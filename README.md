@@ -2,21 +2,26 @@
 
 ## Quick start: wire this into another project
 
-Run one (or both) of these in the target project's directory. They add a link to this
-project's knowledge base into `CLAUDE.md` / `AGENTS.md`, so an LLM working in that repo
-consults it before making Scala architecture decisions. Interactive: pick GitHub link or
-browse the filesystem for a local checkout. Safe to re-run — idempotent, no duplicates.
+Run this in the target project's directory. It adds a link to this project's knowledge base
+into both `CLAUDE.md` and `AGENTS.md`, so an LLM working in that repo consults it before
+making Scala architecture decisions. Safe to re-run — idempotent, no duplicates.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-claude-md-link.sh | bash
-curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-agents-md-link.sh | bash
+curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh | bash
 ```
 
 If your shell doesn't show the prompts under the pipe form, use process substitution instead:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-claude-md-link.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh)
 ```
+
+On a real terminal it's an arrow-key menu (↑/↓ or j/k, Enter to choose, Esc/q to cancel):
+
+1. **GitHub** or **a local checkout you already have**?
+2. If GitHub: **link to it over the internet**, or **clone it locally** (you pick the
+   parent folder, arrow-key filesystem browser)?
+3. If local: browse the filesystem for the existing checkout.
 
 ## What this repo is
 
