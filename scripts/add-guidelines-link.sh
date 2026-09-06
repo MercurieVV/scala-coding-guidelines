@@ -30,7 +30,16 @@ MARKER_END="<!-- scala-coding-guidelines:end -->"
 
 TTY_OK=0
 ORIG_STTY=""
-if exec 3<>/dev/tty 2>/dev/null; then
+if [ -t 0 ]; then
+  # stdin is already the real terminal (direct execution, or bash <(curl ...)
+  # process substitution, which only redirects the script source, not stdin)
+  # -- reuse it instead of reopening /dev/tty.
+  exec 3<&0
+  TTY_OK=1
+  ORIG_STTY=$(stty -g <&3 2>/dev/null || true)
+elif exec 3<>/dev/tty 2>/dev/null; then
+  # stdin is the piped script itself (curl ... | bash) -- only /dev/tty can
+  # still reach the terminal for interactive input.
   TTY_OK=1
   ORIG_STTY=$(stty -g <&3 2>/dev/null || true)
 fi
