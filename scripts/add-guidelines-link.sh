@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
-# Idempotently adds a link to the scala-coding-guidelines knowledge base into
-# both ./CLAUDE.md and ./AGENTS.md in the current working directory.
-#
-# Interactive, arrow-key menu on a real terminal (falls back to a plain
-# numbered menu otherwise, e.g. non-interactive pipes/CI):
-#   1. GitHub, or a local checkout you already have?
-#   2. If GitHub: link to it over the internet, or clone it locally first
-#      (you pick the parent folder)?
-#   3. If local: browse the filesystem for the checkout.
+# Idempotently links the scala-coding-guidelines knowledge base into
+# ./CLAUDE.md and ./AGENTS.md in the current working directory.
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh | bash
 #   (or, if your shell doesn't pass prompts through the pipe:)
 #   bash <(curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh)
 #
-# Safe to re-run: it replaces its own marked block instead of duplicating it.
+# Menu tree:
+#   GitHub
+#     link to it over the internet
+#     clone it locally -> point to a folder to clone into
+#   Local checkout I already have -> point to it
+#
+# On a real terminal: arrow keys (or j/k) + Enter, Esc/q cancels. Falls back
+# to a plain numbered menu when there's no controlling terminal (e.g. certain
+# non-interactive pipes/CI).
+#
+# Safe to re-run: replaces its own marked block instead of duplicating it.
 set -uo pipefail
 
 REPO_URL="https://github.com/MercurieVV/scala-coding-guidelines"
@@ -26,11 +29,11 @@ MARKER_START="<!-- scala-coding-guidelines:start -->"
 MARKER_END="<!-- scala-coding-guidelines:end -->"
 
 TTY_OK=0
+ORIG_STTY=""
 if exec 3<>/dev/tty 2>/dev/null; then
   TTY_OK=1
+  ORIG_STTY=$(stty -g <&3 2>/dev/null || true)
 fi
-ORIG_STTY=""
-[ "$TTY_OK" -eq 1 ] && ORIG_STTY=$(stty -g <&3 2>/dev/null || true)
 
 cleanup() {
   if [ "$TTY_OK" -eq 1 ]; then
@@ -40,123 +43,94 @@ cleanup() {
 }
 trap cleanup EXIT
 
-set_raw()    { [ "$TTY_OK" -eq 1 ] && stty -echo -icanon min 1 time 0 <&3 2>/dev/null; }
-set_cooked() { [ "$TTY_OK" -eq 1 ] && [ -n "$ORIG_STTY" ] && stty "$ORIG_STTY" <&3 2>/dev/null; }
+restore_tty() {
+  [ "$TTY_OK" -eq 1 ] && [ -n "$ORIG_STTY" ] && stty "$ORIG_STTY" <&3 2>/dev/null
+}
 
-# select_menu TITLE OUTVAR ITEM...
-# Real-terminal menu: up/down arrows (or j/k) to move, enter to confirm, esc/q
-# to cancel. On confirm sets OUTVAR to the 0-based selected index and returns
-# 0; on cancel returns 1.
-select_menu() {
+# menu TITLE OUTVAR ITEM...
+# Arrow-key menu on a real terminal; plain numbered menu otherwise.
+# On confirm: sets OUTVAR to the 0-based selected index, returns 0.
+# On cancel (Esc/q/EOF): returns 1.
+menu() {
   local title="$1" outvar="$2"; shift 2
   local items=("$@")
   local n=${#items[@]}
-  local sel=0 first=1 key rest
 
-  render_menu() {
-    if [ "$first" -eq 0 ]; then
-      printf '\033[%dA\033[0J' "$((n + 2))" >&2
-    fi
-    first=0
-    printf '%s\n' "$title" >&2
+  if [ "$TTY_OK" -ne 1 ]; then
+    echo "$title" >&2
     local i
     for ((i = 0; i < n; i++)); do
+      echo "  $((i + 1))) ${items[$i]}" >&2
+    done
+    local sel
+    printf '> ' >&2
+    IFS= read -r sel || return 1
+    case "$sel" in
+      ''|*[!0-9]*) return 1 ;;
+    esac
+    if [ "$sel" -ge 1 ] && [ "$sel" -le "$n" ]; then
+      printf -v "$outvar" '%s' "$((sel - 1))"
+      return 0
+    fi
+    return 1
+  fi
+
+  local sel=0 drawn=0 key rest i
+  stty -echo -icanon min 1 time 0 <&3 2>/dev/null
+  while true; do
+    if [ "$drawn" -eq 1 ]; then
+      printf '\033[%dA\033[J' "$((n + 1))" >&2
+    fi
+    drawn=1
+    echo "$title" >&2
+    for ((i = 0; i < n; i++)); do
       if [ "$i" -eq "$sel" ]; then
-        printf '  \033[7m> %s\033[0m\n' "${items[$i]}" >&2
+        printf '  \033[7m %s \033[0m\n' "${items[$i]}" >&2
       else
         printf '    %s\n' "${items[$i]}" >&2
       fi
     done
-    printf '  (up/down or j/k, enter to choose, esc/q to cancel)\n' >&2
-  }
 
-  set_raw
-  render_menu
-  while true; do
-    IFS= read -rsn1 key <&3 || { set_cooked; return 1; }
+    IFS= read -rsn1 key <&3 || { restore_tty; return 1; }
     case "$key" in
       $'\x1b')
         # bash 3.2 (macOS default) has no fractional -t timeout, so read both
-        # escape-sequence bytes in one shot; a genuine arrow key has them
-        # already buffered (instant), a lone Esc times out after 1s and cancels.
+        # escape-sequence bytes in one shot: a genuine arrow key already has
+        # them buffered (instant); a lone Esc times out after 1s and cancels.
         rest=""
         if IFS= read -rsn2 -t 1 rest <&3; then
           case "$rest" in
-            '[A') sel=$(( (sel - 1 + n) % n )); render_menu ;;
-            '[B') sel=$(( (sel + 1) % n )); render_menu ;;
+            '[A') sel=$(( (sel - 1 + n) % n )) ;;
+            '[B') sel=$(( (sel + 1) % n )) ;;
+            *) : ;; # unrecognized escape sequence (left/right/etc.) - ignore
           esac
         else
+          restore_tty
           printf '\n' >&2
-          set_cooked
           return 1
         fi
         ;;
-      k) sel=$(( (sel - 1 + n) % n )); render_menu ;;
-      j) sel=$(( (sel + 1) % n )); render_menu ;;
+      k) sel=$(( (sel - 1 + n) % n )) ;;
+      j) sel=$(( (sel + 1) % n )) ;;
       q)
+        restore_tty
         printf '\n' >&2
-        set_cooked
         return 1
         ;;
       '')
-        printf -v "$outvar" '%s' "$sel"
+        restore_tty
         printf '\n' >&2
-        set_cooked
+        printf -v "$outvar" '%s' "$sel"
         return 0
         ;;
     esac
   done
 }
 
-# text_menu TITLE OUTVAR ITEM...  -- plain numbered fallback for non-tty use.
-text_menu() {
-  local title="$1" outvar="$2"; shift 2
-  local items=("$@")
-  local n=${#items[@]}
-  echo "$title" >&2
-  local i
-  for ((i = 0; i < n; i++)); do
-    echo "  $((i + 1))) ${items[$i]}" >&2
-  done
-  local sel
-  printf '> ' >&2
-  IFS= read -r sel
-  case "$sel" in
-    ''|*[!0-9]*) return 1 ;;
-  esac
-  if [ "$sel" -ge 1 ] 2>/dev/null && [ "$sel" -le "$n" ]; then
-    printf -v "$outvar" '%s' "$((sel - 1))"
-    return 0
-  fi
-  return 1
-}
-
-# pick_one TITLE OUTVAR ITEM... -- arrow menu on a real terminal, plain
-# numbered menu otherwise.
-pick_one() {
-  if [ "$TTY_OK" -eq 1 ]; then
-    select_menu "$@"
-  else
-    text_menu "$@"
-  fi
-}
-
-# read_line PROMPT OUTVAR -- cooked-mode line read (for typing a path).
-read_line() {
-  local prompt="$1" outvar="$2"
-  if [ "$TTY_OK" -eq 1 ]; then
-    set_cooked
-    printf '%s' "$prompt" >&2
-    IFS= read -r "$outvar" <&3
-  else
-    printf '%s' "$prompt" >&2
-    IFS= read -r "$outvar"
-  fi
-}
-
-# browse_local_dir -- interactive filesystem browser starting at $HOME.
-# Prints the chosen absolute directory path on stdout.
-browse_local_dir() {
+# browse_dir -- interactive filesystem browser starting at $HOME.
+# Prints the chosen absolute directory path on stdout; exits the whole
+# script if the user cancels.
+browse_dir() {
   local dir="$HOME"
   while true; do
     local subdirs=()
@@ -164,27 +138,18 @@ browse_local_dir() {
       [ -n "$d" ] && subdirs+=("$d")
     done < <(cd "$dir" 2>/dev/null && ls -d */ 2>/dev/null | sed 's#/$##' | sort)
 
-    local items=("[ select this directory ]" "[ type a path ]" ".. (up one level)")
+    local items=("[ select this directory ]" "..")
     [ "${#subdirs[@]}" -gt 0 ] && items+=("${subdirs[@]}")
 
     local idx
-    if ! pick_one "Current: $dir" idx "${items[@]}"; then
-      echo "Cancelled." >&2
-      exit 1
+    if ! menu "Current: $dir" idx "${items[@]}"; then
+      return 1
     fi
 
     case "$idx" in
       0) break ;;
-      1)
-        local typed
-        read_line "path: " typed
-        [ -d "$typed" ] && dir="$typed" || echo "not a directory: $typed" >&2
-        ;;
-      2) dir=$(dirname "$dir") ;;
-      *)
-        local pick=$((idx - 3))
-        dir="$dir/${subdirs[$pick]}"
-        ;;
+      1) dir=$(dirname "$dir") ;;
+      *) dir="$dir/${subdirs[$((idx - 2))]}" ;;
     esac
   done
   cd "$dir" && pwd
@@ -232,10 +197,10 @@ EOF
   fi
 }
 
-echo "scala-coding-guidelines link setup (in $(pwd))"
+echo "scala-coding-guidelines link setup (in $(pwd))" >&2
 
-top_idx=0
-if ! pick_one "Where does the project live?" top_idx \
+top=0
+if ! menu "Where does the project live?" top \
     "GitHub" \
     "A local checkout I already have"; then
   echo "Cancelled." >&2
@@ -243,42 +208,36 @@ if ! pick_one "Where does the project live?" top_idx \
 fi
 
 link=""
-case "$top_idx" in
-  0)
-    sub_idx=0
-    if ! pick_one "Use it over the internet, or clone it locally?" sub_idx \
-        "Link to it over the internet (GitHub)" \
-        "Clone it locally (pick a parent folder)"; then
-      echo "Cancelled." >&2
-      exit 1
+if [ "$top" -eq 0 ]; then
+  sub=0
+  if ! menu "Use it over the internet, or clone it locally?" sub \
+      "Link to it over the internet (GitHub)" \
+      "Clone it locally"; then
+    echo "Cancelled." >&2
+    exit 1
+  fi
+  if [ "$sub" -eq 0 ]; then
+    link="$REPO_URL/blob/master/$WIKI_INDEX_REL"
+  else
+    echo "Pick a folder to clone into:" >&2
+    parent_dir=$(browse_dir) || { echo "Cancelled." >&2; exit 1; }
+    dest="$parent_dir/$REPO_DIR_NAME"
+    if [ -d "$dest/.git" ]; then
+      echo "Already cloned at $dest, pulling latest..." >&2
+      git -C "$dest" pull --ff-only
+    else
+      echo "Cloning into $dest..." >&2
+      git clone --depth 1 "$REPO_GIT" "$dest"
     fi
-    case "$sub_idx" in
-      0)
-        link="$REPO_URL/blob/master/$WIKI_INDEX_REL"
-        ;;
-      1)
-        echo "Pick the folder to clone into:" >&2
-        parent_dir=$(browse_local_dir)
-        dest="$parent_dir/$REPO_DIR_NAME"
-        if [ -d "$dest/.git" ]; then
-          echo "Already cloned at $dest, pulling latest..."
-          git -C "$dest" pull --ff-only
-        else
-          echo "Cloning into $dest..."
-          git clone --depth 1 "$REPO_GIT" "$dest"
-        fi
-        link="$dest/$WIKI_INDEX_REL"
-        ;;
-    esac
-    ;;
-  1)
-    echo "Browse to your existing checkout:" >&2
-    dir=$(browse_local_dir)
-    link="$dir/$WIKI_INDEX_REL"
-    echo "Note: this script cannot change your shell's directory (it runs in a subprocess)."
-    echo "Selected project path: $dir"
-    ;;
-esac
+    link="$dest/$WIKI_INDEX_REL"
+  fi
+else
+  echo "Browse to your existing checkout:" >&2
+  dir=$(browse_dir) || { echo "Cancelled." >&2; exit 1; }
+  link="$dir/$WIKI_INDEX_REL"
+fi
+
+echo "Link: $link" >&2
 
 for f in "${TARGET_FILES[@]}"; do
   upsert_block "$f" "$link"
