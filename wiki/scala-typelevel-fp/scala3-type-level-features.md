@@ -1,8 +1,8 @@
 # Scala 3 Type-Level Design Features
 
-> Sources: Local research corpus, 2026-09-06
-> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md)
-> Updated: 2026-09-06
+> Sources: Local research corpus, 2026-09-06; Daniel Beskin (Rock the JVM), 2023-12-06
+> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [Scala 3: Type-Level Programming](../../raw/scala-typelevel-fp/2023-12-06-scala3-type-level-programming.md)
+> Updated: 2026-09-07
 
 ## Overview
 
@@ -36,6 +36,8 @@ Opaque types are not full newtypes out of the box — `apply`/`value`/extension 
 
 Use `given`/`using` for typeclass instances and capability traits; context bounds (`[F[_]: Monad: Logger]`) for concise requirements; `derives` for typeclass derivation (`Eq`/`Show`/circe codecs); extension methods to attach syntax without wrappers. Example: `def program[F[_]: Monad](using items: Items[F], log: Logger[F]): F[Unit]`. Excessive implicit/`given` resolution creates slow compiles and opaque error messages — keep given scopes shallow, prefer explicit params for business algebras, implicit only for lawful typeclasses/capabilities.
 
+Plain `derives` + hand-written `Mirror.Of[A]` logic covers a one-off typeclass; **shapeless 3**'s `K0`/`K1` machinery factors out the product/coproduct traversal itself, worth reaching for once several typeclasses (Monoid, Show, Eq, ...) need generic derivation — see [Shapeless 3: Generic Type Class Derivation](shapeless3-generic-derivation.md).
+
 ## Union & intersection types
 
 **Union `A | B`** models error channels without Coproduct/nested `Either`: `def foo: F[DuplicateUser | UserNotFound | Unit]`, pattern-matched at the boundary. Gabriel Volpe, "Scala 3: Error handling in FP land" (gvolpe.com/blog/error-handling-scala3/, published 2022-02-08): "Union types are the perfect feature to model error types," replacing `type Err = Either[Either[DuplicateStory, UserNotFound], Unit]`.
@@ -47,6 +49,10 @@ Union-type exhaustiveness is not enforced as strictly as sealed ADTs — enable 
 ## Match types & compile-time computation
 
 Type-level functions (`type Elem[X] = X match { case String => Char; case Array[t] => t }`) and `inline`/`compiletime` ops give compile-time guarantees. Useful for library-level API ergonomics (deriving return types) and compile-time literal validation (Iron uses inline + compiletime API) — rarely needed in application code. Match types degrade inference and error messages fast; keep them in library boundaries, not business modules.
+
+The full toolbox for this style of metaprogramming (Rock the JVM, "Scala 3: Type-Level Programming", 2023-12-06): `inline def` for compile-time evaluation and specialization at call sites; `summonInline` for implicit resolution during inlining; Scala 3 tuple recursion (`*:`/`EmptyTuple` pattern matching) for compile-time iteration; `Mirror`-derived `MirroredElemTypes`/`MirroredElemLabels` for reflection-free access to a case class's field types/names; `erasedValue` to pattern-match on a type with no corresponding value; `transparent inline` to preserve precise inferred types through a chain of transformations; `scala.compiletime.ops` for type-level boolean/integer/equality computation; and the `error` function for custom compile-time error messages. A worked example (flat-JSON codecs with compile-time duplicate-field detection) combines all of these.
+
+**Tradeoffs, from the same source:** compile-time safety and elimination of runtime/reflection cost are real, but the type-level "language" this builds is primitive and loosely typed (heavy tuple encoding), benign-looking edits can silently break type precision, IDE support and match-type-reduction error messages are sparse, and using it well requires a working model of the compiler's inlining/erasure passes. Treat this as a library-author's toolbox for a specific, well-bounded problem — not a default style for application code.
 
 ## Phantom types & type-level state machines
 
@@ -60,4 +66,5 @@ A type parameter carrying no runtime value encodes protocol state so illegal cal
 
 - [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md)
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
+- [Shapeless 3: Generic Type Class Derivation](shapeless3-generic-derivation.md)
 - [Project Structure & Testing](project-structure-and-testing.md)

@@ -1,7 +1,7 @@
 # Tagless-Final Architecture & Hand-Wired DI (Typelevel/cats-effect)
 
-> Sources: Local research corpus, 2026-09-06
-> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md)
+> Sources: Local research corpus, 2026-09-06; John A De Goes, 2019-06-18
+> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [The False Hope of Managing Effects with Tagless-Final in Scala](../../raw/scala-typelevel-fp/2019-06-18-tagless-final-false-hope.md)
 > Updated: 2026-09-06
 
 ## Overview
@@ -80,6 +80,9 @@ Algebra vs interpreter vs program: algebras = abstract capability traits; interp
 - **Tagless-final overuse / premature indirection** (De Goes): "only library authors have a compelling argument for effect type indirection. In order to maximize market share... they need to support all major effect types... this is completely inapplicable to the closed source applications that make up the majority of Scala software development." The refactor cost between effect types is one-time and semantically driven; indirection cost is paid forever.
 - **`F[_]` proliferation without benefit:** if `F` is never instantiated to anything but `IO`, the polymorphism is dead weight, hides the concrete `IO` API, degrades inference, and worsens error messages.
 - **"Untestable effects" myth** (De Goes, verbatim): "testability is not a property of tagless-final code... tagless-final programs are not inherently testable. In fact, they are testable only to the degree their tagless-final type classes are testable." `Sync`/`Async`-based type classes capturing arbitrary side effects are inherently untestable.
+- **No effect parametric polymorphism** (De Goes): "effect parametric reasoning is a lie" — Scala has no way to track effects through implicit parameters, so any reasoning benefit is a social contract enforced by code review discipline, not something the compiler guarantees: "These 'guarantees' come from discipline, not from the Scala compiler."
+- **Sync bloat:** real-world tagless-final code liberally uses unconstrained side-effect type classes (`Sync`, `Async`), creating "opaque blobs of side-effecting, untestable procedural code" — the abstraction buys nothing once the constraint is that permissive.
+- **Fake abstraction without laws** (De Goes): tagless-final type classes typically carry no algebraic laws, so "generic reasoning requires abstractions... The moment we create fake abstractions... we aren't doing principled functional programming anymore" — an unlawful `putStrLn`-style operation is semantically unspecified regardless of how abstract its signature looks.
 - **Excessive implicit/given complexity:** deep implicit chains → slow compiles, cryptic errors. Pass business algebras explicitly; reserve implicits for lawful typeclasses and capability traits.
 - **`EitherT`/monad-transformer stacks:** avoid stacking over `IO`; use cats-mtl or concrete `IO` + `Either` at edges (see [Cats & Category-Theory Patterns](cats-category-theory-patterns.md), [Project Structure & Testing](project-structure-and-testing.md)).
 - **God `for`-comprehension wiring:** split into `.make` sub-modules.

@@ -1,8 +1,8 @@
 # Cats & Category-Theory-Driven Design Patterns
 
-> Sources: Local research corpus, 2026-09-06
-> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md)
-> Updated: 2026-09-06
+> Sources: Local research corpus, 2026-09-06; Bartosz Milewski, 2016-12-27
+> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [Monads Categorically](../../raw/scala-typelevel-fp/2016-12-27-monads-categorically.md)
+> Updated: 2026-09-07
 
 ## Overview
 
@@ -11,6 +11,8 @@ Cats provides category-theory abstractions (Functor/Monad laws, Free structures,
 ## Functor/Applicative/Monad laws as interface constraints
 
 Require the weakest lawful abstraction a module needs. Laws (identity, composition, associativity) are design constraints: a lawful `Semigroup`/`Monad` instance guarantees composability across module boundaries. Enforce with `cats-laws` (see [Project Structure & Testing](project-structure-and-testing.md)).
+
+**The categorical shape behind `Monad`** (Bartosz Milewski, "Monads Categorically," 2016-12-27): a monad is an endofunctor `T` equipped with two natural transformations — `μ` (`join`, component `T(T a) -> T a`) and `η` (`pure`/`return`, component `a -> T a`) — satisfying associativity and unit laws. The famous compression of this: "monad is just a monoid in the category of endofunctors" (attributed to Saunders Mac Lane) — function composition is the tensor product on endofunctors, and `μ`/`η` are exactly a monoid's combine/identity in that category. Monads also arise from an adjunction `L ⊣ R` as the composite `R ∘ L`, with `μ = R ∘ ε ∘ L`; cats-effect's `IO`/`State`-style monads fit this same shape, `flatMap` being `map` followed by `μ`. This is background for *why* `Monad` laws take the form they do — day-to-day module design should still be driven by the weakest lawful abstraction a module actually needs, not by reaching for the categorical framing itself.
 
 ## Free structures for composing independent algebras
 
