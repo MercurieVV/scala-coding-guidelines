@@ -6,7 +6,7 @@ Scala 3 + Typelevel/cats-effect architecture, type-level design, and coding conv
 
 | Article | Summary | Updated |
 |---------|---------|---------|
-| [Tagless-Final Architecture & Hand-Wired DI](scala-typelevel-fp/tagless-final-and-di-architecture.md) | Module boundaries via tagless-final algebras, Resource-based hand-wired DI, anti-patterns | 2026-09-06 |
+| [Tagless-Final Architecture & Hand-Wired DI](scala-typelevel-fp/tagless-final-and-di-architecture.md) | Module boundaries via tagless-final algebras, Resource-based hand-wired DI, anti-patterns | 2026-09-07 |
 | [Scala 3 Type-Level Features](scala-typelevel-fp/scala3-type-level-features.md) | Opaque types, abstract type members, given/using, union/intersection types, match/phantom types, inline/Mirror/compiletime metaprogramming | 2026-09-07 |
 | [Cats & Category-Theory Patterns](scala-typelevel-fp/cats-category-theory-patterns.md) | Functor/Monad laws (incl. the categorical endofunctor+μ/η definition), Free structures, Semigroup/Monoid, Profunctor, Arrow, Monocle optics | 2026-09-07 |
 | [Project Structure & Testing](scala-typelevel-fp/project-structure-and-testing.md) | Multi-module sbt/mill layout, http4s+tapir organization, testing, error handling | 2026-09-06 |

@@ -2,7 +2,7 @@
 
 > Sources: Local research corpus, 2026-09-06; John A De Goes, 2019-06-18
 > Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [The False Hope of Managing Effects with Tagless-Final in Scala](../../raw/scala-typelevel-fp/2019-06-18-tagless-final-false-hope.md)
-> Updated: 2026-09-06
+> Updated: 2026-09-07
 
 ## Overview
 
