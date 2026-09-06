@@ -3,9 +3,12 @@
 # ./CLAUDE.md and ./AGENTS.md in the current working directory.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh | bash
-#   (or, if your shell doesn't pass prompts through the pipe:)
-#   bash <(curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh)
+#   curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh -o /tmp/add-guidelines-link.sh && bash /tmp/add-guidelines-link.sh
+#
+# Piping straight into bash (curl ... | bash) or via process substitution
+# (bash <(curl ...)) can silently hang on some systems for an interactive
+# script like this one (observed on macOS/Terminal.app) -- download-then-run
+# avoids that.
 #
 # Menu tree:
 #   GitHub

@@ -7,14 +7,13 @@ into both `CLAUDE.md` and `AGENTS.md`, so an LLM working in that repo consults i
 making Scala architecture decisions. Safe to re-run — idempotent, no duplicates.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh | bash
+curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh -o /tmp/add-guidelines-link.sh && bash /tmp/add-guidelines-link.sh
 ```
 
-If your shell doesn't show the prompts under the pipe form, use process substitution instead:
-
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/MercurieVV/scala-coding-guidelines/master/scripts/add-guidelines-link.sh)
-```
+This is the reliable form — piping straight into `bash` (`curl ... | bash`) or via process
+substitution (`bash <(curl ...)`) can silently hang for an interactive script like this one on
+some systems (observed on macOS/Terminal.app), since bash's own stdin gets tangled up with the
+script source. Download-then-run avoids that entirely.
 
 On a real terminal it's an arrow-key menu (↑/↓ or j/k, Enter to choose, Esc/q to cancel):
 
