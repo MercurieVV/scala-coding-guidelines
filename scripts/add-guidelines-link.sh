@@ -175,9 +175,10 @@ upsert_block() {
 $MARKER_START
 ## Scala Coding Guidelines Knowledge Base
 
-Compounding knowledge base of Scala 3 / Typelevel / cats-effect architecture research
-(tagless-final module boundaries, hand-wired Resource-based DI, opaque types, recursion
-schemes / droste, cats category-theory patterns, project/testing conventions): $link
+[Scala Coding Guidelines — wiki index]($link) is a compounding knowledge base of Scala 3 /
+Typelevel / cats-effect architecture research (tagless-final module boundaries, hand-wired
+Resource-based DI, opaque types, recursion schemes / droste, cats category-theory patterns,
+project/testing conventions).
 
 **Consult this knowledge base before making Scala architecture decisions or reviewing
 Scala code in this repo.** Start at the linked index and follow its article links; treat
