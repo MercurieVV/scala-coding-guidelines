@@ -11,3 +11,4 @@ Scala 3 + Typelevel/cats-effect architecture, type-level design, and coding conv
 | [Cats & Category-Theory Patterns](scala-typelevel-fp/cats-category-theory-patterns.md) | Functor/Monad laws, Free structures, Semigroup/Monoid, Profunctor, Arrow, Monocle optics | 2026-09-06 |
 | [Project Structure & Testing](scala-typelevel-fp/project-structure-and-testing.md) | Multi-module sbt/mill layout, http4s+tapir organization, testing, error handling | 2026-09-06 |
 | [Typelevel FP References](scala-typelevel-fp/typelevel-fp-references.md) | Key people/projects (Volpe, De Goes, SystemFw, etc.) and corpus caveats | 2026-09-06 |
+| [Recursion Schemes and the Droste Library](scala-typelevel-fp/recursion-schemes-and-droste.md) | Catamorphism/anamorphism/hylomorphism/histomorphism zoo, droste's Algebra/Coalgebra/Fix/Basis, and heuristics for spotting recursion-scheme shape when the structure isn't an obvious tree | 2026-09-06 |
