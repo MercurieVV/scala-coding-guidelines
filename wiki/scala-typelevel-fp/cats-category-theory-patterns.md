@@ -16,7 +16,7 @@ Require the weakest lawful abstraction a module needs. Laws (identity, compositi
 
 ## Free structures for composing independent algebras
 
-`Free`/`FreeApplicative` + `EitherK` (Coproduct) + `InjectK` let independently-developed modules be combined into one program and interpreted together — used when modules are developed separately and one interpretation point is wanted. Full tradeoff discussion in [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md).
+`Free`/`FreeApplicative` + `EitherK` (Coproduct) + `InjectK` let independently-developed modules be combined into one program and interpreted together — used when modules are developed separately and one interpretation point is wanted. Full tradeoff discussion in [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md); the underlying Coproduct/Inject mechanism and the provider/consumer framing behind it are in [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md).
 
 `Free` and its dual `Cofree` also underpin two recursion schemes — futumorphism and histomorphism, respectively — see [Recursion Schemes and the Droste Library](recursion-schemes-and-droste.md).
 
@@ -64,3 +64,4 @@ Optics that "break the contract" (e.g. filtered traversals) violate composition 
 - [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md)
 - [Scala 3 Type-Level Features](scala3-type-level-features.md)
 - [Project Structure & Testing](project-structure-and-testing.md)
+- [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)

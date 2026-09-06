@@ -1,7 +1,7 @@
 # Tagless-Final Architecture & Hand-Wired DI (Typelevel/cats-effect)
 
-> Sources: Local research corpus, 2026-09-06; John A De Goes, 2019-06-18
-> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [The False Hope of Managing Effects with Tagless-Final in Scala](../../raw/scala-typelevel-fp/2019-06-18-tagless-final-false-hope.md)
+> Sources: Local research corpus, 2026-09-06; John A De Goes, 2019-06-18; Wouter Swierstra, 2008-07-01
+> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [The False Hope of Managing Effects with Tagless-Final in Scala](../../raw/scala-typelevel-fp/2019-06-18-tagless-final-false-hope.md); [Data Types à la Carte](../../raw/scala-typelevel-fp/2008-data-types-a-la-carte.md)
 > Updated: 2026-09-07
 
 ## Overview
@@ -27,6 +27,8 @@ Free monads reify a program as an AST (`Free[F, A]`), interpreted later via a na
 Adam Warski / SoftwareMill: "for expressing higher-level business concepts, where there's a large number of languages (instruction sets), the final tagless approach will be much more convenient... For more cross-cutting concerns, free might be a better choice."
 
 Tradeoffs: more object allocation (Coproduct instances) → slower than tagless-final; more boilerplate; `Inject` machinery is opaque to newcomers; Free is stack-safe (trampolined), while tagless-final's stack-safety depends on the chosen monad.
+
+The `Inject`/Coproduct mechanism traces to Swierstra's "Data types à la carte" (2008): each algebra is its own small functor (a *provider*), `EitherK`'s Coproduct `(f :+: g)` combines any number of them without their knowing about each other, and `InjectK`'s `inj`/`prj` route a term into and back out of the combination automatically. Adding a new algebra means writing its functor and its interpreter case — the existing algebras and their interpreters are untouched. See [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md).
 
 ## ZIO layers vs cats-effect Resource (contrast)
 
@@ -95,3 +97,4 @@ Algebra vs interpreter vs program: algebras = abstract capability traits; interp
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
 - [Project Structure & Testing](project-structure-and-testing.md)
 - [Typelevel FP References](typelevel-fp-references.md)
+- [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)

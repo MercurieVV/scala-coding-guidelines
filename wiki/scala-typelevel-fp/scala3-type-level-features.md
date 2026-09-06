@@ -1,7 +1,7 @@
 # Scala 3 Type-Level Design Features
 
-> Sources: Local research corpus, 2026-09-06; Daniel Beskin (Rock the JVM), 2023-12-06
-> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [Scala 3: Type-Level Programming](../../raw/scala-typelevel-fp/2023-12-06-scala3-type-level-programming.md)
+> Sources: Local research corpus, 2026-09-06; Daniel Beskin (Rock the JVM), 2023-12-06; Rúnar Bjarnason (via Edd Steel), 2016-03-21
+> Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [Scala 3: Type-Level Programming](../../raw/scala-typelevel-fp/2023-12-06-scala3-type-level-programming.md); [Applying Least Power in Scala](../../raw/scala-typelevel-fp/2016-03-21-applying-least-power-in-scala.md)
 > Updated: 2026-09-07
 
 ## Overview
@@ -31,6 +31,8 @@ Opaque types are not full newtypes out of the box — `apply`/`value`/extension 
 ## Higher-kinded types as the abstraction boundary
 
 `F[_]` is the primary abstraction seam. Constrain minimally ("principle of least power"): require `Applicative` not `Monad` when only independent effects are needed — the signature then documents that no effect depends on a prior result's value (De Goes's parametric-reasoning benefit). Do not add `F[_]` "just in case" — if the app only ever runs on `IO`, writing `IO`-specific code is legitimate and clearer.
+
+"Power" here means unconstrained capability, not usefulness (Rúnar Bjarnason, "Constraints Liberate, Liberties Constrain"): "the more a system *can* do, the less we can predict what it *will* do." A weaker typeclass bound, or a plain function passed instead of a multi-method interface, is *less powerful* by this definition and therefore preferable — it rules out entire classes of behavior a caller would otherwise have to check for by reading the implementation. See [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md).
 
 ## given/using composition
 
@@ -68,3 +70,4 @@ A type parameter carrying no runtime value encodes protocol state so illegal cal
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
 - [Shapeless 3: Generic Type Class Derivation](shapeless3-generic-derivation.md)
 - [Project Structure & Testing](project-structure-and-testing.md)
+- [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)

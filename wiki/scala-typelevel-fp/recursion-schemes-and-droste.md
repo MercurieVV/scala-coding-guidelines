@@ -1,8 +1,8 @@
 # Recursion Schemes and the Droste Library
 
-> Sources: higherkindness/droste README (Unknown date); Ziyang Liu, "Curried Thoughts" blog, 2017-11-13; Claude Code synthesis, 2026-09-06
-> Raw: [Droste Library Overview](../../raw/scala-typelevel-fp/droste-library-overview.md); [Recursion Schemes in Scala — Elementary Introduction](../../raw/scala-typelevel-fp/2017-11-13-recursion-schemes-scala-elementary-intro.md); [Applying Recursion Schemes When Structure Is Unclear](../../raw/scala-typelevel-fp/recursion-schemes-when-structure-unclear-notes.md)
-> Updated: 2026-09-06
+> Sources: higherkindness/droste README (Unknown date); Ziyang Liu, "Curried Thoughts" blog, 2017-11-13; Claude Code synthesis, 2026-09-06; Wikipedia, F-algebra (Unknown date)
+> Raw: [Droste Library Overview](../../raw/scala-typelevel-fp/droste-library-overview.md); [Recursion Schemes in Scala — Elementary Introduction](../../raw/scala-typelevel-fp/2017-11-13-recursion-schemes-scala-elementary-intro.md); [Applying Recursion Schemes When Structure Is Unclear](../../raw/scala-typelevel-fp/recursion-schemes-when-structure-unclear-notes.md); [F-Algebra (Wikipedia)](../../raw/scala-typelevel-fp/f-algebra-wikipedia.md)
+> Updated: 2026-09-07
 
 ## Overview
 
@@ -15,6 +15,8 @@ Recursion schemes factor the *shape* of a recursive traversal (fold, unfold, fol
 - **`Algebra[F, A]`** (`F[A] => A`): collapses one functor layer — the "how to fold" description.
 - **`Coalgebra[F, A]`** (`A => F[A]`): expands one functor layer — the "how to unfold" description.
 - **`Basis[F, T]`**: typeclass supplying `embed`/`project` between the pattern functor `F` and an existing recursive type `T`, so schemes can run over a type that isn't literally `Fix[F]`.
+
+`Algebra[F, A]` and `Coalgebra[F, A]` are exactly an **F-algebra** (`F(A) -> A`) and its dual **F-coalgebra** (`A -> F(A)`) from category theory (Wikipedia, "F-algebra"). An F-algebra is a *constructor*: given one layer of `F`-structure, produce a value — the initial F-algebra is the datatype itself, built purely from these rules (natural numbers from zero + successor is the textbook case). An F-coalgebra is a *destructor/observer*: given a value, reveal its next layer of structure — the terminal F-coalgebra is what lets potentially-infinite structures be consumed one step at a time. Catamorphism = repeatedly apply the algebra (fold, provider side); anamorphism = repeatedly apply the coalgebra (unfold, consumer side). See [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md) for the same duality applied to module boundaries generally.
 
 ## The zoo of schemes
 
@@ -51,3 +53,4 @@ A from-scratch toy `Fix`/cata/ana implementation (as in introductory tutorials) 
 ## See Also
 
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
+- [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)

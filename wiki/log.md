@@ -28,3 +28,8 @@
 - Updated: Cats & Category-Theory Patterns; Typelevel FP References
 
 ## [2026-09-07] lint | 1 issues found, 1 auto-fixed
+
+## [2026-09-07] ingest | Provider/Consumer Design: Least Power, Algebras, and Modular Composition
+- Disposition: New; Update
+- Raw: raw/scala-typelevel-fp/2016-03-21-applying-least-power-in-scala.md; raw/scala-typelevel-fp/f-algebra-wikipedia.md; raw/scala-typelevel-fp/2008-data-types-a-la-carte.md
+- Updated: Tagless-Final Architecture & Hand-Wired DI; Scala 3 Type-Level Features; Cats & Category-Theory Patterns; Recursion Schemes and the Droste Library
