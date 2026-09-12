@@ -2,7 +2,7 @@
 
 > Sources: typelevel/shapeless-3 README (Unknown date); Javier Martínez, 2025-04-30 (updated)
 > Raw: [shapeless3-readme.md](../../raw/scala-typelevel-fp/shapeless3-readme.md); [How to Derive Type Class Instances With Shapeless 3](../../raw/scala-typelevel-fp/2025-04-30-deriving-type-class-instances-shapeless3.md)
-> Updated: 2026-09-06
+> Updated: 2026-09-13
 
 ## Overview
 
@@ -72,3 +72,4 @@ Plain Scala 3 `derives` + hand-written `Mirror.Of[A]` logic is enough for a sing
 
 - [Scala 3 Type-Level Features](scala3-type-level-features.md)
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
+- [Droste Algebra/Coalgebra Type Taxonomy](droste-algebra-coalgebra-taxonomy.md)

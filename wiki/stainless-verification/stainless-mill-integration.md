@@ -2,7 +2,7 @@
 
 > Sources: ScalaSemanticMCP repo (local), 2026-09-07
 > Raw: [ScalaSemanticMCP Stainless/Mill integration](../../raw/stainless-verification/2026-09-07-scalasemanticmcp-stainless-mill-integration.md); [Mill + Stainless formal verification — reusable integration recipe](../../raw/stainless-verification/2026-09-07-mill-stainless-verification-recipe.md)
-> Updated: 2026-09-12
+> Updated: 2026-09-13
 
 ## Overview
 
@@ -269,3 +269,7 @@ from any build tool:
   `build.sbt`)".
   **Fix:** the real invocation is `./mill analysis.stainlessVerify` — treat leftover sbt-era
   comments as stale, not as an alternate invocation path.
+
+## See Also
+
+- [Project Structure & Testing](../scala-typelevel-fp/project-structure-and-testing.md)

@@ -63,3 +63,10 @@
 - Updated: Recursion Schemes and the Droste Library
 
 ## [2026-09-13] lint | 0 issues found, 0 auto-fixed
+
+## [2026-09-13] lint | 3 issues found, 0 auto-fixed
+- Full-wiki lint (both topics), cross-topic focus. Safe-fix categories (index consistency, internal links, Raw references, See Also) all clean, nothing to fix. check_evidence.py: 0 evidence errors, 0 unreferenced raw files, 37 fidelity suspects all verified as false positives (line-wrap/formatting artifacts, or self-evidencing filename-derived titles/dates).
+- Judgment findings (not auto-fixed): (1) stainless-verification topic is a single orphan page with zero inbound links and zero cross-topic references to/from scala-typelevel-fp; (2) droste-algebra-coalgebra-taxonomy.md's Scala 3 `derives Functor/Foldable/Traverse` section names shapeless3 but doesn't cross-link the existing dedicated article; (3) Project Structure & Testing's cats-laws/CI-gate section and the Stainless article's prePush verification gate are the same "correctness as a build gate" pattern with no cross-link between them.
+
+## [2026-09-13] lint | 3 issues found, 3 auto-fixed
+- Added the three cross-references from the prior lint pass (user-confirmed): See Also links between droste-algebra-coalgebra-taxonomy.md and shapeless3-generic-derivation.md (bidirectional); and between scala-typelevel-fp/project-structure-and-testing.md and stainless-verification/stainless-mill-integration.md (bidirectional, resolves the stainless topic's orphan-page finding). Updated dates refreshed on all four touched articles and in index.md.

@@ -2,7 +2,7 @@
 
 > Sources: Local research corpus, 2026-09-06
 > Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md)
-> Updated: 2026-09-06
+> Updated: 2026-09-13
 
 ## Overview
 
@@ -60,3 +60,4 @@ This stays in the mono-functor error channel — preserving cats-effect concurre
 - [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md)
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
 - [Typelevel FP References](typelevel-fp-references.md)
+- [Integrating Stainless verification into a Mill build](../stainless-verification/stainless-mill-integration.md)

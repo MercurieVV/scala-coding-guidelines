@@ -110,3 +110,4 @@ Code: [annotations.scala](https://github.com/higherkindness/droste/blob/main/mod
 - [Recursion Schemes and the Droste Library](recursion-schemes-and-droste.md)
 - [Droste Recursion Scheme Zoo and Worked Examples](droste-scheme-zoo-examples.md)
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
+- [Shapeless 3: Generic Type Class Derivation](shapeless3-generic-derivation.md)
