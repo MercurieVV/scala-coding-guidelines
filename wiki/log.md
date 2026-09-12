@@ -33,3 +33,15 @@
 - Disposition: New; Update
 - Raw: raw/scala-typelevel-fp/2016-03-21-applying-least-power-in-scala.md; raw/scala-typelevel-fp/f-algebra-wikipedia.md; raw/scala-typelevel-fp/2008-data-types-a-la-carte.md
 - Updated: Tagless-Final Architecture & Hand-Wired DI; Scala 3 Type-Level Features; Cats & Category-Theory Patterns; Recursion Schemes and the Droste Library
+
+## [2026-09-07] ingest | Integrating Stainless verification into a Mill build
+- Disposition: New
+- Raw: raw/stainless-verification/2026-09-07-scalasemanticmcp-stainless-mill-integration.md
+
+## [2026-09-12] ingest | Recursion Schemes and the Droste Library
+- Disposition: Update
+- Raw: raw/scala-typelevel-fp/droste-source-algebra-taxonomy.md; raw/scala-typelevel-fp/droste-source-schemes-and-kernel.md; raw/scala-typelevel-fp/droste-source-zoo-gather-scatter.md; raw/scala-typelevel-fp/droste-worked-examples-per-scheme.md; raw/scala-typelevel-fp/droste-worked-examples-per-scheme-postpro.md; raw/scala-typelevel-fp/droste-changelog.md; raw/scala-typelevel-fp/recursion-schemes-haskell-readme.md; raw/scala-typelevel-fp/matryoshka-readme.md
+
+## [2026-09-12] ingest | Recursion Schemes and the Droste Library (GitHub source/smoke-test links)
+- Disposition: Update
+- Raw: raw/scala-typelevel-fp/droste-worked-examples-per-scheme-postpro.md
