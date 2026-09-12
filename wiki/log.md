@@ -51,3 +51,15 @@
 - Raw: raw/stainless-verification/2026-09-07-mill-stainless-verification-recipe.md
 
 ## [2026-09-12] lint | 0 issues found, 0 auto-fixed
+
+## [2026-09-13] ingest | Droste Algebra/Coalgebra Type Taxonomy
+- Disposition: New; Update
+- Raw: raw/scala-typelevel-fp/droste-source-basis-and-fixpoints.md; raw/scala-typelevel-fp/droste-macro-derivation.md
+- Updated: Recursion Schemes and the Droste Library
+
+## [2026-09-13] ingest | Droste Recursion Scheme Zoo and Worked Examples
+- Disposition: New; Update
+- Raw: raw/scala-typelevel-fp/droste-athema-example.md
+- Updated: Recursion Schemes and the Droste Library
+
+## [2026-09-13] lint | 0 issues found, 0 auto-fixed
