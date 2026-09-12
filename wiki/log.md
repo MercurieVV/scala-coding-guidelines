@@ -45,3 +45,9 @@
 ## [2026-09-12] ingest | Recursion Schemes and the Droste Library (GitHub source/smoke-test links)
 - Disposition: Update
 - Raw: raw/scala-typelevel-fp/droste-worked-examples-per-scheme-postpro.md
+
+## [2026-09-12] ingest | Integrating Stainless verification into a Mill build
+- Disposition: Update
+- Raw: raw/stainless-verification/2026-09-07-mill-stainless-verification-recipe.md
+
+## [2026-09-12] lint | 0 issues found, 0 auto-fixed
