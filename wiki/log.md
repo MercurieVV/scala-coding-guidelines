@@ -75,3 +75,7 @@
 - Disposition: New
 - Raw: raw/scala-typelevel-fp/cats-arrow-typeclass-docs.md; raw/scala-typelevel-fp/cats-kleisli-arrowchoice-source.md; raw/scala-typelevel-fp/kleisli-category-wikipedia.md; raw/scala-typelevel-fp/scala-purrism-arrow-patterns.md; raw/scala-typelevel-fp/scala-purrism-engineering-rules.md; raw/scala-typelevel-fp/scala-purrism-readme.md
 - Updated: Cats & Category-Theory Patterns; Tagless-Final Architecture & Hand-Wired DI; Droste Algebra/Coalgebra Type Taxonomy
+
+## [2026-09-13] lint | 0 issues found, 0 auto-fixed
+- Full-wiki lint (both topics), cross-topic focus, re-run after the Kleisli-to-Arrow ingest. Safe-fix categories (index consistency, internal links, Raw references, See Also) all clean. check_evidence.py: 0 evidence errors, 0 unreferenced raw files, 40 fidelity suspects — same set as the prior pass plus new false positives from kleisli-to-arrow-refactoring.md (backtick-adjacent word breaks, e.g. "as long as `F` is a monad" verified verbatim in raw/scala-typelevel-fp/cats-arrow-typeclass-docs.md), none real.
+- Orphan check: no article has zero inbound links; stainless-mill-integration.md (1 inbound, from project-structure-and-testing.md) remains its topic's only article but is no longer isolated. No new missing cross-topic references found — kleisli-to-arrow-refactoring.md's tie-in to droste's Kleisli/Cokleisli-style `.compose`/`.andThen` is already cross-linked from the prior ingest.
