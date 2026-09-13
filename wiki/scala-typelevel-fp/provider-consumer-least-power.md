@@ -48,3 +48,4 @@ In each row, minimizing what the provider commits to (fewer required capabilitie
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
 - [Recursion Schemes and the Droste Library](recursion-schemes-and-droste.md)
 - [Scala 3 Type-Level Features](scala3-type-level-features.md)
+- [Abstracting Over Abstract Types: Type Members vs. Type Parameters](abstract-types-vs-type-parameters.md)

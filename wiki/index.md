@@ -7,7 +7,7 @@ Scala 3 + Typelevel/cats-effect architecture, type-level design, and coding conv
 | Article | Summary | Updated |
 |---------|---------|---------|
 | [Tagless-Final Architecture & Hand-Wired DI](scala-typelevel-fp/tagless-final-and-di-architecture.md) | Module boundaries via tagless-final algebras, Resource-based hand-wired DI, anti-patterns | 2026-09-13 |
-| [Scala 3 Type-Level Features](scala-typelevel-fp/scala3-type-level-features.md) | Opaque types, abstract type members, given/using, union/intersection types, match/phantom types, inline/Mirror/compiletime metaprogramming | 2026-09-07 |
+| [Scala 3 Type-Level Features](scala-typelevel-fp/scala3-type-level-features.md) | Opaque types, abstract type members, given/using, union/intersection types, match/phantom types, inline/Mirror/compiletime metaprogramming | 2026-09-13 |
 | [Cats & Category-Theory Patterns](scala-typelevel-fp/cats-category-theory-patterns.md) | Functor/Monad laws (incl. the categorical endofunctor+μ/η definition), Free structures, Semigroup/Monoid, Profunctor, Arrow, Monocle optics | 2026-09-13 |
 | [Project Structure & Testing](scala-typelevel-fp/project-structure-and-testing.md) | Multi-module sbt/mill layout, http4s+tapir organization, testing, error handling | 2026-09-13 |
 | [Typelevel FP References](scala-typelevel-fp/typelevel-fp-references.md) | Key people/projects (Volpe, De Goes, SystemFw, Milewski, etc.) and corpus caveats | 2026-09-07 |
@@ -18,6 +18,7 @@ Scala 3 + Typelevel/cats-effect architecture, type-level design, and coding conv
 | [Shapeless 3: Generic Type Class Derivation](scala-typelevel-fp/shapeless3-generic-derivation.md) | K0/K1 generic derivation (ProductInstances, CoproductInstances, Generic), a Monoid/Show derivation example, and when it earns its keep over plain `derives` | 2026-09-13 |
 | [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](scala-typelevel-fp/provider-consumer-least-power.md) | Bjarnason's least-power framing, F-algebra/F-coalgebra duality, and Data Types à la Carte's Coproduct/Inject — one throughline from "pass a function not an interface" to "combine independent algebras via EitherK" | 2026-09-07 |
 | [Refactoring Kleisli to Arrow: When and How](scala-typelevel-fp/kleisli-to-arrow-refactoring.md) | Kleisli category vs Arrow typeclass background; three concrete refactoring patterns (linear chain → `>>>`, `map`-after-`run` → `.map`, fan-out → `&&&`) with an effect-ordering proof; when to leave Kleisli as-is; the `scala-purrism` `PreferKleisli`/`PreferArrow` scalafix rules that automate it | 2026-09-13 |
+| [Abstracting Over Abstract Types: Type Members vs. Type Parameters](scala-typelevel-fp/abstract-types-vs-type-parameters.md) | When to use abstract type members vs type parameters; Odersky/Zenger's quadratic-blowup and family-polymorphism arguments; the cake pattern's use of type members for DI and its practical cost; my-type/self-type problem; how `scala-purrism`'s `PreferTypeParameters` is a distinct axis | 2026-09-13 |
 
 ## stainless-verification
 

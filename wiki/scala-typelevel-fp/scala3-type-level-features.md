@@ -2,7 +2,7 @@
 
 > Sources: Local research corpus, 2026-09-06; Daniel Beskin (Rock the JVM), 2023-12-06; Rúnar Bjarnason (via Edd Steel), 2016-03-21
 > Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [Scala 3: Type-Level Programming](../../raw/scala-typelevel-fp/2023-12-06-scala3-type-level-programming.md); [Applying Least Power in Scala](../../raw/scala-typelevel-fp/2016-03-21-applying-least-power-in-scala.md)
-> Updated: 2026-09-07
+> Updated: 2026-09-13
 
 ## Overview
 
@@ -10,7 +10,7 @@ Scala 3 changes the mechanics of abstract type design: opaque types replace valu
 
 ## Abstract type members vs type parameters
 
-Use **type parameters** (`trait Repo[F[_], A]`) when the caller must choose/vary the type freely and combine multiple instances. Use **abstract type members** (`trait Repo { type Entity; def get(id: Id): F[Entity] }`) when the type is an implementation detail fixed per module instance and should be hidden behind a path-dependent type (`repo.Entity`) — e.g. sealing an opaque `Session`/`Handle` tied to one module instance. Path-dependent types complicate cross-instance interop and inference; don't reach for them without a specific encapsulation need.
+Use **type parameters** (`trait Repo[F[_], A]`) when the caller must choose/vary the type freely and combine multiple instances. Use **abstract type members** (`trait Repo { type Entity; def get(id: Id): F[Entity] }`) when the type is an implementation detail fixed per module instance and should be hidden behind a path-dependent type (`repo.Entity`) — e.g. sealing an opaque `Session`/`Handle` tied to one module instance. Path-dependent types complicate cross-instance interop and inference; don't reach for them without a specific encapsulation need. For the full tradeoff analysis (parameter explosion, the cake pattern's use of type members for DI, family polymorphism, conversion between the two styles, and why this is a distinct axis from `scala-purrism`'s type-parameter-widening rules), see [Abstracting Over Abstract Types: Type Members vs. Type Parameters](abstract-types-vs-type-parameters.md).
 
 ## Opaque types for domain modeling
 
@@ -71,3 +71,5 @@ A type parameter carrying no runtime value encodes protocol state so illegal cal
 - [Shapeless 3: Generic Type Class Derivation](shapeless3-generic-derivation.md)
 - [Project Structure & Testing](project-structure-and-testing.md)
 - [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)
+- [Abstracting Over Abstract Types: Type Members vs. Type Parameters](abstract-types-vs-type-parameters.md)
+- [Integrating Stainless verification into a Mill build](../stainless-verification/stainless-mill-integration.md)

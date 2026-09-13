@@ -79,3 +79,14 @@
 ## [2026-09-13] lint | 0 issues found, 0 auto-fixed
 - Full-wiki lint (both topics), cross-topic focus, re-run after the Kleisli-to-Arrow ingest. Safe-fix categories (index consistency, internal links, Raw references, See Also) all clean. check_evidence.py: 0 evidence errors, 0 unreferenced raw files, 40 fidelity suspects — same set as the prior pass plus new false positives from kleisli-to-arrow-refactoring.md (backtick-adjacent word breaks, e.g. "as long as `F` is a monad" verified verbatim in raw/scala-typelevel-fp/cats-arrow-typeclass-docs.md), none real.
 - Orphan check: no article has zero inbound links; stainless-mill-integration.md (1 inbound, from project-structure-and-testing.md) remains its topic's only article but is no longer isolated. No new missing cross-topic references found — kleisli-to-arrow-refactoring.md's tie-in to droste's Kleisli/Cokleisli-style `.compose`/`.andThen` is already cross-linked from the prior ingest.
+
+## [2026-09-13] ingest | Abstracting Over Abstract Types: Type Members vs. Type Parameters
+- Disposition: New
+- Raw: raw/scala-typelevel-fp/odersky-zenger-scalable-component-abstractions-oopsla2005.md; raw/scala-typelevel-fp/2009-10-07-venners-abstract-type-members-vs-generics.md; raw/scala-typelevel-fp/2015-07-13-typelevel-type-members-almost-type-parameters.md; raw/scala-typelevel-fp/ghik-opinionated-scala-generics-and-type-members.md; raw/scala-typelevel-fp/2024-04-08-orford-di-and-the-cake-pattern.md
+- Updated: Scala 3 Type-Level Features; Tagless-Final Architecture & Hand-Wired DI; Provider/Consumer Design: Least Power, Algebras, and Modular Composition
+
+## [2026-09-13] lint | 2 issues found, 0 auto-fixed
+
+## [2026-09-13] lint | 2 issues found, 2 auto-fixed
+- Added See Also link pair: Scala 3 Type-Level Features <-> Integrating Stainless verification into a Mill build
+- Added See Also links from Shared State in Cats Effect to Tagless-Final Architecture & Hand-Wired DI and Project Structure & Testing

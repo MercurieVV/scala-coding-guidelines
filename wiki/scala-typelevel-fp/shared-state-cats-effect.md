@@ -43,3 +43,5 @@ val localRefCounter: IO[CounterWithReset] =
 ## See Also
 
 - [Typelevel FP References](typelevel-fp-references.md)
+- [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md)
+- [Project Structure & Testing](project-structure-and-testing.md)

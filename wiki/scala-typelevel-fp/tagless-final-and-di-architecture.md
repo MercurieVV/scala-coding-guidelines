@@ -99,3 +99,4 @@ Algebra vs interpreter vs program: algebras = abstract capability traits; interp
 - [Typelevel FP References](typelevel-fp-references.md)
 - [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)
 - [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md)
+- [Abstracting Over Abstract Types: Type Members vs. Type Parameters](abstract-types-vs-type-parameters.md)

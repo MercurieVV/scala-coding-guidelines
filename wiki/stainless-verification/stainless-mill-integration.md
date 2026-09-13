@@ -273,3 +273,4 @@ from any build tool:
 ## See Also
 
 - [Project Structure & Testing](../scala-typelevel-fp/project-structure-and-testing.md)
+- [Scala 3 Type-Level Features](../scala-typelevel-fp/scala3-type-level-features.md)
