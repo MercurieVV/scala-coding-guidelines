@@ -70,3 +70,8 @@
 
 ## [2026-09-13] lint | 3 issues found, 3 auto-fixed
 - Added the three cross-references from the prior lint pass (user-confirmed): See Also links between droste-algebra-coalgebra-taxonomy.md and shapeless3-generic-derivation.md (bidirectional); and between scala-typelevel-fp/project-structure-and-testing.md and stainless-verification/stainless-mill-integration.md (bidirectional, resolves the stainless topic's orphan-page finding). Updated dates refreshed on all four touched articles and in index.md.
+
+## [2026-09-13] research | Refactoring Kleisli to Arrow: When and How
+- Disposition: New
+- Raw: raw/scala-typelevel-fp/cats-arrow-typeclass-docs.md; raw/scala-typelevel-fp/cats-kleisli-arrowchoice-source.md; raw/scala-typelevel-fp/kleisli-category-wikipedia.md; raw/scala-typelevel-fp/scala-purrism-arrow-patterns.md; raw/scala-typelevel-fp/scala-purrism-engineering-rules.md; raw/scala-typelevel-fp/scala-purrism-readme.md
+- Updated: Cats & Category-Theory Patterns; Tagless-Final Architecture & Hand-Wired DI; Droste Algebra/Coalgebra Type Taxonomy

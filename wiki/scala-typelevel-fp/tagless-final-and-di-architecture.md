@@ -2,7 +2,7 @@
 
 > Sources: Local research corpus, 2026-09-06; John A De Goes, 2019-06-18; Wouter Swierstra, 2008-07-01
 > Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [The False Hope of Managing Effects with Tagless-Final in Scala](../../raw/scala-typelevel-fp/2019-06-18-tagless-final-false-hope.md); [Data Types à la Carte](../../raw/scala-typelevel-fp/2008-data-types-a-la-carte.md)
-> Updated: 2026-09-07
+> Updated: 2026-09-13
 
 ## Overview
 
@@ -46,7 +46,7 @@ Package by concentric dependency direction: `domain` (innermost, no deps) ← `s
 
 ## Kleisli / Reader / cats-mtl for framework-free DI
 
-`Kleisli[F, Env, A]` (aka `ReaderT`) threads a read-only environment through a computation; cats-mtl's `Ask`/`Local` abstracts it (`Ask[F, Config]` instead of stacking transformers). Use for request-scoped context (trace IDs, auth principal) or a small global config passed everywhere — `http4s` itself is built this way: `type HttpRoutes[F] = Kleisli[OptionT[F, *], Request[F], Response[F]]`. Overusing Reader for *all* DI leads to `Kleisli` noise and worse inference than plain constructor injection; prefer constructor injection for wiring, reserve `Ask`/`Local` for genuinely ambient context.
+`Kleisli[F, Env, A]` (aka `ReaderT`) threads a read-only environment through a computation; cats-mtl's `Ask`/`Local` abstracts it (`Ask[F, Config]` instead of stacking transformers). Use for request-scoped context (trace IDs, auth principal) or a small global config passed everywhere — `http4s` itself is built this way: `type HttpRoutes[F] = Kleisli[OptionT[F, *], Request[F], Response[F]]`. Overusing Reader for *all* DI leads to `Kleisli` noise and worse inference than plain constructor injection; prefer constructor injection for wiring, reserve `Ask`/`Local` for genuinely ambient context. Once you're chaining or fanning out more than one Kleisli, prefer `Arrow` composition (`>>>`, `.map`, `&&&`) over hand-threading `.run`/`flatMap` — see [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md).
 
 ## Resource-based DI: the canonical wiring pattern
 
@@ -98,3 +98,4 @@ Algebra vs interpreter vs program: algebras = abstract capability traits; interp
 - [Project Structure & Testing](project-structure-and-testing.md)
 - [Typelevel FP References](typelevel-fp-references.md)
 - [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)
+- [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md)

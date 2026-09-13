@@ -111,3 +111,4 @@ Code: [annotations.scala](https://github.com/higherkindness/droste/blob/main/mod
 - [Droste Recursion Scheme Zoo and Worked Examples](droste-scheme-zoo-examples.md)
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
 - [Shapeless 3: Generic Type Class Derivation](shapeless3-generic-derivation.md)
+- [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md)

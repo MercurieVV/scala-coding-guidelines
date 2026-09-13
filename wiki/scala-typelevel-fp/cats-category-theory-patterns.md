@@ -2,7 +2,7 @@
 
 > Sources: Local research corpus, 2026-09-06; Bartosz Milewski, 2016-12-27
 > Raw: [scala-coding-practices-research.md](../../raw/scala-typelevel-fp/scala-coding-practices-research.md); [Monads Categorically](../../raw/scala-typelevel-fp/2016-12-27-monads-categorically.md)
-> Updated: 2026-09-07
+> Updated: 2026-09-13
 
 ## Overview
 
@@ -51,6 +51,8 @@ val headPlusLast = (headK &&& lastK) >>> Arrow[Kleisli[Option, *, *]].lift((_ + 
 
 For genuinely streaming/backpressured pipelines use fs2 `Stream`/`Pipe` (`Pipe[F,A,B] = Stream[F,A] => Stream[F,B]`) rather than raw Kleisli arrows.
 
+For the full refactoring guidelines — concrete before/after patterns for turning hand-threaded Kleisli chains into `>>>`/`.map`/`&&&`, a proof that `&&&` preserves effect ordering and short-circuiting, when to leave a chain as plain Kleisli instead, and the `scala-purrism` scalafix rules (`PreferKleisli`/`PreferArrow`) that automate it — see [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md).
+
 ## Optics (Monocle) across module boundaries
 
 `Lens` (product focus), `Prism` (sum focus), `Optional`, `Iso`, `Traversal` are composable, purely-functional getters/setters for immutable nested data. Use to update deeply nested domain state without leaking internal structure across modules, modify one branch of an ADT (`Prism`), or run effectful updates inside a structure (`modifyF`).
@@ -65,3 +67,4 @@ Optics that "break the contract" (e.g. filtered traversals) violate composition 
 - [Scala 3 Type-Level Features](scala3-type-level-features.md)
 - [Project Structure & Testing](project-structure-and-testing.md)
 - [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)
+- [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md)
