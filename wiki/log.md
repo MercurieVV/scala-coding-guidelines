@@ -90,3 +90,8 @@
 ## [2026-09-13] lint | 2 issues found, 2 auto-fixed
 - Added See Also link pair: Scala 3 Type-Level Features <-> Integrating Stainless verification into a Mill build
 - Added See Also links from Shared State in Cats Effect to Tagless-Final Architecture & Hand-Wired DI and Project Structure & Testing
+
+## [2026-09-13] ingest | Refactoring Kleisli to Arrow: When and How (suggestion: arrow-string infix type aliases)
+- Disposition: Update
+- Raw: raw/scala-typelevel-fp/scala3-rules-for-operators-infix-types.md; raw/scala-typelevel-fp/cats-functionk-natural-transformation-docs.md; raw/scala-typelevel-fp/sip33-priority-based-infix-type-precedence.md; raw/scala-typelevel-fp/2023-09-16-reintech-guide-to-infix-types-in-scala.md; raw/scala-typelevel-fp/suggestion-arrow-string-infix-type-aliases.md
+- Updated: Scala 3 Type-Level Features; Abstracting Over Abstract Types: Type Members vs. Type Parameters

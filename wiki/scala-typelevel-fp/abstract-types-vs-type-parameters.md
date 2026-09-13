@@ -75,3 +75,4 @@ The tradeoff Matthew Orford documents from practice: the cake pattern gives "exp
 - [Scala 3 Type-Level Features](scala3-type-level-features.md)
 - [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md)
 - [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)
+- [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md)

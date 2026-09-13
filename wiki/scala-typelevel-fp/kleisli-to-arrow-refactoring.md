@@ -1,7 +1,7 @@
 # Refactoring Kleisli to Arrow: When and How
 
-> Sources: Cats docs, "Arrow" (Unknown date); typelevel/cats source (Unknown date); Wikipedia, "Kleisli category" (Unknown date); MercurieVV/scala-purrism docs (Unknown date); Claude Code synthesis, 2026-09-13
-> Raw: [Cats Docs: Arrow Typeclass](../../raw/scala-typelevel-fp/cats-arrow-typeclass-docs.md); [Cats Source: Kleisli ArrowChoice Instances](../../raw/scala-typelevel-fp/cats-kleisli-arrowchoice-source.md); [Kleisli Category (Wikipedia)](../../raw/scala-typelevel-fp/kleisli-category-wikipedia.md); [scala-purrism: Kleisli → Arrow rewrite catalogue](../../raw/scala-typelevel-fp/scala-purrism-arrow-patterns.md); [scala-purrism: Engineering Rules](../../raw/scala-typelevel-fp/scala-purrism-engineering-rules.md); [scala-purrism: README](../../raw/scala-typelevel-fp/scala-purrism-readme.md)
+> Sources: Cats docs, "Arrow" (Unknown date); typelevel/cats source (Unknown date); Wikipedia, "Kleisli category" (Unknown date); MercurieVV/scala-purrism docs (Unknown date); Scala 3 Reference, "Rules for Operators" (Unknown date); Cats docs, "FunctionK" (Unknown date); Oron Port, SIP-33 (2017-02-07); Arthur C. Codex (reintech.io), 2023-09-16; Claude Code synthesis, 2026-09-13
+> Raw: [Cats Docs: Arrow Typeclass](../../raw/scala-typelevel-fp/cats-arrow-typeclass-docs.md); [Cats Source: Kleisli ArrowChoice Instances](../../raw/scala-typelevel-fp/cats-kleisli-arrowchoice-source.md); [Kleisli Category (Wikipedia)](../../raw/scala-typelevel-fp/kleisli-category-wikipedia.md); [scala-purrism: Kleisli → Arrow rewrite catalogue](../../raw/scala-typelevel-fp/scala-purrism-arrow-patterns.md); [scala-purrism: Engineering Rules](../../raw/scala-typelevel-fp/scala-purrism-engineering-rules.md); [scala-purrism: README](../../raw/scala-typelevel-fp/scala-purrism-readme.md); [Scala 3 Reference: Rules for Operators](../../raw/scala-typelevel-fp/scala3-rules-for-operators-infix-types.md); [Cats Docs: FunctionK](../../raw/scala-typelevel-fp/cats-functionk-natural-transformation-docs.md); [SIP-33: Priority-based infix type precedence](../../raw/scala-typelevel-fp/sip33-priority-based-infix-type-precedence.md); [A Guide to Scala's Infix Types (reintech.io)](../../raw/scala-typelevel-fp/2023-09-16-reintech-guide-to-infix-types-in-scala.md); [Suggestion: Arrow-String Infix Type Aliases](../../raw/scala-typelevel-fp/suggestion-arrow-string-infix-type-aliases.md)
 > Updated: 2026-09-13
 
 ## Overview
@@ -143,8 +143,31 @@ sbt scalafix
 - The engineering rule behind all of this: **`PreferKleisli` → recompile → `PreferArrow` is a pipeline, not one invocation listing both rules** — a rule that consumes another rule's signature-changing output needs a fresh SemanticDB pass in between, because the payload describes the code as it was compiled *before* the first rewrite.
 - Two shapes were deliberately dropped rather than automated, for the same reasons given in "When Kleisli composition is fine as-is" above: cosmetic `Function1` `andThen`→`>>>` swaps, and blanket `Kleisli[F, A, B]` → abstract-`Arrow` signature generalization (this one needs whole-program knowledge of intent that a single-file rule structurally cannot have).
 
+## Suggestion: symbolic infix aliases for arrow-shaped types (`-->`, `==>`, `~~>`)
+
+Scala 3's `infix` feature makes it possible to give an arrow-shaped type constructor a short symbolic alias and write it infix at use sites instead of always spelling out `SomeArrow[A, B]`:
+
+```scala
+type -->[A, B] = Kleisli[F, A, B]        // an effectful arrow A --> B
+type ~~>[F[_], G[_]] = FunctionK[F, G]   // a natural transformation F ~~> G
+
+def validate: User --> ValidatedUser     // reads as "User to ValidatedUser"
+```
+
+This is not a novel hack — it generalizes a pattern cats already ships. Cats provides `type ~>[F[_], G[_]] = FunctionK[F, G]`, and its own docs frame the motivation directly: "being able to use `~>` as an alias for `FunctionK` parallels being able to use `=>` as an alias for `Function1`." Symbolic type names don't even need the `infix` modifier in Scala 3 — "infix operations involving symbolic operators are always allowed" (Scala 3 Reference, "Rules for Operators") — only alphanumeric infix types/methods need it (`infix type or[X, Y]`).
+
+`-->` specifically is not a fresh proposal for this codebase's tooling: `scala-purrism`'s own `fix.arrow.KleisliType` discriminator already "dealiases through `-->`, `Flow`, fully-qualified and inferred types via SemanticDB" when recognizing Kleisli-shaped code, and its fixtures deliberately distinguish that alias from an unrelated type parameter of the same spelling (`ProgramArrows[-->[_, _]]`). Adopting `-->` (and `~~>`/`==>` for other arrow families) as a house convention just makes deliberate what the refactoring tool already treats as the canonical spelling.
+
+**Caveats before adopting this broadly:**
+
+- **Infix type precedence is not expression precedence.** SIP-33 documents that (pre-fix) infix *types* don't share term operators' precedence rules — mixing multiple different symbolic infix type operators in one unparenthesized type expression can parse surprisingly. A lone `A --> B` relationship is unaffected; avoid chaining distinct infix type operators without parentheses.
+- **IDE/discoverability cost.** Symbolic infix type aliases get weaker go-to-definition/hover support than named types, per the reintech.io infix-types guide. Keep the alias set small and consistently meaningful (mirror cats: one alias, `~>`, for one concept) rather than inventing a new symbol per use case.
+- **Guard against spelling collisions.** `scala-purrism`'s own fixtures needed explicit logic to avoid confusing the `-->` Kleisli alias with an unrelated type parameter of the same name — pick one canonical meaning per symbol per module and don't reuse it for a structurally different relationship.
+- Reach for this only where the aliased type appears often enough, in signature position, to make the infix spelling a readability win (e.g. a pipeline-heavy module chaining several `-->`s) — not as a blanket replacement for every two-parameter type.
+
 ## See Also
 
 - [Cats & Category-Theory Patterns](cats-category-theory-patterns.md)
 - [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md)
 - [Droste Algebra/Coalgebra Type Taxonomy](droste-algebra-coalgebra-taxonomy.md)
+- [Abstracting Over Abstract Types: Type Members vs. Type Parameters](abstract-types-vs-type-parameters.md)
