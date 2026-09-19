@@ -95,3 +95,8 @@
 - Disposition: Update
 - Raw: raw/scala-typelevel-fp/scala3-rules-for-operators-infix-types.md; raw/scala-typelevel-fp/cats-functionk-natural-transformation-docs.md; raw/scala-typelevel-fp/sip33-priority-based-infix-type-precedence.md; raw/scala-typelevel-fp/2023-09-16-reintech-guide-to-infix-types-in-scala.md; raw/scala-typelevel-fp/suggestion-arrow-string-infix-type-aliases.md
 - Updated: Scala 3 Type-Level Features; Abstracting Over Abstract Types: Type Members vs. Type Parameters
+
+## [2026-09-18] ingest | Named Shape Traits: Do Not Spell a Type Member's Shape at the Use Site
+- Disposition: New
+- Raw: raw/scala-typelevel-fp/2026-09-18-named-shape-traits.md
+- Updated: Abstracting Over Abstract Types: Type Members vs. Type Parameters (See Also link)

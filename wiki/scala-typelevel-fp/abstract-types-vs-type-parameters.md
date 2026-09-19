@@ -76,3 +76,4 @@ The tradeoff Matthew Orford documents from practice: the cake pattern gives "exp
 - [Tagless-Final Architecture & Hand-Wired DI](tagless-final-and-di-architecture.md)
 - [Provider/Consumer Design: Least Power, Algebras, and Modular Composition](provider-consumer-least-power.md)
 - [Refactoring Kleisli to Arrow: When and How](kleisli-to-arrow-refactoring.md)
+- [Named Shape Traits: Do Not Spell a Type Member's Shape at the Use Site](named-shape-traits.md)
