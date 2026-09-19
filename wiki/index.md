@@ -38,3 +38,4 @@ migration is verified and recorded.
 |---------|---------|---------|
 | [The Reengineering Contract: Rules R-1 … R-14](reengineering/reengineering-contract.md) | The citable spine: fourteen rules, one line each, with what each forbids and permits | 2026-09-19 |
 | [Absence Unrepresentable](reengineering/absence-unrepresentable.md) | R-5, R-6: a non-empty structure in the type instead of a runtime guard; the contract stated on the abstract member, implementations total | 2026-09-19 |
+| [The Decidable Boundary](reengineering/decidable-vs-judgement.md) | R-10, R-11: what a linter may decide, what only a human may, and why an unsatisfiable rule is escalated rather than suppressed | 2026-09-19 |
