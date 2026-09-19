@@ -37,7 +37,7 @@ Neither rule is a style preference. Each answers something you can watch happen.
 a first element that may not be there. Nothing in the types stops the caller, so the failure waits for the value that
 happens to arrive, and it surfaces as a read at runtime rather than as a compile error. The design's F-2 case is the
 observed form: "A control event before the first note killed the events stream; the fix stated the contract on the
-abstract member, made the implementation total and shipped the regression test."
+abstract member, made the implementation total and shipped the regression test"
 
 **A contract written for one implementor.** A contract drafted with one implementation in view is that
 implementation's behaviour, promoted — the second implementor either cannot satisfy it or satisfies it partially,

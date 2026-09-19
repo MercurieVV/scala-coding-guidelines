@@ -108,4 +108,3 @@
 ## [2026-09-19] ingest | Absence Unrepresentable: Guarantees in the Type, Contracts on the Member
 - Disposition: New
 - Raw: raw/reengineering/2026-09-19-kit-design.md
-- Updated: The Reengineering Contract (See Also link)
