@@ -52,18 +52,21 @@ does not grow to fit whatever the pass happened to touch.
 
 ## The two documents: a contract that holds, a dial that moves
 
-The record travels in two documents, and the design gives them different jobs. The first is the contract file: step 1
-produces it together with the module list, a human approves it, and it is what a later reshape is held against. Its
-durability is the point — a rule stays citable while the document stating it stays still.
+The record travels in two documents — this article's reading of the design, which names two things and never says they
+are two files. Step 1's output ends with "a proposed module list, one line of purpose each, plus the contract file",
+and step 5 opens the record step with "the project's dial/contract updated as the shape moves". Read as two roles, the
+first is the contract file: step 1 produces it together with the module list, the list is what a human approves before
+anything else starts, and the contract file is what a later reshape is held against. Its durability is the point — a
+rule stays citable while the document stating it stays still.
 
 The second is the one that must move, and the procedure opens its record step with exactly that update:
 
 > the project's dial/contract updated as the shape moves, stale claims corrected, divergences recorded as rulings
 
 A dial is a fitting name for it: the document is expected to change every time a module crosses the boundary, so
-rewriting it is not drift but part of the work. In the working project the dial is the campaign document the header's
-Sources line names, while the contract file is the one that stays still so that a reader can tell what the project's
-rules are without having to work out where the migration currently stands.
+rewriting it is not drift but part of the work. Whether a project keeps the two roles in one file or in two is a
+question the design leaves open; what it fixes is that one of them moves with the shape and the other is what the move
+is held against.
 
 ## R-12: the record travels with the code
 
@@ -145,4 +148,4 @@ exit condition.
 ## See Also
 
 - [The Reengineering Contract: Rules R-1 … R-14](reengineering-contract.md) — the spine: all fourteen rules, and what each forbids and permits
-- [The Decidable Boundary: What a Machine Decides, What a Human Rules](decidable-vs-judgement.md) — `R-10`, `R-11`: the machine/human split, and why an unreconciled divergence is recorded as a ruling rather than decided by the agent that found it
+- [The Decidable Boundary](decidable-vs-judgement.md) — `R-10`, `R-11`: the machine/human split, and why an unreconciled divergence is recorded as a ruling rather than decided by the agent that found it

@@ -88,7 +88,7 @@ git commit -m "docs: the reengineering kit design, and its raw source for the wi
 
 - [ ] **Step 1: Write the article**
 
-Header (exact template shape) plus body. The body must contain, in order: an Overview paragraph; a table with one row per ID (`R-1 … R-14`) whose second column is the one-line statement copied verbatim from the design's rules table; a short subsection per ID family that says what it forbids and what it permits in a sentence or two; and a `## See Also` section linking `../scala-typelevel-fp/named-shape-traits.md` (R-4), `../scala-typelevel-fp/kleisli-to-arrow-refactoring.md` (R-1), `../scala-typelevel-fp/project-structure-and-testing.md` (R-7, module layout), `absence-unrepresentable.md` (R-5, R-6), `decidable-vs-judgement.md` (R-10, R-11), `verification-and-the-gate.md` (R-8, R-9) and `recording-a-migration.md` (R-12, R-13).
+Header (exact template shape) plus body. The body must contain, in order: an Overview paragraph; a table with one row per ID (`R-1 … R-14`) whose second column is the one-line statement copied verbatim from the design's rules table; a short subsection per ID family that says what it forbids and what it permits in a sentence or two; and a `## See Also` section linking `../scala-typelevel-fp/named-shape-traits.md` (R-4), `../scala-typelevel-fp/kleisli-to-arrow-refactoring.md` (R-1), `../scala-typelevel-fp/project-structure-and-testing.md` (R-7, module layout), `absence-unrepresentable.md` (R-5, R-6), `decidable-vs-judgement.md` (R-10, R-11), `verification-and-the-gate.md` (R-8, R-9) and `recording-a-migration.md` (R-12, R-13). **This task writes all seven links**, including the four pointing at sibling articles that do not exist until Tasks 3–6 land: they are this article's own forward references, so Tasks 3–6 cascade nothing back into it, and Task 7 is the task that verifies they resolve.
 
 ```markdown
 # The Reengineering Contract: Rules `R-1 … R-14`
@@ -139,6 +139,8 @@ migration is verified and recorded.
 - Raw: raw/reengineering/2026-09-19-kit-design.md
 ```
 
+No `- Updated:` line, here or in any of this plan's other log entries: no task in this plan updates another article (`SKILL.md` says to omit the line when no cascade occurs), and the forward links Tasks 3–6 are often credited with are written by this task, in this article.
+
 - [ ] **Step 4: Run the grounding check**
 
 Run: `python3 ~/.claude/skills/karpathy-llm-wiki/scripts/check_evidence.py .`
@@ -165,7 +167,7 @@ git commit -m "wiki(reengineering): the contract — R-1 … R-14 as a citable s
 
 - [ ] **Step 1: Write the article**
 
-Body must carry: the rule in one sentence each; the *observable* failure mode that motivates them (a member built from a possibly-empty input throws at the first element; a contract written for one implementor is unsatisfiable for another); the two moves that fix them (`Tree`/`NonEmptyList` in the type instead of a runtime guard; the contract stated on the abstract member with total implementations, and where it cannot be satisfiable, what an implementation must do instead); the worked examples from the raw file with their commits; and a `## See Also` to `reengineering-contract.md` and `../scala-typelevel-fp/named-shape-traits.md`.
+Body must carry: the rule in one sentence each; the *observable* failure mode that motivates them (a member built from a possibly-empty input has to read a first element that may not be there; a contract written for one implementor is unsatisfiable for another); the two moves that fix them (`Tree`/`NonEmptyList` in the type instead of a runtime guard; the contract stated on the abstract member with total implementations, and where it cannot be satisfiable, what an implementation must do instead); the worked examples from the raw file with their commits (the `Tree` row is `R-5`'s evidence and the control-event row is `R-6`'s — do not swap them, as Task 3's first draft did); and a `## See Also` to `reengineering-contract.md` and `../scala-typelevel-fp/named-shape-traits.md`.
 
 Header:
 
@@ -189,7 +191,6 @@ Header:
 ## [2026-09-19] ingest | Absence Unrepresentable: Guarantees in the Type, Contracts on the Member
 - Disposition: New
 - Raw: raw/reengineering/2026-09-19-kit-design.md
-- Updated: The Reengineering Contract (See Also link)
 ```
 
 - [ ] **Step 4: Grounding check** — `python3 ~/.claude/skills/karpathy-llm-wiki/scripts/check_evidence.py .` → clean.
@@ -232,7 +233,7 @@ Header:
 | [The Decidable Boundary](reengineering/decidable-vs-judgement.md) | R-10, R-11: what a linter may decide, what only a human may, and why an unsatisfiable rule is escalated rather than suppressed | 2026-09-19 |
 ```
 
-- [ ] **Step 3: Log entry** — same shape as Task 3, with this title and `- Updated: The Reengineering Contract (See Also link)`.
+- [ ] **Step 3: Log entry** — same shape as Task 3, with this title: heading, `- Disposition: New`, `- Raw: raw/reengineering/2026-09-19-kit-design.md`, and no `- Updated:` line.
 
 - [ ] **Step 4: Grounding check** → clean.
 
@@ -275,7 +276,7 @@ Header:
 | [Verification and the Gate](reengineering/verification-and-the-gate.md) | R-8, R-9 and the build contract: the three declared tasks, the coverage map, and the independent lane's verdict-per-rule protocol | 2026-09-19 |
 ```
 
-- [ ] **Step 3: Log entry** — as in Task 3.
+- [ ] **Step 3: Log entry** — as in Task 3: this title with `- Disposition: New` and `- Raw: raw/reengineering/2026-09-19-kit-design.md`, and no `- Updated:` line, because this task cascades nothing (the `See Also` links between articles are all Task 2's, written into the spine).
 
 - [ ] **Step 4: Grounding check** → clean.
 
@@ -299,7 +300,7 @@ git commit -m "wiki(reengineering): verification receipts, the build contract, a
 
 - [ ] **Step 1: Write the article**
 
-Body must carry: R-13 (a reshape is declared deliberate by an explicit target list; a module is not reshaped because a diff touched it) with the two-document shape (a durable contract and a rewritten campaign/dial); R-12 (docs amended as the shape moves; a stale claim is a defect, not a nit — the raw file records three that were corrected; an open divergence is recorded as a *ruling*, with the reason it was not reconciled); what does **not** count as a record (a gitignored ledger, a chat summary, a TODO); and one commit per module. `## See Also` to `reengineering-contract.md` and `decidable-vs-judgement.md`.
+Body must carry: R-13 (a reshape is declared deliberate by an explicit target list; a module is not reshaped because a diff touched it) with the record's two roles as this plan reads them — a contract file that stays still (step 1's output) and a dial/contract updated as the shape moves (step 5); the design names both and never says they are two files, so the article must present the pairing as its own reading rather than as the design's, and must not lean on its own `Sources:` line for the word "campaign"; R-12 (docs amended as the shape moves; a stale claim is a defect, not a nit — the raw file records three that were corrected; an open divergence is recorded as a *ruling*, with the reason it was not reconciled); what does **not** count as a record (a gitignored ledger, a chat summary, a TODO); and one commit per module. `## See Also` to `reengineering-contract.md` and `decidable-vs-judgement.md`.
 
 Header:
 
@@ -317,7 +318,7 @@ Header:
 | [Recording a Migration](reengineering/recording-a-migration.md) | R-12, R-13: the target list and exit condition, why a gitignored ledger is not a record, and how an open divergence becomes a ruling | 2026-09-19 |
 ```
 
-- [ ] **Step 3: Log entry** — as in Task 3.
+- [ ] **Step 3: Log entry** — as in Task 3: this title with `- Disposition: New` and `- Raw: raw/reengineering/2026-09-19-kit-design.md`, and no `- Updated:` line, because this task cascades nothing (the `See Also` links between articles are all Task 2's, written into the spine).
 
 - [ ] **Step 4: Grounding check** → clean.
 
@@ -344,7 +345,10 @@ Run: `for n in $(seq 1 14); do grep -lw "R-$n" wiki/reengineering/*.md; done`
 Expected: at least one file per ID (`R-1 … R-14`), and the spine listing all fourteen.
 
 Run: `grep -ho '](\.\.\?/[^)]*)' wiki/reengineering/*.md | sort -u | while read -r l; do f="wiki/reengineering/${l#](}"; f="${f%)}"; [ -e "$f" ] || echo "BROKEN: $l"; done`
-Expected: no output.
+Expected: no output. That command only sees `../`-style targets; run the check below as well, which resolves **every** markdown link in the topic relative to its own file — including the four forward links Task 2 wrote into the spine before their targets existed, which this task is the one to verify.
+
+Run: `for f in wiki/reengineering/*.md; do grep -o '](\([^)]*\))' "$f" | sed 's/^](//; s/)$//' | while read -r t; do case "$t" in http*|\#*|mailto:*) continue;; esac; [ -e "$(dirname "$f")/${t%%#*}" ] || echo "BROKEN $f: $t"; done; done`
+Expected: no output (every relative link in all five articles resolves).
 
 - [ ] **Step 2: Verify the index lists every article and the log every ingest**
 
@@ -366,7 +370,7 @@ git commit -m "wiki(reengineering): cross-links, index rows and the closing grou
 
 ## Self-review notes
 
-- **Spec coverage:** the design's L1 row ("prose rules with stable `R-n` IDs … citable") → Tasks 2–6; the rules this session produced (R-5, R-6, R-9, R-10, R-11, R-12) → Tasks 3–6; R-13's target-list discipline → Task 6; the build contract (plan C's interface, documented in L1) → Task 5; the design's "`R-n` table is a mapping, 5–6 articles, IDs as the citable spine" → exactly five articles; the design's L1 note that the design document becomes `raw/` material → Task 1. Deliberately not here: the vendored rule (plan B), the skills (plan B), the harness (plan C), the on-demand procedure (plan B).
+- **Spec coverage:** the design's L1 row ("prose rules with stable `R-n` IDs … citable") → Tasks 2–6; the rules this session produced (R-5, R-6, R-9, R-10, R-11, R-12) → Tasks 3–6; R-13's target-list discipline → Task 6; the build contract (plan C's interface, documented in L1) → Task 5; **the article set → exactly five articles, which is this plan's grouping, not a count the design gives.** The design leaves the set open — "L1's article set is not final: the `R-n` table above is a mapping to be compiled through the `karpathy-llm-wiki` flow … with each article one rule or one pattern" — and names no number of articles. This plan reads that as a shape rather than a count and chooses the grouping: one spine carrying all fourteen IDs, because the IDs are the interface the scalafix config, the skills and the lane cite and have to be citable from one place; then four articles for the rules this session actually produced, each gathering the rules that share a failure mode and an evidence base (R-5/R-6, R-8/R-9, R-10/R-11, R-12/R-13) rather than one thin article per rule. R-1 … R-4, R-7 and R-14 get no new article (YAGNI) — the spine carries them and links out where an existing article elaborates them. The design's L1 note that the design document becomes `raw/` material → Task 1. Deliberately not here: the vendored rule (plan B), the skills (plan B), the harness (plan C), the on-demand procedure (plan B).
 - **R-1 … R-4, R-7, R-14** have their canonical text in the spine article plus cross-links to the existing articles that elaborate them; no new article is created for them (YAGNI), and the spine says where each is elaborated.
 - **Placeholder scan:** every article's header, index row and log entry is given verbatim; article *bodies* are specified as the claims they must carry (a docs deliverable has no compile step, so the test is Task 7's grounding check plus the link/ID checks).
 - **Type consistency:** the names used across tasks — the `reengineering` topic, the five article filenames, `R-1 … R-14`, `preCommit`/`prePush`/`checkFormat`, `AllowedShape`, `allowedTypes`, `disallowedConstructs` — are the frozen names from the design's interfaces table.

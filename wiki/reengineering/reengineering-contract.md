@@ -12,6 +12,12 @@ skills, and the verification lane's verdicts all cite IDs, so "a rule changes by
 than by editing prose that machinery believes it implements. This article is the canonical text of that list — the spine
 the rest of the topic hangs off, and the `R-n` set a lane judges a diff against.
 
+The design names five layers, each with an artifact and an interface. L1 *Rules* is this article: the `R-n`
+identifiers, "one sentence each, citable". L2 *Enforcement* is the `AllowedShape` rule with its config keys. L3
+*Process* is four skills. L4 *Harness* is the gate, "a runner over a build contract". L5 *Verification* is the lane,
+which "consumes L1 and L4; produces receipts". This article defines L1 and names the other four; what each of them is
+in full belongs to the design, and the rest of the topic cites them by number on that understanding.
+
 ## The rules
 
 | ID | Rule |
@@ -39,8 +45,9 @@ Arrow*. Generalized from `C-1`.
 
 **R-2.** Forbids naming a concrete type at the abstract level, and reaching outside the package for anything the
 allowlist does not grant. Permits the allowlisted types and any type parameter or abstract member that keeps the level
-abstract. Generalized from `C-2`; the allowlist is the machine-decidable half, carried as the `AllowedShape` rule's
-`allowedTypes` config key in each project's build.
+abstract. Generalized from `C-2`; the allowlist of types and the denylist of constructs are the machine-decidable half,
+carried as the `AllowedShape` rule's two config keys — `allowedTypes` and `disallowedConstructs` — in each project's
+build.
 
 **R-3.** Forbids imperative constructs wherever the type system can state the same thing. Permits any encoding that
 moves the decision into the types, so that what the code does is what its types say. Generalized from `C-3`.
@@ -88,12 +95,23 @@ strictness dial.
 **R-14.** Forbids reading and searching code textually as the default. Permits text search on sources as an exception,
 with a reason; symbol-level tools are the rule. Generalized from `C-9`.
 
+### Where each rule is carried further
+
+`R-2`, `R-3` and `R-14` are elaborated nowhere else. The design's rules table gives each of them a one-line statement
+and an origin — `C-2`, `C-3`, `C-9` — and nothing further: no worked example, no failure mode of its own, and for `R-2`
+an enforcement half that is L2's config rather than more prose. This article is therefore their canonical text, and the
+topic creates no sibling article for them.
+
+Every other rule is carried further, and the `See Also` list below is the map: `R-1` by *Refactoring Kleisli to Arrow*,
+`R-4` by *Named Shape Traits*, `R-7` by *Project Structure & Testing*, and `R-5`/`R-6`, `R-8`/`R-9`, `R-10`/`R-11` and
+`R-12`/`R-13` by the four sibling articles, each annotated with the IDs it carries.
+
 ## See Also
 
 - [Named Shape Traits: Do Not Spell a Type Member's Shape at the Use Site](../scala-typelevel-fp/named-shape-traits.md) — R-4
 - [Refactoring Kleisli to Arrow: When and How](../scala-typelevel-fp/kleisli-to-arrow-refactoring.md) — R-1
 - [Project Structure & Testing](../scala-typelevel-fp/project-structure-and-testing.md) — R-7, module layout
-- [Absence Unrepresentable: Guarantees in the Type, Contracts on the Member](absence-unrepresentable.md) — R-5, R-6
-- [The Decidable Boundary: What a Machine Decides, What a Human Rules](decidable-vs-judgement.md) — R-10, R-11
-- [Verification and the Gate: Receipts, the Build Contract, and the Independent Lane](verification-and-the-gate.md) — R-8, R-9
-- [Recording a Migration: Target Lists, Receipts, and Rulings](recording-a-migration.md) — R-12, R-13
+- [Absence Unrepresentable](absence-unrepresentable.md) — R-5, R-6
+- [The Decidable Boundary](decidable-vs-judgement.md) — R-10, R-11
+- [Verification and the Gate](verification-and-the-gate.md) — R-8, R-9
+- [Recording a Migration](recording-a-migration.md) — R-12, R-13

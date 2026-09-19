@@ -122,3 +122,5 @@
 - Raw: raw/reengineering/2026-09-19-kit-design.md
 
 ## [2026-09-19] lint | 0 issues found, 0 auto-fixed
+
+## [2026-09-19] lint | fixed: the final review's findings — R-5's evidence, the record's two roles, the five layers named, two softened inferences, and the plan's cascade and citation defects

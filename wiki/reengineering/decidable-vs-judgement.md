@@ -9,9 +9,9 @@
 `R-10` and `R-11` are the two rules that keep a gate honest about what it knows. `R-11` splits the findings a
 reengineering job produces into two piles — what a machine decides, what a human rules — and forbids letting the
 first stand in for the second. `R-10` says what to do where the two meet: a finding that cannot be fixed honestly is
-escalated, never silenced. Both are stated in [The Reengineering Contract](reengineering-contract.md), the spine of
-this topic; this article carries the two lists themselves, the reason a green gate is not a correct design, and the
-shape an escalation should take.
+escalated, never silenced. Both are stated in [The Reengineering Contract: Rules R-1 … R-14](reengineering-contract.md),
+the spine of this topic; this article carries the two lists themselves, the reason a green gate is not a correct
+design, and the shape an escalation should take.
 
 ## The boundary, stated plainly
 
@@ -90,10 +90,11 @@ Both are in `skreeep2`, 2026-09-19:
 
 The first is the escalation performed properly: the finding was answered in the code, and the rule's source was read
 before deciding what it actually required — which is how you tell a real finding from a misread one. The second is
-`R-11`'s evidence in the other direction: the gate was green over wording that a lane then judged wrong, because the
-wording was never the machine's to judge.
+`R-11`'s evidence in the other direction: what the lane flagged was wording that had passed for a design judgement.
+The design records the finding and not what the gate said about that wording at the time; what it does establish is
+that the wording was never the machine's to judge.
 
 ## See Also
 
 - [The Reengineering Contract: Rules R-1 … R-14](reengineering-contract.md) — the spine: all fourteen rules, and what each forbids and permits
-- [Verification and the Gate: Receipts, the Build Contract, and the Independent Lane](verification-and-the-gate.md) — `R-8`, `R-9`: the gate's own output, and the independent lane that judges what a gate cannot
+- [Verification and the Gate](verification-and-the-gate.md) — `R-8`, `R-9`: the gate's own output, and the independent lane that judges what a gate cannot

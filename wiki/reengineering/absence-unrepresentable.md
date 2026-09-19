@@ -9,8 +9,8 @@
 `R-5` and `R-6` are two halves of one move: take a guarantee a runtime check was supposed to provide, and put it
 where the compiler can see it. `R-5` moves it into the structure — the empty case stops existing. `R-6` moves it onto
 the abstract member — one statement of the obligation, and every implementation total against it. Both are stated in
-[The Reengineering Contract](reengineering-contract.md), the spine of this topic; this article carries their failure
-mode, their fix, and the worked examples the design records for them.
+[The Reengineering Contract: Rules R-1 … R-14](reengineering-contract.md), the spine of this topic; this article
+carries their failure mode, their fix, and the worked examples the design records for them.
 
 ## The rules
 
@@ -35,9 +35,9 @@ Neither rule is a style preference. Each answers something you can watch happen.
 
 **Absence that was only checked.** A member that builds a non-empty structure from a possibly-empty input has to read
 a first element that may not be there. Nothing in the types stops the caller, so the failure waits for the value that
-happens to arrive, and it surfaces as a read at runtime rather than as a compile error. The design's F-2 case is the
-observed form: "A control event before the first note killed the events stream; the fix stated the contract on the
-abstract member, made the implementation total and shipped the regression test"
+happens to arrive, and it surfaces as a read at runtime rather than as a compile error. The design's row for the case
+is "Two members built a non-empty structure from a possibly-empty input": the band and the roots' inputs became
+`Tree`s, so emptiness is unrepresentable and the read that needed the guard stopped existing.
 
 **A contract written for one implementor.** A contract drafted with one implementation in view is that
 implementation's behaviour, promoted — the second implementor either cannot satisfy it or satisfies it partially,
@@ -52,8 +52,8 @@ design judgement.
 **Put non-emptiness in the type.** The `Tree` closure is the worked form. Two members built a non-empty structure
 from a possibly-empty input; the fix made the band and the roots' inputs `Tree`s, so emptiness is unrepresentable.
 `Tree` — a `NonEmptyList`-shaped guarantee in the general case — admits no empty value for a caller to pass and none
-for an implementation to check, which is what a non-empty structure in the type beats a runtime guard means
-concretely.
+for an implementation to check. That is what `R-5` means concretely: the non-emptiness is a property of the type
+rather than a check every caller has to remember.
 
 **State the contract on the abstract member, and make every implementation total.** One statement, on the member
 every implementation already has to answer to. An implementation that cannot be total against it does not get to

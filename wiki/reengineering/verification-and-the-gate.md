@@ -23,8 +23,8 @@ The rule, in the design's words:
 
 The first half fixes whose output counts. Not a memory of a green run, not a summary written after the fact, not the
 author's confidence that nothing else touched the module: the claim is made against what the gate itself printed. The
-design's origin column names two sources for the rule — `C-10` of the `skreeep2` contract, and an `I4` finding — so
-`R-8` is itself a correction arrived at by running something, not a preference stated in advance.
+design's origin column names two sources for the rule — `C-10` of the `skreeep2` contract, and an `I4` finding, a label
+the design carries without saying what it was.
 
 The second half is the one that gets skipped, because compiling is the most visible thing a gate does and the
 cheapest to mistake for verification. A gate that compiles and stops has said nothing about whether the tests ran —
@@ -33,11 +33,12 @@ and the boundary rule puts exactly that on the machine's side of the line, where
 > a test that does not run
 
 A module can sit in the build, compile cleanly, and never be executed by anything the gate invokes. The design's own
-evidence for the second half is a gate that was green over lint and tests it had not run:
+evidence for the second half is a matter of timing rather than of a red result:
 
 > The gate ran the module's own lint and tests only after the module joined the gate lists
 
-The gate was never wrong about that module; it was silent about it, and silence reads as green. `R-8`'s second half is
+Nothing in that record says the gate was wrong about the module — those checks simply had not run yet, and a check
+that does not run leaves nothing for a reader to notice. `R-8`'s second half is
 therefore a requirement about coverage rather than about exit codes: the gate must invoke the tests, and the coverage
 map below is what says whose tests those are.
 
@@ -150,4 +151,4 @@ enforcement layer ships has no tests today, and why that is work rather than a f
 ## See Also
 
 - [The Reengineering Contract: Rules R-1 … R-14](reengineering-contract.md) — the spine: all fourteen rules, and what each forbids and permits
-- [The Decidable Boundary: What a Machine Decides, What a Human Rules](decidable-vs-judgement.md) — `R-10`, `R-11`: the machine/human split the lane sits on the human side of
+- [The Decidable Boundary](decidable-vs-judgement.md) — `R-10`, `R-11`: the machine/human split the lane sits on the human side of
