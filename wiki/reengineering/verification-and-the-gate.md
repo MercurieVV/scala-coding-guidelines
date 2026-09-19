@@ -152,3 +152,5 @@ enforcement layer ships has no tests today, and why that is work rather than a f
 
 - [The Reengineering Contract: Rules R-1 … R-14](reengineering-contract.md) — the spine: all fourteen rules, and what each forbids and permits
 - [The Decidable Boundary](decidable-vs-judgement.md) — `R-10`, `R-11`: the machine/human split the lane sits on the human side of
+- [What Goes Wrong in LLM-Generated Code](../llm-scala-fusion/llm-code-defect-taxonomy.md) — reward-hacking evidence (ImpossibleBench, SpecBench) behind "the gate must run tests" and the independent lane
+- [Roadmap: More Scala, Less LLM](../llm-scala-fusion/roadmap-more-scala-less-llm.md) — test-protection hooks and a holdout module as the gate's mechanical form

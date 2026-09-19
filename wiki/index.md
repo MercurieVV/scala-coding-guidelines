@@ -41,3 +41,17 @@ migration is verified and recorded.
 | [The Decidable Boundary](reengineering/decidable-vs-judgement.md) | R-10, R-11: what a linter may decide, what only a human may, and why an unsatisfiable rule is escalated rather than suppressed | 2026-09-19 |
 | [Verification and the Gate](reengineering/verification-and-the-gate.md) | R-8, R-9 and the build contract: the three declared tasks, the coverage map, and the independent lane's verdict-per-rule protocol | 2026-09-19 |
 | [Recording a Migration](reengineering/recording-a-migration.md) | R-12, R-13: the target list and exit condition, why a gitignored ledger is not a record, and how an open divergence becomes a ruling | 2026-09-19 |
+
+## llm-scala-fusion
+
+Fusing LLM agents with strict Scala: what LLM-generated code gets wrong, where types/properties/verifiers buy the most, gaps
+in the existing fusion tools (scala-purrism, ScalaSemantic, scala-llm-template, dsh profile), alternative paradigms incl. BDD
+as the text/type seam, and a prioritised roadmap.
+
+| Article | Summary | Updated |
+|---------|---------|---------|
+| [What Goes Wrong in LLM-Generated Code: The Opposite Vector](llm-scala-fusion/llm-code-defect-taxonomy.md) | Seven defect classes with evidence: hallucinated APIs (8.1-40% library hallucination), misinterpretation, FP compile penalty (FPBench), imperative idiom drift (94% in Scala), maintainability debt, security (prompting does not reduce CWE counts), test gaming/reward hacking (ImpossibleBench, SpecBench, RLVR verifier gaming); the Productivity-Reliability Paradox as frame | 2026-09-19 |
+| [Where Types and Properties Buy the Most: Compiler-Guided Generation](llm-scala-fusion/where-types-and-properties-buy-most.md) | Five mechanisms — type-constrained decoding, typed-hole context (Hazel), deterministic AST post-processing, compiler/verifier-in-the-loop (vericoding), property-based shrunk-counterexample feedback (PGS, PBT-Bench) — and a Scala-owns / LLM-owns / seam decision map | 2026-09-19 |
+| [Harness and Tooling Gaps](llm-scala-fusion/harness-and-tooling-gaps.md) | Surface gap analysis of purrism, ScalaSemantic, the template and the dsh `scala-arhitect` profile against the literature: typed-hole tool, diff-scoped symbol verification, test-protection hooks + holdout module, diagnostic→instruction table, code-execution MCP surface | 2026-09-19 |
+| [Alternative Paradigms: Spec-First, Neurosymbolic Split, and the BDD Seam](llm-scala-fusion/alternative-paradigms-and-bdd-seam.md) | Vericoding/spec-first, Guess & Sketch confidence routing, isomorphic vs extensional verification, specification governance, and a typed BDD step algebra (Gherkin scenarios → typed-hole step signatures → property Then-clauses → visible/holdout split) | 2026-09-19 |
+| [Roadmap: More Scala, Less LLM](llm-scala-fusion/roadmap-more-scala-less-llm.md) | Ten ranked items in four tiers, each tied to a defect class, mechanism and tool; plus a "what not to do" list | 2026-09-19 |

@@ -115,3 +115,4 @@ Every other rule is carried further, and the `See Also` list below is the map: `
 - [The Decidable Boundary](decidable-vs-judgement.md) — R-10, R-11
 - [Verification and the Gate](verification-and-the-gate.md) — R-8, R-9
 - [Recording a Migration](recording-a-migration.md) — R-12, R-13
+- [What Goes Wrong in LLM-Generated Code](../llm-scala-fusion/llm-code-defect-taxonomy.md) — the empirical case for R-8, R-9, R-10, R-14 (test gaming, hallucinated symbols, idiom drift)

@@ -124,3 +124,33 @@
 ## [2026-09-19] lint | 0 issues found, 0 auto-fixed
 
 ## [2026-09-19] lint | fixed: the final review's findings — R-5's evidence, the record's two roles, the five layers named, two softened inferences, and the plan's cascade and citation defects
+
+## [2026-09-19] ingest | What Goes Wrong in LLM-Generated Code: The Opposite Vector
+- Disposition: New (new topic `llm-scala-fusion`; research ingest of 25 web sources; five articles created: defect taxonomy, types-and-properties, harness gaps, alternative paradigms + BDD seam, roadmap)
+- Raw: raw/llm-scala-fusion/2024-03-13-bugs-in-llm-generated-code-empirical-study.md
+- Raw: raw/llm-scala-fusion/2025-12-04-survey-of-bugs-in-ai-generated-code.md
+- Raw: raw/llm-scala-fusion/2026-04-09-static-analysis-for-code-library-hallucinations.md
+- Raw: raw/llm-scala-fusion/2025-11-02-systematic-review-code-hallucinations-in-llms.md
+- Raw: raw/llm-scala-fusion/2025-03-08-taxonomy-of-inefficiencies-in-llm-generated-python.md
+- Raw: raw/llm-scala-fusion/2026-05-22-llm-code-security-across-prompting-methods.md
+- Raw: raw/llm-scala-fusion/2026-05-07-agent-generated-code-maintenance-empirical-study.md
+- Raw: raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md
+- Raw: raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md
+- Raw: raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md
+- Raw: raw/llm-scala-fusion/2026-04-16-llms-gaming-verifiers-rlvr-reward-hacking.md
+- Raw: raw/llm-scala-fusion/2026-05-01-productivity-reliability-paradox-spec-driven-governance.md
+- Raw: raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md
+- Raw: raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md
+- Raw: raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md
+- Raw: raw/llm-scala-fusion/2026-06-16-llm-code-correction-iterative-feedback-loops.md
+- Raw: raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md
+- Raw: raw/llm-scala-fusion/2026-05-13-pbt-bench-agents-property-based-testing.md
+- Raw: raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md
+- Raw: raw/llm-scala-fusion/2023-09-25-guess-and-sketch-neurosymbolic-transpilation.md
+- Raw: raw/llm-scala-fusion/2026-02-17-mcp-design-choices-tool-orchestration-vs-code-execution.md
+- Raw: raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md
+- Raw: raw/llm-scala-fusion/serena-mcp-semantic-coding-toolkit.md
+- Raw: raw/llm-scala-fusion/2025-10-14-survey-of-vibe-coding-with-llms.md
+- Raw: raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md
+- Updated: The Reengineering Contract: Rules R-1 … R-14 (See Also)
+- Updated: Verification and the Gate (See Also)
