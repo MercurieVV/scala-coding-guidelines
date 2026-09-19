@@ -65,7 +65,7 @@ Its content is the design document's content, verbatim, under the skill's raw he
 - [ ] **Step 2: Verify the copy is faithful**
 
 Run: `diff <(tail -n +7 raw/reengineering/2026-09-19-kit-design.md) docs/2026-09-19-reengineering-kit-design.md`
-Expected: no output (identical from line 5 on).
+Expected: no output (identical from line 7 on — the header is six lines).
 
 - [ ] **Step 3: Commit both files**
 
