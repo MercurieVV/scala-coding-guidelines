@@ -40,3 +40,4 @@ migration is verified and recorded.
 | [Absence Unrepresentable](reengineering/absence-unrepresentable.md) | R-5, R-6: a non-empty structure in the type instead of a runtime guard; the contract stated on the abstract member, implementations total | 2026-09-19 |
 | [The Decidable Boundary](reengineering/decidable-vs-judgement.md) | R-10, R-11: what a linter may decide, what only a human may, and why an unsatisfiable rule is escalated rather than suppressed | 2026-09-19 |
 | [Verification and the Gate](reengineering/verification-and-the-gate.md) | R-8, R-9 and the build contract: the three declared tasks, the coverage map, and the independent lane's verdict-per-rule protocol | 2026-09-19 |
+| [Recording a Migration](reengineering/recording-a-migration.md) | R-12, R-13: the target list and exit condition, why a gitignored ledger is not a record, and how an open divergence becomes a ruling | 2026-09-19 |

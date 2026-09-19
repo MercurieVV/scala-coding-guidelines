@@ -116,3 +116,7 @@
 ## [2026-09-19] ingest | Verification and the Gate: Receipts, the Build Contract, and the Independent Lane
 - Disposition: New
 - Raw: raw/reengineering/2026-09-19-kit-design.md
+
+## [2026-09-19] ingest | Recording a Migration: Target Lists, Receipts, and Rulings
+- Disposition: New
+- Raw: raw/reengineering/2026-09-19-kit-design.md
