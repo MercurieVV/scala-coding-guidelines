@@ -100,3 +100,7 @@
 - Disposition: New
 - Raw: raw/scala-typelevel-fp/2026-09-18-named-shape-traits.md
 - Updated: Abstracting Over Abstract Types: Type Members vs. Type Parameters (See Also link)
+
+## [2026-09-19] ingest | The Reengineering Contract: Rules R-1 … R-14
+- Disposition: New
+- Raw: raw/reengineering/2026-09-19-kit-design.md

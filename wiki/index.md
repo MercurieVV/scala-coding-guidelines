@@ -28,3 +28,12 @@ Integrating the Stainless formal-verification tool into Scala builds — archite
 | Article | Summary | Updated |
 |---------|---------|---------|
 | [Integrating Stainless verification into a Mill build](stainless-verification/stainless-mill-integration.md) | Verify production code directly (no mirror) by pulling collection-free primitives into a dedicated object; hand-porting sbt-stainless to Mill (unmanaged jar, Task.Command, prePush, CI job); full wrapper-script recipe with jar provenance/sha256, and known issues/fixes (exit-code vs summary parsing, solver timeouts, platform detection, caching, timeout tuning, stale sbt references) | 2026-09-13 |
+
+## reengineering
+
+Reengineering a Scala project toward an abstract level: the citable rules, the machine/human boundary, and how a
+migration is verified and recorded.
+
+| Article | Summary | Updated |
+|---------|---------|---------|
+| [The Reengineering Contract: Rules R-1 … R-14](reengineering/reengineering-contract.md) | The citable spine: fourteen rules, one line each, with what each forbids and permits | 2026-09-19 |
