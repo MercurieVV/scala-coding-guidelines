@@ -92,8 +92,8 @@ with a reason; symbol-level tools are the rule. Generalized from `C-9`.
 
 - [Named Shape Traits: Do Not Spell a Type Member's Shape at the Use Site](../scala-typelevel-fp/named-shape-traits.md) — R-4
 - [Refactoring Kleisli to Arrow: When and How](../scala-typelevel-fp/kleisli-to-arrow-refactoring.md) — R-1
-- [Project Structure & Testing](../scala-typelevel-fp/project-structure-and-testing.md) — R-7, module layout
-- [Absence Is Unrepresentable](absence-unrepresentable.md) — R-5, R-6
-- [Decidable vs. Judgement](decidable-vs-judgement.md) — R-10, R-11
-- [Verification and the Gate](verification-and-the-gate.md) — R-8, R-9
-- [Recording a Migration](recording-a-migration.md) — R-12, R-13
+- [Project Structuring, Testing & Error Handling (Typelevel)](../scala-typelevel-fp/project-structure-and-testing.md) — R-7, module layout
+- [Absence Unrepresentable: Guarantees in the Type, Contracts on the Member](absence-unrepresentable.md) — R-5, R-6
+- [The Decidable Boundary: What a Machine Decides, What a Human Rules](decidable-vs-judgement.md) — R-10, R-11
+- [Verification and the Gate: Receipts, the Build Contract, and the Independent Lane](verification-and-the-gate.md) — R-8, R-9
+- [Recording a Migration: Target Lists, Receipts, and Rulings](recording-a-migration.md) — R-12, R-13

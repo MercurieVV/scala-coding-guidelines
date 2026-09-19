@@ -96,4 +96,4 @@ wording was never the machine's to judge.
 ## See Also
 
 - [The Reengineering Contract: Rules R-1 … R-14](reengineering-contract.md) — the spine: all fourteen rules, and what each forbids and permits
-- [Verification and the Gate](verification-and-the-gate.md) — `R-8`, `R-9`: the gate's own output, and the independent lane that judges what a gate cannot
+- [Verification and the Gate: Receipts, the Build Contract, and the Independent Lane](verification-and-the-gate.md) — `R-8`, `R-9`: the gate's own output, and the independent lane that judges what a gate cannot
