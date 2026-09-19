@@ -37,3 +37,4 @@ migration is verified and recorded.
 | Article | Summary | Updated |
 |---------|---------|---------|
 | [The Reengineering Contract: Rules R-1 … R-14](reengineering/reengineering-contract.md) | The citable spine: fourteen rules, one line each, with what each forbids and permits | 2026-09-19 |
+| [Absence Unrepresentable](reengineering/absence-unrepresentable.md) | R-5, R-6: a non-empty structure in the type instead of a runtime guard; the contract stated on the abstract member, implementations total | 2026-09-19 |
