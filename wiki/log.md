@@ -112,3 +112,7 @@
 ## [2026-09-19] ingest | The Decidable Boundary: What a Machine Decides, What a Human Rules
 - Disposition: New
 - Raw: raw/reengineering/2026-09-19-kit-design.md
+
+## [2026-09-19] ingest | Verification and the Gate: Receipts, the Build Contract, and the Independent Lane
+- Disposition: New
+- Raw: raw/reengineering/2026-09-19-kit-design.md
