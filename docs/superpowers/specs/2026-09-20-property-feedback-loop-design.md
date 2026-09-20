@@ -1,6 +1,7 @@
 # The property feedback loop — design (2026-09-20)
 
-**Status:** approved design, not yet implemented.
+**Status:** implemented in `skreeep2` `master` (merged 2026-09-20, 15 commits ending `0b65d62`); this text carries the
+implementation-time amendments inline.
 **Origin:** Tier 1, item 2 of `wiki/llm-scala-fusion/roadmap-more-scala-less-llm.md` (ScalaCheck ⇄ LLM: shrunk counterexample as the
 feedback).
 **Evidence:** `wiki/llm-scala-fusion/where-types-and-properties-buy-most.md` §5 — property-oriented, structurally minimal
@@ -76,7 +77,9 @@ Raw output suppressed: 84 lines — .dsh/.state/feedback/2026-09-20T10-12-03Z.lo
 - A record whose source file lies under `test-draft/` renders as `DRAFT PROPERTY:` / `DRAFT TEST:`.
 - `infra` renders `INFRA: <exception line>` plus the kept frames and ends `Raw output kept: N lines — <path>` (nothing
   suppressed).
-- `unreadable` prints the last 40 raw lines and the path.
+- `unreadable` prints one `UNREADABLE: <message>` line and `Raw output kept: N lines — <path>` — never raw lines
+  (amended 2026-09-20 at implementation: the original "last 40 raw lines" was dropped in favour of a leak-free default; the
+  log is one read away). Real Mill/Scala compile failures are classified `infra` (the `-- [E…] … Error:` line as message).
 - An all-green run is the single `FEEDBACK: N passed, 0 failed (<selector>)` line.
 
 ## §2 The wrapper, the rewrite, and where each stage runs
@@ -95,9 +98,11 @@ The hook prints one stand-down line on stdout — "shaped by feedback.sh; raw at
 **Contract keys** (both optional; `<module>` substituted as `checkFormat`/`fix` already do):
 
 ```
-fastTests    = ./mill -j 1 --ticker false <module>.test.testOnly -- '*Props'
+fastTests    = ./mill -j 1 --ticker false <module>.test.testOnly '*Props'
 turnEndTests = ./mill -j 1 --ticker false <module>.test
 ```
+
+(The selector precedes `--`: weaver ignores a glob passed after `--` — verified 2026-09-20.)
 
 - **post-edit** (fast): after its existing checks for the edited file's module, when the coverage map grants `tests` and
   `fastTests` is set, run it through the wrapper and render into the hook's report. A failing property is **noted, not

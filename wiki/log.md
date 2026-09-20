@@ -160,3 +160,13 @@
 
 ## [2026-09-20] update | Roadmap: More Scala, Less LLM
 - Disposition: Update (item 1's two residuals closed; the documented out-of-layer limits stated instead)
+
+## [2026-09-20] ingest | Stainless language usage: contracts, ADTs, and proofs
+- Disposition: New
+- Raw: raw/stainless-verification/2026-09-20-stainless-tutorial-sorting.md; raw/stainless-verification/2026-09-20-stainless-pure-scala-subset.md; raw/stainless-verification/2026-09-20-stainless-proving-theorems.md; raw/stainless-verification/2026-09-20-stainless-verification-conditions.md
+- Updated: Integrating Stainless verification into a Mill build
+
+## [2026-09-20] lint | 58 issues found, 0 auto-fixed
+
+## [2026-09-20] update | Roadmap: More Scala, Less LLM
+- Disposition: Update (Tier 1 item 2 marked Shipped; runner-shrinking caveat and the open updatedInput check recorded)

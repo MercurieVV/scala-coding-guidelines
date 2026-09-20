@@ -23,11 +23,12 @@ Scala 3 + Typelevel/cats-effect architecture, type-level design, and coding conv
 
 ## stainless-verification
 
-Integrating the Stainless formal-verification tool into Scala builds — architecture, Mill wiring without an official plugin, and standalone-CLI wrapper-script pitfalls.
+Integrating the Stainless formal-verification tool into Scala builds — architecture, Mill wiring without an official plugin, standalone-CLI wrapper-script pitfalls, and the Pure Scala language subset itself (contracts, ADTs, proofs).
 
 | Article | Summary | Updated |
 |---------|---------|---------|
 | [Integrating Stainless verification into a Mill build](stainless-verification/stainless-mill-integration.md) | Verify production code directly (no mirror) by pulling collection-free primitives into a dedicated object; hand-porting sbt-stainless to Mill (unmanaged jar, Task.Command, prePush, CI job); full wrapper-script recipe with jar provenance/sha256, and known issues/fixes (exit-code vs summary parsing, solver timeouts, platform detection, caching, timeout tuning, stale sbt references) | 2026-09-13 |
+| [Stainless language usage: contracts, ADTs, and proofs](stainless-verification/stainless-language-usage-guide.md) | Pure Scala subset rules; `require`/`ensuring`/`assert`/`check`; ADT invariants (`require`, `@invariant`, `@inlineInvariant`); precondition-aware match exhaustiveness; loop `invariant`/`decreases`; theorem proving with `.holds`, `because`, `@induct`, and the `==|`/`.qed` equational DSL | 2026-09-20 |
 
 ## reengineering
 
@@ -54,4 +55,4 @@ as the text/type seam, and a prioritised roadmap.
 | [Where Types and Properties Buy the Most: Compiler-Guided Generation](llm-scala-fusion/where-types-and-properties-buy-most.md) | Five mechanisms — type-constrained decoding, typed-hole context (Hazel), deterministic AST post-processing, compiler/verifier-in-the-loop (vericoding), property-based shrunk-counterexample feedback (PGS, PBT-Bench) — and a Scala-owns / LLM-owns / seam decision map | 2026-09-19 |
 | [Harness and Tooling Gaps](llm-scala-fusion/harness-and-tooling-gaps.md) | Surface gap analysis of purrism, ScalaSemantic, the template and the dsh `scala-arhitect` profile against the literature: typed-hole tool, diff-scoped symbol verification, test-protection hooks + holdout module, diagnostic→instruction table, code-execution MCP surface | 2026-09-19 |
 | [Alternative Paradigms: Spec-First, Neurosymbolic Split, and the BDD Seam](llm-scala-fusion/alternative-paradigms-and-bdd-seam.md) | Vericoding/spec-first, Guess & Sketch confidence routing, isomorphic vs extensional verification, specification governance, and a typed BDD step algebra (Gherkin scenarios → typed-hole step signatures → property Then-clauses → visible/holdout split) | 2026-09-19 |
-| [Roadmap: More Scala, Less LLM](llm-scala-fusion/roadmap-more-scala-less-llm.md) | Ten ranked items in four tiers, each tied to a defect class, mechanism and tool; plus a "what not to do" list. Tier 1 item 1 (test-protection hooks + holdout module) shipped 2026-09-20 | 2026-09-20 |
+| [Roadmap: More Scala, Less LLM](llm-scala-fusion/roadmap-more-scala-less-llm.md) | Ten ranked items in four tiers, each tied to a defect class, mechanism and tool; plus a "what not to do" list. Tier 1 items 1 (test-protection hooks + holdout module) and 2 (property feedback loop) shipped 2026-09-20 | 2026-09-20 |

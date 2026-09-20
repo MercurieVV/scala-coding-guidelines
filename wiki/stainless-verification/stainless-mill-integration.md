@@ -274,3 +274,4 @@ from any build tool:
 
 - [Project Structure & Testing](../scala-typelevel-fp/project-structure-and-testing.md)
 - [Scala 3 Type-Level Features](../scala-typelevel-fp/scala3-type-level-features.md)
+- [Stainless language usage: contracts, ADTs, and proofs](stainless-language-usage-guide.md)

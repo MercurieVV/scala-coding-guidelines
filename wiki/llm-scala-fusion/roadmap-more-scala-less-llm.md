@@ -37,6 +37,15 @@ self-deceiving I/O tests. *Evidence:* Property-Generated Solver — property-ori
 that, on property failure, feeds the LLM *only* the shrunk counterexample and the property text. ScalaCheck shrinking
 makes this nearly free.
 
+> **Status: Shipped** (2026-09-20) — landed in `skreeep2` on `master`: a generic normaliser (weaver/weaver-scalacheck,
+> ScalaCheck, munit, infra adapters → TAB failure records → a fixed `FEEDBACK:/PROPERTY:/TEST:/INFRA:` block), the
+> `feedback.sh` wrapper (raw log kept, names and counterexample only shown), a PreToolUse rewrite of the agent's own
+> `mill … test` runs, `fastTests` in post-edit (noted) and `turnEndTests` at turn-end (blocking; drafts under
+> `test-draft/src` noted), five installation rules. Spec: `docs/superpowers/specs/2026-09-20-property-feedback-loop-design.md`
+> (this repo). Caveat found at implementation: weaver-scalacheck reports the failing input but does not shrink it, so the
+> "shrunk" half depends on the runner — plain ScalaCheck's `ARG_0_ORIGINAL` is rendered when present. Open: whether Claude
+> Code honours the `updatedInput` rewrite live; the post-edit and turn-end stages do not depend on it.
+
 **3. Diagnostic→instruction table.** *Closes:* idiom drift, compile-error loops that stall. *Evidence:* FPEval's repair
 gains come from static-analysis feedback paired with "hand-crafted instructions for common types of issues"; raw
 diagnostics alone repaired less. *Build:* purrism exports per-rule repair instructions; the build-result hook joins
