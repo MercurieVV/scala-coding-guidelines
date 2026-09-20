@@ -154,3 +154,6 @@
 - Raw: raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md
 - Updated: The Reengineering Contract: Rules R-1 … R-14 (See Also)
 - Updated: Verification and the Gate (See Also)
+
+## [2026-09-20] update | Roadmap: More Scala, Less LLM
+- Disposition: Update (Tier 1 item 1 marked Shipped with residuals; no new raw source — the record is the spec in docs/ and skreeep2's git history)
