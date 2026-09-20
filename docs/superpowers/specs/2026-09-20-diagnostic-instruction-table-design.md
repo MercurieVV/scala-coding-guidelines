@@ -20,7 +20,7 @@ the frozen tables.
 | Question | Decision |
 |---|---|
 | Where the table lives | Purrism ships a catalog and a TSV (versioned with the rules, in the jar and on the docs site); purrism rules also carry the explanation in the diagnostic text; the harness vendors purrism's TSV and adds a project-local overlay for scalac / wart / project-rule codes |
-| Join key | Stable finding codes `<RuleName>/<kebab-kind>` for purrism (one per finding *kind*), `E006`-style codes for scalac, wart names for wartremover — appended as `[code]` after the human text, never replacing it |
+| Join key | Stable finding codes `<RuleName>.<kebab-kind>` for purrism (amended 2026-09-20 at planning: the code IS scalafix's lint id — `categoryID = kind` — so scalafix/Mill print `[Rule.kind]` natively and no suffix is hand-built; the spec's `/` and the manual `[code]` suffix are superseded) (one per finding *kind*), `E006`-style codes for scalac, wart names for wartremover — appended as `[code]` after the human text, never replacing it |
 | Join point | The feedback normalizer: `scalafix` and `scalac` adapters produce `diagnostic` records; the renderer appends `INSTRUCTION:` from the tables; post-edit / turn-end / the PreToolUse rewrite route `compile`, `fix --check`, `fixStrict` through the wrapper like tests |
 | Scope | Full purrism catalog now (all rule families), a small scalac/wart overlay; a later pass deepens the `Idiom*` / `Suspend*` instructions |
 | Transport | A: catalog in purrism + vendored copy in the harness refreshed by a sync script; B (separate findings artifact with a Scala API) when roadmap item 8 lands; C (read the jar at hook time) rejected |
