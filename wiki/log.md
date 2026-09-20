@@ -157,3 +157,6 @@
 
 ## [2026-09-20] update | Roadmap: More Scala, Less LLM
 - Disposition: Update (Tier 1 item 1 marked Shipped with residuals; no new raw source — the record is the spec in docs/ and skreeep2's git history)
+
+## [2026-09-20] update | Roadmap: More Scala, Less LLM
+- Disposition: Update (item 1's two residuals closed; the documented out-of-layer limits stated instead)

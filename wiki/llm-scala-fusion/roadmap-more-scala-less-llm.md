@@ -24,9 +24,12 @@ agent. R-8/R-9 already state the rule; this makes it mechanical.
 > **Status: Shipped** (2026-09-20) — landed in `skreeep2` on `master`: a `sealed` access token in `.dsh/frozen-paths` (reads
 > and writes denied), every module test root frozen, the harness and its live hook wiring self-frozen, a `holdout` Mill
 > module run only by the turn-end gate and `prePush` with names-only reporting, and six installation rules in
-> `check-harness.sh`. Spec: `docs/superpowers/specs/2026-09-19-test-protection-and-holdout-design.md` (this repo). Known
-> residuals: quoted or alternate Mill selectors (`./mill 'holdout.test'`, `_.test`) still reach the suite; the guard's
-> stand-down hint still names `__.compile`, which the policy now denies. Plan C carries the engine into the profile.
+> `check-harness.sh`. Spec: `docs/superpowers/specs/2026-09-19-test-protection-and-holdout-design.md` (this repo). The
+> two residuals from the final review — quoted or alternate Mill selectors (`./mill 'holdout.test'`, `_.test`,
+> `__.test.<task>`, brace forms) reaching the suite, and the guard's stand-down hint naming the now-refused `__.compile` —
+> were closed the same day. What stays outside the text-matching layer, by design and documented: `bash -c '…'`,
+> variable-built selectors, and reads scoped at an ancestor (`grep -r .`, `git grep`). Plan C carries the engine into
+> the profile.
 
 **2. Shrunk-counterexample feedback loop (ScalaCheck ⇄ LLM).** *Closes:* misinterpretation, missing corner cases,
 self-deceiving I/O tests. *Evidence:* Property-Generated Solver — property-oriented, structurally minimal feedback,
