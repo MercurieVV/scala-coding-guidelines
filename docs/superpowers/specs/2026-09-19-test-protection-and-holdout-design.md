@@ -56,7 +56,9 @@ wiring/test/**	tests are the human's spec; ask in chat to unfreeze a file
 **Mill module.** `object holdout extends ScalaTests with <the same test mixin as the modules it exercises>` under
 `holdout/src`, depending on the app/wiring modules it composes. Content is human-written, cross-feature scenarios
 (SpecBench: compose the specified features as real usage would). It is **not** reachable from `preCommit`'s test
-aggregate, so `./mill __.test` run by the agent never executes it; only the gate does.
+aggregate, so the gate's own runs never touch it. Mill's wildcard selectors (`__.test`, `__.compile`, `prePush`) and the
+module's own selectors (`holdout.*`) DO reach it, so the tool-policy hook denies a `mill` invocation naming any of those
+(amended 2026-09-20 after the final review: the original text claimed `__.test` could not run it, which was false).
 
 **Contract.** One new line: `holdout = ./mill -j 1 --ticker false holdout.test`. Absent → the gate skips the step
 silently; `check-harness.sh` warns (a project without a holdout suite is legal, only weaker).
@@ -92,9 +94,18 @@ failing holdout suite blocks.
 .dsh/check-harness.sh	the engine is the human's
 ```
 
-`.dsh/.state/**` is not frozen: hooks write it, and an agent adding to `.dsh/.state/frozen-paths` can only tighten.
+`.dsh/.state/**` is not frozen as a whole: an agent adding to `.dsh/.state/frozen-paths` can only tighten. Two state files
+ARE frozen because the agent could forge them — `.dsh/.state/receipts` (the gate's record, R-8) and `.dsh/.state/modules.tsv`
+(the coverage map rules 1 and 6 trust). Hooks still write them: hooks run outside PreToolUse and are never gated
+(amended 2026-09-20; the original reasoning "hooks write it" was mistaken).
 
-**Blind spots, stated:** `tool-policy` already denies `rm/mv/ln/truncate/patch/git checkout|restore|rm|mv|apply/perl -i/
+The self-freeze also covers the hook wiring Claude Code actually reads — `.claude/settings.json`, `.claude/settings.local.json`,
+`.dsh/cc-settings.json` — and the root `.ignore` that keeps sealed paths out of ripgrep-backed search (added 2026-09-20).
+
+**Blind spots, stated (amended 2026-09-20):** reads scoped at an ancestor — `grep -r .`, `git grep`, `git log -p`,
+`find -exec cat` — cannot be decided by a text guard on the path; a root `.ignore` keeps `holdout/` out of ripgrep-backed
+search (the `Grep` tool, `rg`), the rest is documented. Symbol-based scala-semantic tools (`symbol_source`, `find_usages`)
+answer from the index, not a path, and are out of scope. Write-side: `tool-policy` already denies `rm/mv/ln/truncate/patch/git checkout|restore|rm|mv|apply/perl -i/
 find -delete` on frozen operands, and now on sealed ones too. `bash -c '…'`, `$(…)` and heredoc-to-interpreter writes
 remain undetected — the README lists them today; the seal inherits the list. The `workspace-write` sandbox (Plan C) is
 the second layer and is unchanged here.
@@ -104,7 +115,8 @@ the second layer and is unchanged here.
 1. Every module the coverage map marks `test` has a `frozen` or `sealed` entry covering its test root; else fail,
    naming the module.
 2. The path `contract.holdout` targets (default `holdout/**`) is `sealed`; else fail.
-3. Each of the seven self-freeze paths is present; else fail.
+3. Each self-freeze path is present (the seven above plus `.ignore`, the three wiring files and the two state files —
+   twelve in total, amended 2026-09-20); else fail.
 4. Unknown kind token in any entry; fail.
 5. `contract` has no `holdout` line; **warn**.
 6. The holdout module is reachable from `preCommit`'s test aggregate; fail (the agent could otherwise run it and read
