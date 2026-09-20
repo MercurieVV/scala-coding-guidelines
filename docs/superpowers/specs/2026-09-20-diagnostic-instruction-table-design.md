@@ -51,6 +51,10 @@ object FindingCatalog {
 1. Every lint message in the golden fixtures ends with `[<code>]` and the code is catalogued — else fail naming file:line.
 2. Every catalog code appears in at least one fixture output — a dead catalog row fails.
 3. Codes unique; `rule` equals the emitting rule's name; all fields non-empty and TAB-free; `message` renders exactly.
+4. **Kinds are globally unique** (amended 2026-09-20): umbrella rules (`TypelevelPurrism`, `PreferTypeParameters`) run
+   child rules inside their own `SemanticRule`, so scalafix prints `[TypelevelPurrism.readability-budget]` for a
+   `PreferArrow` finding. The harness therefore joins on the full code first and falls back to the kind alone; unique
+   kinds make that fallback exact. `doc` anchors must exist as headings in `docs/index.md`.
 
 **Export.** A generator (`findingsgen`, beside `indexgen`, or a Mill task) writes `docs/findings.tsv` — header line
 `# purrism <version>`, then `code<TAB>rule<TAB>title<TAB>explanation<TAB>instruction<TAB>doc`, sorted by code — and copies it
