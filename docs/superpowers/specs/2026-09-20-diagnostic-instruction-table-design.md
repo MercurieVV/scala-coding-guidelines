@@ -1,6 +1,6 @@
 # The diagnostic → instruction table — design (2026-09-20)
 
-**Status:** §1 (purrism) implemented and released as scalafix-purrism v0.9.1 (2026-09-21, master 314afcd; 31 codes, `findings.tsv` in the jar, docs Findings page, `findingsCheck` in CI). §2–§4 (harness) in progress: `skreeep2/docs/superpowers/plans/2026-09-21-diagnostic-instruction-table.md`.
+**Status:** implemented. §1 shipped as scalafix-purrism v0.9.1 (2026-09-21, master 314afcd); §2–§4 shipped in skreeep2 master 50a7698 (plan `skreeep2/docs/superpowers/plans/2026-09-21-diagnostic-instruction-table.md`, 13 commits, run.sh 293 fixtures, lib-test 450).
 **Origin:** Tier 1, item 3 of `wiki/llm-scala-fusion/roadmap-more-scala-less-llm.md`.
 **Evidence:** FPEval (`wiki/llm-scala-fusion/llm-code-defect-taxonomy.md` §4): self-repair improved when static-analysis
 findings were paired with "hand-crafted instructions for common types of issues"; raw diagnostics alone repaired less.

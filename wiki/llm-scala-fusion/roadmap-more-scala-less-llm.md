@@ -2,7 +2,7 @@
 
 > Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
 > Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-20
+> Updated: 2026-09-21
 
 ## Overview
 
@@ -50,6 +50,20 @@ makes this nearly free.
 gains come from static-analysis feedback paired with "hand-crafted instructions for common types of issues"; raw
 diagnostics alone repaired less. *Build:* purrism exports per-rule repair instructions; the build-result hook joins
 compiler/scalafix diagnostics with them before the model sees the output.
+
+> **Status: Shipped** (2026-09-21) — two halves. *scalafix-purrism v0.9.1:* a finding catalog (31 stable codes, one per
+> finding kind, `code = Rule.kind` = scalafix's lint id so Mill/scalafix print `[Rule.kind]` natively), every diagnostic
+> text carries the explanation for humans, `purrism/findings.tsv` in the jar (`code rule title explanation instruction doc`,
+> header `# purrism <version>`), a docs "Findings" page, `findingsCheck` in CI. *skreeep2 `master`:* `scalafix` and `scalac`
+> adapters in the feedback normaliser (`kind diagnostic` records), two frozen tables (`.dsh/instructions/purrism.tsv` vendored
+> by `instructions-sync.sh`; project-owned `local.tsv` for scalac/wart codes), `DIAGNOSTIC:` + `INSTRUCTION:` + `DOC:`
+> rendering with a `No instruction for:` gap line and a `.dsh/.state/instructions-missing` backlog, post-edit/turn-end
+> `compile`/`fix --check`/`fixStrict` routed through the wrapper (blocking and F53 attribution still read the raw log), the
+> PreToolUse rewrite extended to those tasks, five installation rules. Spec:
+> `docs/superpowers/specs/2026-09-20-diagnostic-instruction-table-design.md` (this repo). Found at implementation: Mill's
+> compile reporter prints no Scala 3 error ids, so scalac codes are `scalac.<kind>` classified from the message headline by a
+> small project table; warts are `wartremover.<Wart>`. Open for the human: the instruction prose is a first draft (codes are
+> stable, prose edits are non-breaking); `Layer.mill`'s `fixStrict` still swallows scalafix config errors as success.
 
 ## Tier 2 — moderate effort, direct tool upgrades
 

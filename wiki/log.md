@@ -170,3 +170,6 @@
 
 ## [2026-09-20] update | Roadmap: More Scala, Less LLM
 - Disposition: Update (Tier 1 item 2 marked Shipped; runner-shrinking caveat and the open updatedInput check recorded)
+
+## [2026-09-21] update | Roadmap: More Scala, Less LLM
+- Disposition: Update (Tier 1 item 3 diagnostic→instruction table marked Shipped — scalafix-purrism v0.9.1 finding catalog + skreeep2 harness adapters/tables; implementation findings recorded)
