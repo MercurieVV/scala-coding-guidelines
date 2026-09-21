@@ -1,6 +1,6 @@
 # The diagnostic → instruction table — design (2026-09-20)
 
-**Status:** approved design, not yet implemented. Two plans follow: one in `scalafix-purrism`, one in `skreeep2`.
+**Status:** §1 (purrism) implemented and released as scalafix-purrism v0.9.1 (2026-09-21, master 314afcd; 31 codes, `findings.tsv` in the jar, docs Findings page, `findingsCheck` in CI). §2–§4 (harness) in progress: `skreeep2/docs/superpowers/plans/2026-09-21-diagnostic-instruction-table.md`.
 **Origin:** Tier 1, item 3 of `wiki/llm-scala-fusion/roadmap-more-scala-less-llm.md`.
 **Evidence:** FPEval (`wiki/llm-scala-fusion/llm-code-defect-taxonomy.md` §4): self-repair improved when static-analysis
 findings were paired with "hand-crafted instructions for common types of issues"; raw diagnostics alone repaired less.
@@ -65,6 +65,20 @@ against the catalog. The docs site renders a "Findings" page from the same TSV (
 (human authorship; an agent may draft, a human reviews). Roughly 40 rule families → an estimated 60–90 finding kinds.
 
 ## §2 Harness: adapters, records, rendering, tables
+
+> **Amended 2026-09-21 at harness planning, from real Mill 1.1.7 captures in skreeep2:**
+> 1. Mill's compile reporter prints no Scala 3 error ids (`-- [E006] …` never appears; the shape is
+>    `[error] <path>:<line>:<col>` / source line / caret line / message lines / blank). scalac codes are therefore
+>    **`scalac.<kind>`**, the kind classified from the message headline by a project-owned `.dsh/instructions/scalac-kinds.tsv`
+>    (`kind TAB ERE`); unclassified → `scalac.error` / `scalac.warning`. Warts print `[wartremover:Var] …` on the message
+>    line → **`wartremover.Var`**. Every code is `<rule>.<kind>`; `local.tsv` keeps purrism's six columns with `rule` = `scalac` /
+>    `wartremover`. The `E006` / bare `Var` spellings below are superseded.
+> 2. skreeep2's `fixStrict` printed `[WARNING][<Rule>] <abs path>:<l>:<c> <text>` (rule name only); it now prints the full lint
+>    id `[<Rule>.<kind>]`. `fix --check` already prints scalafix's native `<abs path>:<l>:<c>: warning: [<Rule>.<kind>] <text>`.
+> 3. Deprecated alias rules (`PreferHKTTypeclasses` …) and the `TypelevelPurrism` umbrella print their own name as prefix; the
+>    harness joins by kind when the exact code has no row (kinds are unique across the catalog).
+> 4. A `fix --check` pending rewrite yields one `scalafix.pending-rewrite` record per `--- <path>` diff header.
+> 5. The wrapper honours `DSH_FEEDBACK_LOG_OUT=<file>` (writes the raw log's path) so post-edit/turn-end attribute on raw text.
 
 **Record kind** — `dsh_feedback_parse` gains `kind<TAB>diagnostic` records:
 
