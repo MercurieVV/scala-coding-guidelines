@@ -58,7 +58,13 @@ is a name the compiler could not resolve. Neither source alone can say that.
 - `suggestions`: deterministic near-misses only — same owner and simple name within edit distance 2, or an exact
   simple-name match under a different owner (the "you meant the other `Path`" case). Empty when nothing is close. Never a
   guess, never an applied fix.
-- Bound: 200 rows per file; `omitted` counts what the bound cut.
+- Bound: 200 rows per file; `omitted` counts what the bound cut. An unresolved row is never the one dropped: the bound
+  cuts resolved rows first, so a hallucination past the 200th name still reaches the caller.
+- `pcFallback` appears only when it is `true` (the on-disk file was read and the index does not hold that document),
+  matching the convention of the other position tools; its absence means `false`.
+- Names inside a statement whose expression carries a type annotation (`(x: @unchecked) match …`) are not checked: the
+  compiler emits no occurrences there, so the tool cannot tell a blind spot from a missing name and stays silent rather
+  than reporting a false hallucination. The blind spot covers a definition's body, never its signature.
 - No policy, no allowlist, no git, no diff parsing.
 
 **One-shot CLI.** The harness runs in a hook process and cannot reuse the agent session's MCP server, so the installed
