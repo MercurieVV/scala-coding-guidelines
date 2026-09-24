@@ -2,7 +2,7 @@
 
 > Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
 > Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-21
+> Updated: 2026-09-24
 
 ## Overview
 
@@ -72,6 +72,19 @@ compiler/scalafix diagnostics with them before the model sees the output.
 definitions "not in the training data nor near the cursor". *Build:* `hole_context(uri, pos)` → expected type,
 compatible in-scope bindings, applicable givens, definitions of involved types; a skill that makes the agent write the
 `???` skeleton first, compile, then fill holes one at a time with this context.
+
+> **Status: Shipped** (2026-09-24) — `ScalaSemanticMCP` master: a `hole_context(uri, line, character, source?)` MCP tool
+> answering from the Scala 3 compiler (a dotty `InteractiveDriver` per module backend, error-tolerant, so an uncompiled
+> buffer still answers): the expected type with `confidence` (`exact` when the enclosing tree prescribes it,
+> `unconstrained` when nothing does — then no candidate is guessed) and a `why`; `bindings` (in-scope values that
+> conform under `<:<`), `producers` (methods and companion members whose result fits, `match` `exact` or `shape`),
+> `givens` (instances the compiler would pick), `types` (the expected type's definitions; project types carry a source
+> excerpt), with per-list bounds and `omitted` counts. Candidates are filtered for accessibility from the hole and named
+> the way the hole's own scope names them (alias, short name when unshadowed, else fully qualified) — never a name that
+> would not compile there. The `typed-holes` skill makes the agent write `???` skeletons first, compile, then fill one
+> hole at a time. Spec: `docs/superpowers/specs/2026-09-21-typed-hole-context-design.md` (this repo). Deferred with
+> reasons in the branch's final review: scope-distance ordering, producers'-`using`-clause givens, non-parameterised
+> given types. Open for the human: a live smoke needs classpath metadata wired in the target project.
 
 **5. Diff-scoped deterministic verification.** *Closes:* hallucinated symbols, allowlist breaches, unresolvable build
 coordinates. *Evidence:* Khati et al.'s AST-vs-knowledge-base check reached "100% precision" and auto-corrected
