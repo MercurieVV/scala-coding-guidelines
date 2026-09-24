@@ -49,7 +49,7 @@ is a name the compiler could not resolve. Neither source alone can say that.
                  { "line": 44, "character": 8, "name": "barr", "kind": "term", "role": "use",
                    "resolved": false, "suggestions": ["foo/domain/User#bar()."] }
                ],
-               "omitted": 0, "pcFallback": false } ] }
+               "omitted": 0 } ] }   // no `pcFallback` key: the buffer came from `source`
 ```
 
 - `kind`: `type` | `term` | `method` | `package`. `role`: `use` | `definition`.
