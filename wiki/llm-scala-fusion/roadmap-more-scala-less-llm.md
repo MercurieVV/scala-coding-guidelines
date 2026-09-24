@@ -92,6 +92,26 @@ coordinates. *Evidence:* Khati et al.'s AST-vs-knowledge-base check reached "100
 symbol against SemanticDB/classpath and the AllowedShape allowlist; a coursier resolve check for new dependencies.
 Deterministic reject before any repair prompt.
 
+> **Status: half shipped** (2026-09-24) — the ScalaSemanticMCP half is on master; the skreeep2 harness half is not
+> written yet, so nothing enforces this at turn-end today. Brainstorming split the item in two: *what* is verified is a
+> Scala semantic fact, *where* it runs is harness policy, and no policy argument crosses the boundary. Shipped:
+> `resolve_references(files)` — batched `{uri, ranges, source?}` input, since a turn-end sweep should be one JVM
+> spin-up rather than one per file. Every name token scalameta finds inside the given line ranges is joined against the
+> occurrences the presentation compiler emits for the same buffer; a token with no occurrence covering it is the one
+> thing neither source can report alone — a name the compiler could not resolve. Each row carries the name as written,
+> `kind`, `role`, `resolved`, the resolved `symbol` and its `origin` (`project` | `stdlib` | `classpath`), or, when
+> unresolved, deterministic near-miss `suggestions` ranked by edit distance. The 200-row cap never drops an unresolved
+> row, so a hallucination past the 200th name still reaches the caller. Also shipped: a one-shot
+> `scalasemantic-mcp call <tool> '<json>' [root] [classpath]` mode, because a shell hook cannot reuse the agent
+> session's MCP server. Spec: `docs/superpowers/specs/2026-09-24-diff-scoped-verification-design.md` (this repo), §1.
+> Found at implementation: a handful of correct Scala 3 shapes carry no compiler occurrence and would read as
+> hallucinations — `derives` clauses, named `export` selectors, macro splices, backticked definitions, and an annotated
+> ascription used as a match scrutinee in a val's right-hand side. Each is suppressed rather than reported, and the tool
+> documents the resulting blind spots; four review rounds went into making each suppression exactly as wide as the
+> compiler's real hole, because one too wide silently passes a hallucinated name. Still to build: `dsh verify-diff` in
+> skreeep2 (§2–§4) — the git-diff hunk ranges, `.dsh/policy/allowed-types.tsv`, the coursier dependency check, and the
+> turn-end and `git commit` / `prePush` wiring that makes the check mandatory rather than agent-optional.
+
 **6. purrism as a loop stage, plus a memorisation-shape rule.** *Closes:* the "94%" imperative-pattern rate in Scala
 output; SpecBench-style test-memorising code. *Build:* run the rewrite rules on the agent's diff before the agent
 reviews it; add a rule flagging large literal-keyed tables and constant returns in production sources.

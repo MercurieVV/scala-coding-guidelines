@@ -176,3 +176,7 @@
 
 ## [2026-09-24] update | Roadmap: More Scala, Less LLM
 - Disposition: Update (Tier 2 item 4 typed-hole context tool marked Shipped — ScalaSemanticMCP `hole_context` + typed-holes skill; implementation findings and deferrals recorded)
+
+## [2026-09-24] update | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Tier 2 item 5 marked half shipped: `resolve_references` + one-shot `call` mode on ScalaSemanticMCP master; the skreeep2 `dsh verify-diff` half (spec §2–§4) is still unbuilt.
