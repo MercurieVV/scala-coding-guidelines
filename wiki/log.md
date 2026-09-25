@@ -180,3 +180,7 @@
 ## [2026-09-24] update | Roadmap: More Scala, Less LLM
 - Disposition: Update
 - Tier 2 item 5 marked half shipped: `resolve_references` + one-shot `call` mode on ScalaSemanticMCP master; the skreeep2 `dsh verify-diff` half (spec §2–§4) is still unbuilt.
+
+## [2026-09-25] update | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Tier 2 item 5 now fully shipped: `dsh verify-diff` merged to skreeep2 master, joining `resolve_references` on ScalaSemanticMCP master. Status block records the three silent-pass defects measurement caught and the finding-vs-degradation rule at the commit boundary.

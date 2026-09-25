@@ -2,7 +2,7 @@
 
 > Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
 > Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-24
+> Updated: 2026-09-25
 
 ## Overview
 
@@ -92,8 +92,7 @@ coordinates. *Evidence:* Khati et al.'s AST-vs-knowledge-base check reached "100
 symbol against SemanticDB/classpath and the AllowedShape allowlist; a coursier resolve check for new dependencies.
 Deterministic reject before any repair prompt.
 
-> **Status: half shipped** (2026-09-24) — the ScalaSemanticMCP half is on master; the skreeep2 harness half is not
-> written yet, so nothing enforces this at turn-end today. Brainstorming split the item in two: *what* is verified is a
+> **Status: Shipped** (2026-09-25) — both halves are on master. Brainstorming split the item in two: *what* is verified is a
 > Scala semantic fact, *where* it runs is harness policy, and no policy argument crosses the boundary. Shipped:
 > `resolve_references(files)` — batched `{uri, ranges, source?}` input, since a turn-end sweep should be one JVM
 > spin-up rather than one per file. Every name token scalameta finds inside the given line ranges is joined against the
@@ -108,9 +107,30 @@ Deterministic reject before any repair prompt.
 > hallucinations — `derives` clauses, named `export` selectors, macro splices, backticked definitions, and an annotated
 > ascription used as a match scrutinee in a val's right-hand side. Each is suppressed rather than reported, and the tool
 > documents the resulting blind spots; four review rounds went into making each suppression exactly as wide as the
-> compiler's real hole, because one too wide silently passes a hallucinated name. Still to build: `dsh verify-diff` in
-> skreeep2 (§2–§4) — the git-diff hunk ranges, `.dsh/policy/allowed-types.tsv`, the coursier dependency check, and the
-> turn-end and `git commit` / `prePush` wiring that makes the check mandatory rather than agent-optional.
+> compiler's real hole, because one too wide silently passes a hallucinated name.
+>
+> The skreeep2 half (§2–§4) is `dsh verify-diff`: `git diff -U0` hunk headers become 0-based half-open line ranges, so
+> the filtering rule that makes the check diff-scoped lives with git and old breakage is never re-reported; coordinates
+> added to a build file go to `cs resolve`; resolved symbols are matched against the human-owned, frozen
+> `.dsh/policy/allowed-types.tsv`. The turn-end gate runs it before the compile chain — the gate invokes it, not the
+> agent, which is the whole difference between mandatory and optional — and `git commit` / `./mill prePush` run it again
+> against the index, where the rules are stricter.
+>
+> What the review rounds changed, and why it is worth recording: the gate's cardinal invariant is that it never silently
+> passes, and three separate violations of it survived the fixtures and were caught only by measurement. A `printf` whose
+> format string began with `---` was parsed as an option by both `/bin/sh` and `dash`, so one degradation note never
+> printed at all. A launcher predating the one-shot `call` mode falls through to `serve`, reads EOF on the hook's closed
+> stdin and exits 0 printing nothing — which the gate read as "nothing unresolved" until a live smoke caught it. And a
+> file answered with an empty `references` list — the ordinary answer for a comment-only change — produced a false
+> "not checked" note. The opposite failure appeared too: at the commit boundary, degradation notes promoted to blocks, so
+> on a machine without `timeout` every commit was denied with a reason no edit of the agent's could clear. The rule that
+> settled it is that a *finding* promotes and a *degradation* never does — "I could not check" must not become "you may
+> not commit".
+>
+> Open for the human: the installed `scalasemantic-mcp` launcher predates `call`, so the semantic half notes instead of
+> checking until ScalaSemanticMCP master is published locally and installed; `.dsh/policy/allowed-types.tsv` ships with
+> its header and no rule rows, because a wrong row blocks real work; and a prose name is never verified, since the
+> semantic tool answers only about Scala files — a change set with no Scala file says so rather than implying otherwise.
 
 **6. purrism as a loop stage, plus a memorisation-shape rule.** *Closes:* the "94%" imperative-pattern rate in Scala
 output; SpecBench-style test-memorising code. *Build:* run the rewrite rules on the agent's diff before the agent
