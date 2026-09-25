@@ -127,8 +127,9 @@ Deterministic reject before any repair prompt.
 > settled it is that a *finding* promotes and a *degradation* never does — "I could not check" must not become "you may
 > not commit".
 >
-> Open for the human: the installed `scalasemantic-mcp` launcher predates `call`, so the semantic half notes instead of
-> checking until ScalaSemanticMCP master is published locally and installed; `.dsh/policy/allowed-types.tsv` ships with
+> Open for the human: the launcher is installed and answers `call`, but skreeep2 has no
+> `.scala-semantic/classpath-mill.json` yet — the server discovers its classpath from that file, and without it every
+> call exits 1 and the gate notes instead of checking (porting `scalaSemanticWriteClasspath` into the build closes it); `.dsh/policy/allowed-types.tsv` ships with
 > its header and no rule rows, because a wrong row blocks real work; and a prose name is never verified, since the
 > semantic tool answers only about Scala files — a change set with no Scala file says so rather than implying otherwise.
 
