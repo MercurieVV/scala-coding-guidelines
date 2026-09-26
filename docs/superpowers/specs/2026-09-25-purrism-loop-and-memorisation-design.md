@@ -1,6 +1,6 @@
 # purrism rewrites in the loop, and a memorisation check — design (2026-09-25)
 
-**Status:** approved design, not yet implemented. Two plans follow: one in `ScalaSemanticMCP` (§1), one in `skreeep2`
+**Status:** implemented; §2's escape amended after the live smoke (see §2). Two plans follow: one in `ScalaSemanticMCP` (§1), one in `skreeep2`
 (§2–§4).
 **Origin:** Tier 2, item 6 of `wiki/llm-scala-fusion/roadmap-more-scala-less-llm.md`.
 **Evidence:** FPEval (`wiki/llm-scala-fusion/llm-code-defect-taxonomy.md`): GPT-5 emitted imperative patterns in "94%" of
@@ -82,9 +82,16 @@ rewritten code.
 | Nothing to apply | Silent. The turn-end after a review ends normally |
 | The task crashes, scalafix cannot load | NOTE; the existing `fix --check` still gates. Never a silent pass |
 
-**Escape.** An agent that disagrees with a rewrite and reverts it would have it reapplied at every turn-end. The way out
-is scalafix's own suppression, `// scalafix:ok <Rule>` with a reason — the block message says so, and a human can grep
-for them.
+**Escape — amended at implementation (2026-09-26).** An agent that disagrees with a rewrite and merely reverts it has it
+reapplied at every turn-end. This spec first named scalafix's own suppression, `// scalafix:ok <Rule>`, as the way out.
+The live smoke measured that it does not work for purrism: every suppression form left `getOrElse(0)` → `.orEmpty`
+applied, and `fix --check` warned `UnusedScalafixSuppression`, because scalafix honours suppression only for patches a
+rule marks atomic, and in scalafix-purrism only `KleisliScope` does. Honouring the comment harness-side cannot work
+either: the chain's whole-file `fix --check` still blocks that line. So the block message says instead: confirm the
+rewritten code still means what you meant; if a rewrite is wrong, restructure the code so the rule no longer matches
+(with a comment saying why), or report the rule, file:line and reason to the human. Until purrism marks its rewrites
+atomic there is no per-line opt-out, so a wrong rewrite that cannot be restructured ends at the attempt cap and is
+logged in `unverified.log` — loud and bounded. Marking purrism's rewrites atomic is a follow-up in that repository.
 
 **Not at the commit boundary.** Rewriting the index during `git commit` would change what is being committed behind the
 author's back. Commits keep today's `fix --check` gate.
