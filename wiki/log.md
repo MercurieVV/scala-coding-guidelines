@@ -184,3 +184,7 @@
 ## [2026-09-25] update | Roadmap: More Scala, Less LLM
 - Disposition: Update
 - Tier 2 item 5 now fully shipped: `dsh verify-diff` merged to skreeep2 master, joining `resolve_references` on ScalaSemanticMCP master. Status block records the three silent-pass defects measurement caught and the finding-vs-degradation rule at the commit boundary.
+
+## [2026-09-26] update | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Tier 2 item 6 shipped: purrism rewrites applied at turn-end with one review block, and a memorisation check keyed on overlap with test literals (literal_tokens in ScalaSemanticMCP, the judge in the skreeep2 harness). Records the scalafix:ok escape measured not to work for purrism.

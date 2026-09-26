@@ -2,7 +2,7 @@
 
 > Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
 > Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-25
+> Updated: 2026-09-26
 
 ## Overview
 
@@ -139,6 +139,25 @@ Deterministic reject before any repair prompt.
 **6. purrism as a loop stage, plus a memorisation-shape rule.** *Closes:* the "94%" imperative-pattern rate in Scala
 output; SpecBench-style test-memorising code. *Build:* run the rewrite rules on the agent's diff before the agent
 reviews it; add a rule flagging large literal-keyed tables and constant returns in production sources.
+
+> **Status: Shipped** (2026-09-26) — both halves on master. purrism already ran in the loop as a *check* (items 1–3), so
+> the new part is *applying* it: at turn-end the skreeep2 harness applies purrism's rewrites to the lines the session
+> changed (`<module>.fixRanges`, which keeps only patches whose every edit is in range) and blocks once so the agent
+> reviews the diff; a rewrite that breaks the compile is undone. The memorisation half ended up in the harness rather
+> than as a purrism rule: the signal is *overlap with test literals*, not table size, because in an audio app a
+> legitimate MIDI note table and a memorising table look alike by size. A new syntax-only ScalaSemanticMCP tool,
+> `literal_tokens`, returns each literal with a normalised value and its enclosing construct; the harness blocks a
+> construct when at least 8 of its non-trivial literals, and at least half of them, also appear in the visible tests,
+> judging the whole construct once touched so a table grown a few rows a turn is still caught. Exemptions live only in a
+> frozen, human-owned table. Spec: `docs/superpowers/specs/2026-09-25-purrism-loop-and-memorisation-design.md` (this repo).
+>
+> What measurement changed: every task review found a silent path, and a live run against real purrism found a
+> spec-level defect the fixtures could not — the escape the design promised, `// scalafix:ok <Rule>`, does not suppress
+> purrism's rewrites, because scalafix honours suppression only for patches a rule marks atomic and purrism marks almost
+> none. The block message now tells the agent to restructure or to report to the human. The rewrite stage also turned
+> out to rewrite a human's pre-session edits until it was confined to a session baseline and to files clean at
+> SessionStart. Open: purrism marking its rewrites atomic, which would restore a per-line opt-out; recording a
+> `git stash create` snapshot at SessionStart so a human's mid-session lines can be told from the agent's.
 
 ## Tier 3 — new surfaces, higher payoff and risk
 
