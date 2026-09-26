@@ -1,5 +1,7 @@
 # Reengineering Kit, Plan C — the harness in the `scala-arhitect` profile
 
+> **Superseded (2026-09-26)** by docs/superpowers/specs/2026-09-26-harness-engine-vendoring-design.md and scala-llm-template docs/superpowers/plans/2026-09-26-harness-engine-vendoring.md. The engine's home is scala-llm-template/kit/harness, vendored per project; not the DSH profile.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn the harness from a repository-local script collection into a profile-carried engine plus a per-project **build contract**, so any project can get the same gate — and `skreeep2` becomes its first consumer.

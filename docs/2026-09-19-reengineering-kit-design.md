@@ -24,6 +24,15 @@ a verification lane — each in its own layer, none of them a framework.
 | L4 | Harness | the gate (`gate.sh`, `lib.sh`, hooks, `check-harness.sh`, the semantic guard) as a runner over a build contract | engine in the `scala-arhitect` profile; project state in `.dsh/` | the build contract (below) |
 | L5 | Verification | the lane protocol: a fresh read-only agent, the diff, the `R-n` list, a verdict per rule | ships with L3 | consumes L1 and L4; produces receipts |
 
+**Amended 2026-09-26 (L4).** The harness engine's home is no longer the `scala-arhitect` profile: it is
+`scala-llm-template/kit/harness`, vendored per project as `.dsh/engine/` by `install.sh` with a verifiable `STAMP`,
+and project state stays in `.dsh/` (spec `docs/superpowers/specs/2026-09-26-harness-engine-vendoring-design.md`;
+scala-llm-template plan `docs/superpowers/plans/2026-09-26-harness-engine-vendoring.md`). Why: Claude Code never
+passes through the profile — its wiring runs the project's own `.dsh/` copy — and the profile is generated from the
+repository, so the repository was already the source of truth. The engine supports Mill only and calls a
+documented set of Mill task names (recipe `kit/recipes/mill.md` §7), which amends interface 2's "the gate never
+learns their names" for Mill.
+
 ### Two interfaces keep the layers independent
 
 1. **Rule IDs (L1 → L2/L3/L5).** Each rule has a stable identifier and a one-line statement. The scalafix config, the

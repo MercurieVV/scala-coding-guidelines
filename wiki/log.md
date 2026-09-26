@@ -188,3 +188,8 @@
 ## [2026-09-26] update | Roadmap: More Scala, Less LLM
 - Disposition: Update
 - Tier 2 item 6 shipped: purrism rewrites applied at turn-end with one review block, and a memorisation check keyed on overlap with test literals (literal_tokens in ScalaSemanticMCP, the judge in the skreeep2 harness). Records the scalafix:ok escape measured not to work for purrism.
+
+## [2026-09-27] update | Verification and the Gate
+- Disposition: Update
+- Where the gate lives: the engine's home is scala-llm-template `kit/harness`, vendored per project as `.dsh/engine/` with a stamp (spec 2026-09-26-harness-engine-vendoring-design); the "gate never learns their names" claim marked Outdated for Mill.
+- Updated: Roadmap: More Scala, Less LLM (a Reengineering Kit status line)

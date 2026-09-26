@@ -2,7 +2,7 @@
 
 > Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
 > Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-26
+> Updated: 2026-09-27
 
 ## Overview
 
@@ -182,6 +182,18 @@ accepts.
 **10. Type-constrained decoding via a local model.** Sampler-level enforcement halved compile errors for TypeScript
 (Mündler et al.), but needs logit access and a type system tractable as a prefix automaton; Scala's is not, and hosted
 models expose no logits. Revisit if dsh runs an open-weight model locally and a Scala-subset grammar is worth building.
+
+## Reengineering Kit status
+
+> **Status: Shipped** (2026-09-26) — the harness engine every shipped item above lives in (the gate, its hooks,
+> `verify-diff`, the rewrite stage, the memorisation check) moved out of skreeep2 into `scala-llm-template`'s
+> `kit/harness`, its one editable home, and is vendored into each project as `.dsh/engine/` with a stamp the
+> installation check verifies; skreeep2 is its first consumer, and a scratch second project is gated end to end by
+> the kit's own recipe. The Mill tasks the engine calls by name ship as a Mill recipe beside it. This replaces the kit
+> design's plan to host the engine in the DSH profile (Plan C, now marked superseded). Spec:
+> `docs/superpowers/specs/2026-09-26-harness-engine-vendoring-design.md` (this repo); where the gate lives is in
+> [Verification and the Gate](../reengineering/verification-and-the-gate.md). Open: the engine supports Mill only —
+> sbt and scala-cli projects get a named stand-down, not checks.
 
 ## What not to do
 

@@ -2,7 +2,7 @@
 
 > Sources: `skreeep2` session, 2026-09-19 (gate and lane findings)
 > Raw: [The reengineering kit — design (2026-09-19)](../../raw/reengineering/2026-09-19-kit-design.md)
-> Updated: 2026-09-19
+> Updated: 2026-09-27
 
 ## Overview
 
@@ -76,6 +76,36 @@ get recipes, but the harness holds no branch for any of them: `preCommit`, `preP
 project's answer, so moving to another build tool is a change to a declaration rather than to the gate. It also keeps
 the coverage map honest, since the gate can never infer coverage from a tool's own defaults — only from what the
 project said.
+
+> **Status: Outdated** (2026-09-26)
+> For Mill, the harness now does learn the build tool's task names. The harness-engine vendoring spec
+> (`docs/superpowers/specs/2026-09-26-harness-engine-vendoring-design.md` in this repository, which amends the kit
+> design's L4 row) makes the engine support Mill only and call a documented set of Mill tasks by name — the module
+> map, the ranged and strict scalafix tasks, compile, the two gate tasks and the ScalaSemantic classpath writer —
+> shipped as a Mill recipe in `scala-llm-template`. A project with positive evidence of another build tool (an sbt
+> or scala-cli build file and no Mill build) gets a named stand-down, never a silent pass and never a block. The
+> declared contract stays the project's own; the engine's hooks read only its optional test and holdout keys.
+
+## Where the gate lives
+
+The design's layer table put the L4 engine in the `scala-arhitect` profile, with project state in `.dsh/`. That
+home did not survive contact with the first project: Claude Code never passes through the profile — its wiring runs
+the project's own `.dsh/` copy of the gate — and the profile was itself generated from the repository, so the
+repository was already the source of truth. The vendoring spec (named in the Status block above) therefore moves the
+engine's single editable home to `scala-llm-template`'s `kit/harness`, and each project carries a vendored copy under
+`.dsh/engine/`:
+
+- an installer run from a template checkout replaces the vendored engine wholesale and seeds project state (the
+  contract, the frozen paths, the policies, both hook-wiring files) only where it is absent;
+- the vendored copy carries a stamp — the template commit, whether the template was dirty, and a hash of the engine
+  tree — and the installation check fails when the tree no longer matches it, so an engine edited in place inside a
+  project is a named failure rather than silent drift;
+- the project freezes its vendored engine, so an agent cannot edit the gate that judges it;
+- the Claude Code settings file stays the human's step: the installer seeds the wiring template, and the human
+  copies it into place.
+
+This keeps `R-8`'s receipt meaningful across projects: every project's gate is a known version of one engine, and
+the check that says so is part of the gate's own installation check.
 
 ## R-9: the lane, and what it is allowed to believe
 
