@@ -63,8 +63,8 @@ section in `kit/recipes/mill.md`), lifted from ScalaSemanticMCP and generalised:
 **K1 — `toPcm16(v: Double): Short`** (16-bit saturation):
 ```scala
 ensuring(r =>
-  (v >= 32767.0  ==> r == 32767) &&
-  (v <= -32768.0 ==> r == -32768) &&
+  (v >= 32767.0  ==> (r == 32767)) &&
+  (v <= -32768.0 ==> (r == -32768)) &&
   ((v > -32768.0 && v < 32767.0) ==> (r.toDouble <= v + 1.0 && r.toDouble >= v - 1.0)))
 ```
 Both saturation bounds pinned as exact values; truncation within 1. NaN keeps today's result (`0`); no `require`.
@@ -72,7 +72,7 @@ Both saturation bounds pinned as exact values; truncation within 1. NaN keeps to
 **K2 — `framesToNanos(frames: Int, sampleRate: Int): Long`** (from `framesToTime`):
 ```scala
 require(frames >= 0 && sampleRate > 0)
-ensuring(r => r >= 0 && (frames == 0 ==> r == 0))
+ensuring(r => r >= 0 && (frames == 0 ==> (r == 0)))
 ```
 
 **K3 — `samplesToNanos(samples: Long, sampleRate: Int): Long`** (from `RelativeTime.fromSampleOffset`):
@@ -86,6 +86,12 @@ The `require` makes today's silent overflow bound visible and proven (≈9.2e9 s
 **Feasibility is measured first.** Plan task 1 runs K1–K3 (and a `???` body) through Stainless 0.9.9.3. Any contract the
 tool cannot express or discharge is reformulated into one the human approves — never silently dropped. Division by a
 variable is nonlinear and may yield `unknown`, which the gate notes (§3).
+
+**Measured 2026-09-27 (Stainless 0.9.9.3, `scala-llm-template` `kit/recipes/mill/stainless-feasibility.md`) and decided by the human:**
+- `==>` binds like `==`, so the implications are bracketed (`a ==> (r == c)`) — as written above.
+- K1: the postcondition is provable; the body's comparisons and `.toShort` fail on NaN (counterexample `v = NaN`). **Decision:** the contract stays as written; the body handles NaN first (returns `0`, today's runtime result).
+- K2, K3: the postconditions are provable; the `Long` multiplication overflow check stays `unknown` (solver timeout at 10 s and 60 s). **Decision:** accepted — the gate reports it as a named `unknown` note (§3), not a block.
+- A typed `(??? : T)` body is reported by Stainless as a missing implementation and exits 0 — the gate must treat it as unverified, never as a pass.
 
 **Callers stay behaviour-identical**: `toPcm16` forwarder; `framesToTime` = `framesToNanos(...).nanos`;
 `fromSampleOffset` via `samplesToNanos`. Existing skreeep2 tests stay green.
