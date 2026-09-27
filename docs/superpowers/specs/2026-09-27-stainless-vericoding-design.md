@@ -1,6 +1,6 @@
 # Stainless on the pure kernel — vericoding under the gate (roadmap Tier 3, item 9)
 
-**Status:** approved design, 2026-09-27. Roadmap: `wiki/llm-scala-fusion/roadmap-more-scala-less-llm.md` item 9 —
+**Status:** approved design, 2026-09-27; amended 2026-09-28 with the measured Stainless behaviour and the final review's rulings (added clauses, escapes, snapshot always written and frozen, stage order). Roadmap: `wiki/llm-scala-fusion/roadmap-more-scala-less-llm.md` item 9 —
 "the human writes `require`/`ensuring`, the LLM fills the body until Stainless accepts."
 
 ## Context (measured 2026-09-27)
@@ -45,7 +45,7 @@ section in `kit/recipes/mill.md`), lifted from ScalaSemanticMCP and generalised:
 **3. Engine (edited in `scala-llm-template/kit/harness`, vendored as usual).**
 - `.dsh/policy/kernels.tsv`: `<file> TAB <module> TAB <reason>`; frozen; seeded header-only; `#` comments allowed.
 - SessionStart `baseline`: snapshot `contract_clauses` of every registered kernel file (dirty or not) into
-  `.dsh/.state/contracts-<session>.tsv`.
+  `.dsh/.state/contracts/<session>.tsv` (frozen by `.dsh/.state/contracts/**`; always written — header-only, or marked `incomplete: <reason>` when the tool could not answer), together with a per-file count of verification escapes (`assume(`, `@extern`, `@ignore`).
 - Turn-end **vericoding stage** (§3).
 - `check-harness`: `kernels.tsv` parses; every file exists; every module is in the module map; the file itself is frozen;
   the launcher answers `contract_clauses`.
@@ -98,13 +98,15 @@ variable is nonlinear and may yield `unknown`, which the gate notes (§3).
 
 ## §3 Gate semantics
 
-Runs at turn-end after the module's compile/checks, only when the turn touched a file listed in `kernels.tsv`:
+Runs at turn-end after the module's compile/checks and after the contract's turn-end tests (so Stainless gets only the Stop hook's remaining budget), only when the turn touched a file listed in `kernels.tsv`, and not for a module whose checks or tests already blocked:
 
 1. **Contract guard.** `contract_clauses` on the touched kernel files vs the session snapshot, keyed by `key`:
    - a changed clause `shape`, or a removed clause/def-with-contract → **block**, naming the def with old and new clause
      text: "contracts are the human's — ask in chat";
    - a new def with a contract (lemma/helper) → allowed;
-   - no snapshot for the session → named note (cannot compare); the Stainless check still runs;
+   - a clause ADDED to a def the snapshot already knows (e.g. a new `require`) → **block** (adding a precondition weakens what callers may rely on);
+   - no snapshot record for the session → **block** (SessionStart always writes one, so absence means deletion); a record marked `incomplete:` → named note (cannot compare); the Stainless check still runs;
+   - more verification escapes (`assume(`, `@extern`, `@ignore`) in a kernel than at snapshot → **block**;
    - tool failure / launcher missing → `dnote` stand-down of the guard (named).
 2. **Stainless.** `<module>.stainlessVerify --targets <all kernel files of that module>`:
    - exit 1 → **block** listing each `invalid` VC (function, VC kind, counterexample; capped), remedy "fix the body; if
@@ -116,7 +118,7 @@ Runs at turn-end after the module's compile/checks, only when the turn touched a
 Human contract edits: the snapshot is taken at SessionStart over every kernel file, so a contract the human edits
 before or between sessions is the baseline; a block fires only for changes between snapshot and turn-end.
 
-A `???` body: Stainless reports it invalid or unsupported (measured in task 1); the block's remedy is "fill the body".
+A `???` body: an untyped `{ …; ??? }` does not compile (Stainless rejects the kernel → **block**, "Stainless cannot compile <file>:<l>"); a typed `(??? : T)` is reported as a missing implementation with exit 0 (measured in task 1) → **block** "a kernel body is not implemented yet". A body outside the Stainless-supported subset is the same compile block. Stainless runs with `--no-server`, inside one time budget for the whole stage (480 s cap, 540 s Stop budget); running out is a named "not verified" note.
 
 ## §4 Testing and delivery
 
@@ -124,7 +126,7 @@ A `???` body: Stainless reports it invalid or unsupported (measured in task 1); 
   change; multi-line clause; infix `ensuring`; `decreases`; parse error per file. Docs golden; one-shot `call` test.
 - **Engine fixtures** (stub launcher + stub Mill): changed contract blocks; removed contract blocks; new lemma passes;
   body-only change runs Stainless only; `invalid` blocks with counterexample text; `unknown` notes; exit 2 notes; no
-  kernel touched → nothing runs; no snapshot → note. `lib-test` + `check-harness` for `kernels.tsv` parse/freeze rules.
+  kernel touched → nothing runs; no snapshot record → block; `incomplete:` record → note; added clause → block; added `assume` → block. `lib-test` + `check-harness` for `kernels.tsv` parse/freeze rules.
 - **Real Stainless:** a recipe smoke over one scratch kernel (valid and invalid); skreeep2 `core.stainlessVerify` green.
 - **Live smoke in skreeep2:** the agent fills a `???` body under the gate; one live contract change is blocked.
 
