@@ -63,9 +63,11 @@ section in `kit/recipes/mill.md`), lifted from ScalaSemanticMCP and generalised:
 **K1 — `toPcm16(v: Double): Short`** (16-bit saturation):
 ```scala
 ensuring(r =>
-  (v >= 32767.0  ==> (r == 32767)) &&
-  (v <= -32768.0 ==> (r == -32768)) &&
-  ((v > -32768.0 && v < 32767.0) ==> (r.toDouble <= v + 1.0 && r.toDouble >= v - 1.0)))
+  (v.isNaN ==> (r == 0)) &&
+  (!v.isNaN ==> (
+    (v >= 32767.0  ==> (r == 32767)) &&
+    (v <= -32768.0 ==> (r == -32768)) &&
+    ((v > -32768.0 && v < 32767.0) ==> (r.toDouble <= v + 1.0 && r.toDouble >= v - 1.0)))))
 ```
 Both saturation bounds pinned as exact values; truncation within 1. NaN keeps today's result (`0`); no `require`.
 
@@ -89,7 +91,7 @@ variable is nonlinear and may yield `unknown`, which the gate notes (§3).
 
 **Measured 2026-09-27 (Stainless 0.9.9.3, `scala-llm-template` `kit/recipes/mill/stainless-feasibility.md`) and decided by the human:**
 - `==>` binds like `==`, so the implications are bracketed (`a ==> (r == c)`) — as written above.
-- K1: the postcondition is provable; the body's comparisons and `.toShort` fail on NaN (counterexample `v = NaN`). **Decision:** the contract stays as written; the body handles NaN first (returns `0`, today's runtime result).
+- K1: the original ensuring compares `v` with NaN itself (3 invalid VCs, counterexample `v = NaN`), which no body can fix — measured in the skreeep2 live session 2026-09-28. **Decision (revised):** the original three clauses are guarded by `!v.isNaN` and `NaN ==> (r == 0)` pins today's runtime result, as written above; Stainless: 49 valid, 0 invalid, 2 unknown (K2/K3 overflow).
 - K2, K3: the postconditions are provable; the `Long` multiplication overflow check stays `unknown` (solver timeout at 10 s and 60 s). **Decision:** accepted — the gate reports it as a named `unknown` note (§3), not a block.
 - A typed `(??? : T)` body is reported by Stainless as a missing implementation and exits 0 — the gate must treat it as unverified, never as a pass.
 
