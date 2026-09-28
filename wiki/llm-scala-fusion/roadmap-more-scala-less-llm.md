@@ -2,7 +2,7 @@
 
 > Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
 > Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-27
+> Updated: 2026-09-28
 
 ## Overview
 
@@ -176,6 +176,26 @@ in the `workspace-write` sandbox. Side benefit: the compiler now type-checks the
 the verifier is strong and the spec formal (82% in Dafny), and prose adds nothing. *Build:* extend the existing Mill
 Stainless integration with a skill: the human writes `require`/`ensuring`, the LLM fills the body until Stainless
 accepts.
+
+> **Status: Shipped** (2026-09-28) — in three repositories. *ScalaSemanticMCP:* a syntax-only `contract_clauses` tool
+> lists every def's `require`/`ensuring`/`decreases` with a shape hash of each clause's syntax tree, so reformatting
+> never reads as a change and any edit to a clause does. *scala-llm-template:* a Stainless Mill recipe, a frozen
+> kernel registry (`.dsh/policy/kernels.tsv`), and a turn-end vericoding stage in the vendored engine — the contracts
+> of every registered kernel are snapshotted at SessionStart and are the human's: a changed, removed or added clause, a
+> missing snapshot, or a new `assume`/`@extern`/`@ignore` blocks; then Stainless runs, and an invalid verification
+> condition, a body Stainless cannot compile, or an unimplemented body blocks, while a solver timeout is only a note;
+> plus a `vericoding` skill. *skreeep2:* the first kernels, three audio/time helpers, verified in place; an agent
+> filled the bodies in a live gated session, and the existing callers delegate to them with unchanged behaviour.
+> Spec: `docs/superpowers/specs/2026-09-27-stainless-vericoding-design.md` (this repo).
+>
+> What measurement changed: the real tool, not the design, settled three things. An implication written `a ==> r == c`
+> does not type-check (`==>` binds like `==`). One human-written postcondition compared its input with NaN itself, so no
+> body could satisfy it — the live session surfaced it, the agent stopped and asked instead of editing the contract, and
+> the human revised the contract. And `require`/`ensuring` in production code are not erased by default: they run on
+> every call unless Stainless's `StaticChecks` is imported. The live session also proved the guard's point — a contract
+> edit the human asked for in chat was still blocked until the human reviewed it and started a new session. Open: an
+> escape written as script-side file writes is not caught by the engine; the turn-end tests have no time cap of their
+> own.
 
 ## Tier 4 — long range
 

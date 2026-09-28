@@ -193,3 +193,7 @@
 - Disposition: Update
 - Where the gate lives: the engine's home is scala-llm-template `kit/harness`, vendored per project as `.dsh/engine/` with a stamp (spec 2026-09-26-harness-engine-vendoring-design); the "gate never learns their names" claim marked Outdated for Mill.
 - Updated: Roadmap: More Scala, Less LLM (a Reengineering Kit status line)
+
+## [2026-09-28] update | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Tier 3 item 9 shipped: `contract_clauses` in ScalaSemanticMCP, the Stainless recipe + kernel registry + turn-end vericoding stage + skill in scala-llm-template, and the skreeep2 pilot (kernels verified in place, bodies filled in a live gated session). Records what the real tool changed: `==>` precedence, a NaN-comparing postcondition revised by the human, and runtime contracts unless `StaticChecks` is imported.
