@@ -2,7 +2,7 @@
 
 > Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
 > Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-28
+> Updated: 2026-09-29
 
 ## Overview
 
@@ -196,6 +196,20 @@ accepts.
 > edit the human asked for in chat was still blocked until the human reviewed it and started a new session. Open: an
 > escape written as script-side file writes is not caught by the engine; the turn-end tests have no time cap of their
 > own.
+>
+> **Follow-up shipped** (2026-09-29) — both open items closed in the engine (scala-llm-template `kit/harness`,
+> re-vendored into skreeep2). A frozen path is now checked after the fact at turn-end, whatever route wrote it: git's
+> changed paths are matched against the frozen rows (session baseline respected, so the human's in-flight work is not
+> blamed on the agent), and git-ignored frozen files are hashed at SessionStart and re-checked. Before a command runs,
+> an interpreter or inline shell (`python3 -c`, `sh -c`, a writing `awk`) whose text names a frozen path is denied.
+> Each module's turn-end tests run under their own time cap inside the Stop hook's budget; a timeout is a note, not a
+> block. One exemption, a human decision: Claude Code itself writes `.claude/settings.local.json` on "don't ask again",
+> so a change there is a loud note rather than a block. Live check in skreeep2: the inline-interpreter write was denied
+> before it ran; asked to compute the path in a script instead, the agent refused — the deny message had named that
+> route as a bypass — so the post-hoc layer was proven with a human-side edit, which blocked every turn until the
+> attempt cap released it. Documented blind spot: an agent with arbitrary code execution can still rewrite a
+> git-ignored frozen file together with its hash record; only a sandbox closes that. Spec:
+> `docs/superpowers/specs/2026-09-28-frozen-path-bypasses-design.md` (this repo).
 
 ## Tier 4 — long range
 

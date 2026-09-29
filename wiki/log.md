@@ -197,3 +197,7 @@
 ## [2026-09-28] update | Roadmap: More Scala, Less LLM
 - Disposition: Update
 - Tier 3 item 9 shipped: `contract_clauses` in ScalaSemanticMCP, the Stainless recipe + kernel registry + turn-end vericoding stage + skill in scala-llm-template, and the skreeep2 pilot (kernels verified in place, bodies filled in a live gated session). Records what the real tool changed: `==>` precedence, a NaN-comparing postcondition revised by the human, and runtime contracts unless `StaticChecks` is imported.
+
+## [2026-09-29] update | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Item 9 follow-up shipped: the engine closes frozen-path bypasses (post-hoc turn-end check over git's changed paths, SessionStart hash record for git-ignored frozen files, a tool-policy rule for interpreters and inline shells) and caps turn-end tests inside the Stop budget; `.claude/settings.local.json` changes are a note by human decision. Records the skreeep2 live check (inline write denied; the agent refused the computed-path route; a human-side edit proved the post-hoc block and the attempt cap).
