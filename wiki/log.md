@@ -262,3 +262,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-01-local-delete-only-turn-probe.md
 - Item 7 test-map follow-up: a delete-only turn ended green at the Stop gate (probe in skreeep2); turn-end now checks the module that owned a deleted source file and its dependents, and blames errors anywhere in that module on the turn. Closed in scala-llm-template 834d4ea.
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-01-local-holdout-cap-probe.md
+- Item 1 follow-up: the turn-end holdout run had no time cap (probe: `sleep 40` under a 20 s budget held the hook 40 s); now capped by `DSH_HOLDOUT_CAP` and the Stop budget. Closed in scala-llm-template 7d23e59.
