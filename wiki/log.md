@@ -247,3 +247,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-01-local-gate-wrapper-bypass-probe.md
 - Item 1 follow-up: the holdout seal and sbt deny were bypassable through wrapper options and `eval` / `sh -c` (probe in skreeep2); the hook's parser now sees through both, and run-time-computed inline commands are refused. Item 1's "`bash -c` stays outside the layer" no longer holds.
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update; Outdated
+- Raw: raw/llm-scala-fusion/2026-10-01-local-live-gated-check-skreeep2.md
+- Live gated check in a skreeep2 worktree: downstream turnEndTests block confirmed (item 7 follow-up). Item 1's "wrapper bypass closed" marked Outdated: wrappers with option arguments in front of `eval` / `sh -c` still passed; closed in scala-llm-template b1c8ac4, with the turn-end closing line and clean-compile feedback fixed alongside.
