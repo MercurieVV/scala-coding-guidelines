@@ -242,3 +242,8 @@
 - Raw: raw/llm-scala-fusion/2026-03-18-tdad-results-and-limitations.md
 - Raw: raw/llm-scala-fusion/2026-10-01-local-skreeep2-downstream-tests-measurement.md
 - Item 7's TDAD test-map follow-up shipped at module level: the build writes each module's dependents with tests into the module map; turn-end runs their turnEndTests (after vericoding, only when nothing earlier blocked) and blocks on red. Evidence: frontier break-rates (TensorBench), relevant-subset gains (TestPrune), TDAD's own caveats; skreeep2 gap and cost measured; oracle 0 mismatches.
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-01-local-gate-wrapper-bypass-probe.md
+- Item 1 follow-up: the holdout seal and sbt deny were bypassable through wrapper options and `eval` / `sh -c` (probe in skreeep2); the hook's parser now sees through both, and run-time-computed inline commands are refused. Item 1's "`bash -c` stays outside the layer" no longer holds.
