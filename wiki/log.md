@@ -234,3 +234,11 @@
 - Raw: raw/llm-scala-fusion/2026-10-01-local-probe-scalasemantic-code-execution.md
 - Tier 3 item 8 investigated and not pursued as a new surface: code-as-tool-use wins in proportion to tool count and result size, with measured losses (parallel calls, three-server orchestration); for ScalaSemantic the tool schemas are already deferred, symbol results are small, and a local probe measured a small saving. The published library already lets an agent script queries through scala-cli.
 - Updated: Harness and Tooling Gaps (Status: Disputed on code execution over tool-by-tool orchestration)
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2025-10-21-testprune-old-tests-new-tricks-swe-issues.md
+- Raw: raw/llm-scala-fusion/2026-06-04-tensorbench-coding-agents-tensor-framework.md
+- Raw: raw/llm-scala-fusion/2026-03-18-tdad-results-and-limitations.md
+- Raw: raw/llm-scala-fusion/2026-10-01-local-skreeep2-downstream-tests-measurement.md
+- Item 7's TDAD test-map follow-up shipped at module level: the build writes each module's dependents with tests into the module map; turn-end runs their turnEndTests (after vericoding, only when nothing earlier blocked) and blocks on red. Evidence: frontier break-rates (TensorBench), relevant-subset gains (TestPrune), TDAD's own caveats; skreeep2 gap and cost measured; oracle 0 mismatches.
