@@ -257,3 +257,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-01-local-fixstrict-config-error-probe.md
 - Item 3 follow-up: `fixStrict` passed (`exit=0`) when scalafix could not run (unknown rule in `.scalafix.conf`, probe in skreeep2); it now fails by name and the engine renders an INFRA record. Closes item 3's open note on swallowed config errors.
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-01-local-delete-only-turn-probe.md
+- Item 7 test-map follow-up: a delete-only turn ended green at the Stop gate (probe in skreeep2); turn-end now checks the module that owned a deleted source file and its dependents, and blames errors anywhere in that module on the turn. Closed in scala-llm-template 834d4ea.
