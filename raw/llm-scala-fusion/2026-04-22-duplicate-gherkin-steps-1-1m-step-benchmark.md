@@ -1,0 +1,17 @@
+# Deja Vu at Scale: Paraphrase-Robust Detection of Duplicate Gherkin Steps in Behaviour-Driven Software Testing with Sentence-Transformer Embeddings and a 1.1M-Step Open Benchmark
+
+> Source: https://arxiv.org/abs/2604.20462
+> Collected: 2026-10-01
+> Published: 2026-04-22
+
+Authors: Mughal, Ali Hassaan; Fatima, Noor; Bilal, Muhammad
+
+## Abstract
+
+Context. Behaviour-Driven Development (BDD) suites in Gherkin accumulate step-text duplication with documented maintenance cost. Prior detectors either require runnable tests or are single-organisation, leaving a gap: a static, paraphrase-robust, step-level detector and a public benchmark to calibrate it. Objective. We release (i) the largest cross-organisational BDD step corpus to date, (ii) a labelled pair-level calibration benchmark, and (iii) a four-strategy detector with a consolidation-savings model linking clusters to ISO/IEC 25010 maintainability sub-characteristics. Method. The corpus contains 347 public GitHub repositories, 23,667 .feature files, and 1,113,616 Gherkin steps, SPDX-tagged. The detector layers exact hashing, normalised Levenshtein, sentence-transformer cosine, and a Levenshtein-banded hybrid. Calibration uses 1,020 manually labelled step pairs under a released rubric (60-pair overlap, Fleiss kappa = 0.84). We report precision, recall, and F1 with bootstrap 95% CIs under the primary rubric and a score-free relabelling, and benchmark against SourcererCC-style and NiCad-style lexical baselines. Results. Step-weighted exact-duplicate rate is 80.2%; median-repository rate is 58.6% (Spearman rho = 0.51). The top hybrid cluster has 20,737 occurrences across 2,245 files. Near-exact reaches F1 = 0.822 on score-free labels; semantic F1 = 0.906 under the primary rubric reflects a disclosed stratification artefact. Lexical baselines reach F1 = 0.761 and 0.799. The savings model estimates 893,357 corpus-wide eliminable step occurrences; on the median repository 62.5% of step lines are eliminable.
+
+## Excerpts (verbatim, from the HTML full text)
+
+> Method. The corpus comprises 347 public GitHub repositories, 23,667 parsed .feature files, and 1,113,616 Gherkin steps, discovered via the GitHub REST Search API and tagged with SPDX licence identifiers. The detector layers exact hashing, normalised Levenshtein, sentence-transformer cosine, and a hybrid Levenshtein-banded variant. Calibration uses 1,020 step pairs manually labelled by the three authors under a released rubric, with a 60-pair overlap subset for inter-annotator agreement (Fleiss’ ). We report precision, recall, and F 1 with bootstrap 95 % confidence intervals under two protocols (the primary rubric and a score-free second-pass relabelling) and benchmark against two classical lexical baselines (SourcererCC-style token Jaccard and NiCad-style char- -gram TF-IDF).
+
+> Gherkin, the near-English notation used by Cucumber, Behat, SpecFlow, pytest-bdd, behave, and related Behaviour-Driven Development (BDD) frameworks ( North, 2006 ; Wynne et al., 2017 ) , is deployed at considerable scale: our survey of public GitHub places approximately 55,000 .feature files in indexable repositories, of which this paper assembles a subset of 347 repositories (23,667 parsed feature files, 1,113,616 steps; Section 5 ). Across that corpus, more than four out of every five steps are byte-identical duplicates of another step in the same corpus; under paraphrase-robust matching the most-repeated canonical step phrasing ( the response status is 200 OK ) appears 20,737 times across 2,245 files in 43 distinct repositories.

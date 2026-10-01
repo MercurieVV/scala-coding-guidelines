@@ -1,8 +1,8 @@
 # Roadmap: More Scala, Less LLM
 
-> Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28
-> Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md)
-> Updated: 2026-09-29
+> Sources: synthesis over the topic's sources — Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; He et al., 2025-06-23; Lang et al. (FPEval), 2026-01-05; Anthropic Engineering, 2025-11-04; Bursuc et al., 2025-09-26; Mündler et al., 2025-04-12; Hassani et al., 2025-08-28; Feng et al., 2026-05-04; Alonso et al. (TDAD), 2026-03-18; Chen et al., 2026-02-08; Liang et al., 2026-07-28; Mughal et al., 2026-04-22
+> Raw: [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Type-constrained code generation](../../raw/llm-scala-fusion/2025-04-12-type-constrained-code-generation-pldi-2025.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md); [Structured spec-driven generation (Gherkin vs NL)](../../raw/llm-scala-fusion/2026-05-04-structured-spec-driven-repo-level-generation-gherkin.md); [TDAD](../../raw/llm-scala-fusion/2026-03-18-tdad-test-driven-agentic-development.md); [Agent-generated tests](../../raw/llm-scala-fusion/2026-02-08-rethinking-value-of-agent-generated-tests.md); [Do code LMs follow tests](../../raw/llm-scala-fusion/2026-07-28-do-code-lms-follow-tests-paired-interventions.md); [Duplicate Gherkin steps](../../raw/llm-scala-fusion/2026-04-22-duplicate-gherkin-steps-1-1m-step-benchmark.md)
+> Updated: 2026-10-01
 
 ## Overview
 
@@ -166,6 +166,22 @@ readable spec. *Evidence:* LLM-generated Gherkin rated relevance 95%, clarity 10
 hallucinations that need review. *Build:* in the template, a cucumber-scala (or specs2) layout where step signatures
 are typed holes over opaque domain types, Then-clauses are properties, and scenarios split into visible/holdout. Detail
 in [Alternative Paradigms and the BDD Seam](alternative-paradigms-and-bdd-seam.md).
+
+> **Status: Outdated** (2026-10-01) — investigated, not pursued. Measured evidence does not show that a BDD layer makes
+> a coding agent's work easier; it shows that the executable half helps and the textual half does not. Gherkin given to
+> the agent as its spec scored 6.8% lower TPR than natural language on average and won only 14 out of the 30
+> model/tool/sample combinations, while the typed signature model improved average TPR (+7.82%) (Feng et al.). Generic
+> TDD instructions without test context raised SWE-bench Verified regressions to 9.94%, against 6.08% for the vanilla
+> agent, while a source-to-test map cut them to 1.82% and moved resolution from 24% to 32% (TDAD). Prompting agents to
+> write more or fewer tests barely moved resolution (GPT-5.2 71.8% both ways; Gemini 3 Pro 74.2% to 73.2%) (Chen et
+> al., agent-generated tests). Models follow test-specified rules inconsistently — mean switching rates from 11.1% to
+> 65.8% — while explicit descriptions elicit the rule on every instance (Liang et al.). On the cost side, 80.2% of
+> 1,113,616 public Gherkin steps are exact duplicates. A throwaway probe on a skreeep2 kernel confirmed the tool facts:
+> a Scala step algebra rejects a mistyped step at compile time; cucumber-scala compiles it and reports the step
+> undefined only at run time, and its step text and body sit in one call, so the signature cannot be frozen apart from
+> the body. What the evidence supports already ships: frozen executable tests and the holdout (item 1), property
+> feedback with minimal counterexamples (item 2), typed holes (item 4). Open follow-up: TDAD's test map — show the agent
+> which tests cover the files it touched — which the engine's module map could provide.
 
 **8. Code-execution surface for the semantic tools.** *Closes:* context bloat and multi-step tool fragility.
 *Evidence:* Anthropic's example fell "from 150,000 tokens to 2,000 tokens"; Felendler et al. confirm the gain and the

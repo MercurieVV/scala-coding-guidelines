@@ -1,8 +1,8 @@
 # Alternative Paradigms: Spec-First, Neurosymbolic Split, and the BDD Seam
 
-> Sources: Bursuc et al., 2025-09-26; Lee et al., 2023-09-25; Hassani et al., 2025-08-28; Farrag, 2026-05-01; Helff et al., 2026-04-16; He et al., 2025-06-23; Ge et al. (vibe-coding survey), 2025-10-14
-> Raw: [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Guess & Sketch](../../raw/llm-scala-fusion/2023-09-25-guess-and-sketch-neurosymbolic-transpilation.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md); [Productivity-Reliability Paradox](../../raw/llm-scala-fusion/2026-05-01-productivity-reliability-paradox-spec-driven-governance.md); [LLMs gaming verifiers](../../raw/llm-scala-fusion/2026-04-16-llms-gaming-verifiers-rlvr-reward-hacking.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Survey of vibe coding](../../raw/llm-scala-fusion/2025-10-14-survey-of-vibe-coding-with-llms.md)
-> Updated: 2026-09-19
+> Sources: Bursuc et al., 2025-09-26; Lee et al., 2023-09-25; Hassani et al., 2025-08-28; Farrag, 2026-05-01; Helff et al., 2026-04-16; He et al., 2025-06-23; Ge et al. (vibe-coding survey), 2025-10-14; Feng et al., 2026-05-04; Alonso et al. (TDAD), 2026-03-18; Chen et al., 2026-02-08; Liang et al., 2026-07-28; Mughal et al., 2026-04-22
+> Raw: [Vericoding benchmark](../../raw/llm-scala-fusion/2025-09-26-vericoding-benchmark-formally-verified-program-synthesis.md); [Guess & Sketch](../../raw/llm-scala-fusion/2023-09-25-guess-and-sketch-neurosymbolic-transpilation.md); [From Law to Gherkin](../../raw/llm-scala-fusion/2025-08-28-from-law-to-gherkin-llm-behavioural-specifications.md); [Productivity-Reliability Paradox](../../raw/llm-scala-fusion/2026-05-01-productivity-reliability-paradox-spec-driven-governance.md); [LLMs gaming verifiers](../../raw/llm-scala-fusion/2026-04-16-llms-gaming-verifiers-rlvr-reward-hacking.md); [Property-Generated Solver](../../raw/llm-scala-fusion/2025-06-23-property-generated-solver-property-oriented-feedback.md); [Survey of vibe coding](../../raw/llm-scala-fusion/2025-10-14-survey-of-vibe-coding-with-llms.md); [Structured spec-driven generation (Gherkin vs NL)](../../raw/llm-scala-fusion/2026-05-04-structured-spec-driven-repo-level-generation-gherkin.md); [TDAD](../../raw/llm-scala-fusion/2026-03-18-tdad-test-driven-agentic-development.md); [Agent-generated tests](../../raw/llm-scala-fusion/2026-02-08-rethinking-value-of-agent-generated-tests.md); [Do code LMs follow tests](../../raw/llm-scala-fusion/2026-07-28-do-code-lms-follow-tests-paired-interventions.md); [Duplicate Gherkin steps](../../raw/llm-scala-fusion/2026-04-22-duplicate-gherkin-steps-1-1m-step-benchmark.md)
+> Updated: 2026-10-01
 
 ## Overview
 
@@ -88,6 +88,17 @@ None of the four paradigms is Scala-specific; what is new is the composition: a 
 signatures are typed holes, whose Then-clauses are properties with shrinking feedback, whose scenarios split into
 visible and held-out suites, and whose pure core can be lifted to Stainless. Each piece has evidence; the composition
 has none yet — it is the experiment to run.
+
+> **Status: Disputed**
+> Later measurements split the seam in two. The *textual* half does not help the agent: Gherkin given as the coding
+> agent's spec scored 6.8% lower TPR than natural language on average, winning 14 out of the 30 combinations (Feng et
+> al.), and models follow test-specified rules inconsistently (mean switching rates from 11.1% to 65.8%) while explicit
+> descriptions elicit the rule on every instance (Liang et al.). The *executable and typed* half does: the typed
+> signature model improved average TPR (+7.82%) (Feng et al.); a source-to-test map cut agent regressions from 6.08% to
+> 1.82%, while generic TDD instructions without it raised them to 9.94% (TDAD). Gherkin suites also carry a measured
+> duplication cost: 80.2% of 1,113,616 public steps are exact duplicates (Mughal et al.). The roadmap therefore keeps
+> typed step signatures, properties and the holdout, and drops the Gherkin/BDD layer — see
+> [Roadmap: More Scala, Less LLM](roadmap-more-scala-less-llm.md), item 7.
 
 ## See Also
 

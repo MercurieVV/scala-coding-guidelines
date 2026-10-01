@@ -201,3 +201,25 @@
 ## [2026-09-29] update | Roadmap: More Scala, Less LLM
 - Disposition: Update
 - Item 9 follow-up shipped: the engine closes frozen-path bypasses (post-hoc turn-end check over git's changed paths, SessionStart hash record for git-ignored frozen files, a tool-policy rule for interpreters and inline shells) and caps turn-end tests inside the Stop budget; `.claude/settings.local.json` changes are a note by human decision. Records the skreeep2 live check (inline write denied; the agent refused the computed-path route; a human-side edit proved the post-hoc block and the attempt cap).
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update; Disputed
+- Raw: raw/llm-scala-fusion/2026-05-04-structured-spec-driven-repo-level-generation-gherkin.md
+- Raw: raw/llm-scala-fusion/2026-03-18-tdad-test-driven-agentic-development.md
+- Raw: raw/llm-scala-fusion/2026-02-08-rethinking-value-of-agent-generated-tests.md
+- Raw: raw/llm-scala-fusion/2026-07-28-do-code-lms-follow-tests-paired-interventions.md
+- Raw: raw/llm-scala-fusion/2026-04-22-duplicate-gherkin-steps-1-1m-step-benchmark.md
+- Tier 3 item 7 investigated and not pursued: Gherkin as agent input measured below natural language; typed signatures, a source-to-test map and property feedback carry the measured gains. Follow-up noted: TDAD's test map via the engine's module map.
+- Updated: Alternative Paradigms: Spec-First, Neurosymbolic Split, and the BDD Seam (Status: Disputed on the BDD seam)
+
+## [2026-10-01] ingest | no material: raw/llm-scala-fusion/2025-04-09-acceptance-test-generation-llm-industrial-case.md
+- Disposition: No material
+
+## [2026-10-01] ingest | no material: raw/llm-scala-fusion/2025-10-21-atomic-llm-acceptance-tests-mobile-industrial.md
+- Disposition: No material
+
+## [2026-10-01] ingest | no material: raw/llm-scala-fusion/2026-04-07-spec-kit-agents-context-grounded-workflows.md
+- Disposition: No material
+
+## [2026-10-01] ingest | no material: raw/llm-scala-fusion/2026-05-14-given-when-then-again-bdd-subscenario-refactoring.md
+- Disposition: No material
