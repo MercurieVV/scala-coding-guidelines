@@ -252,3 +252,8 @@
 - Disposition: Update; Outdated
 - Raw: raw/llm-scala-fusion/2026-10-01-local-live-gated-check-skreeep2.md
 - Live gated check in a skreeep2 worktree: downstream turnEndTests block confirmed (item 7 follow-up). Item 1's "wrapper bypass closed" marked Outdated: wrappers with option arguments in front of `eval` / `sh -c` still passed; closed in scala-llm-template b1c8ac4, with the turn-end closing line and clean-compile feedback fixed alongside.
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-01-local-fixstrict-config-error-probe.md
+- Item 3 follow-up: `fixStrict` passed (`exit=0`) when scalafix could not run (unknown rule in `.scalafix.conf`, probe in skreeep2); it now fails by name and the engine renders an INFRA record. Closes item 3's open note on swallowed config errors.
