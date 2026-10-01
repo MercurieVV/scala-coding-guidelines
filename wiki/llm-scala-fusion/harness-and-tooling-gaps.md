@@ -1,8 +1,8 @@
 # Harness and Tooling Gaps: purrism, ScalaSemantic, the Template and the dsh Profile Against the Literature
 
-> Sources: Felendler et al., 2026-02-17; Anthropic Engineering, 2025-11-04; oraios/serena README, Unknown; Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Ge et al. (vibe-coding survey), 2025-10-14; Zhong et al. (ImpossibleBench), 2025-10-23; Lang et al. (FPEval), 2026-01-05
-> Raw: [MCP design choices](../../raw/llm-scala-fusion/2026-02-17-mcp-design-choices-tool-orchestration-vs-code-execution.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Serena](../../raw/llm-scala-fusion/serena-mcp-semantic-coding-toolkit.md); [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [Survey of vibe coding](../../raw/llm-scala-fusion/2025-10-14-survey-of-vibe-coding-with-llms.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md)
-> Updated: 2026-09-19
+> Sources: Felendler et al., 2026-02-17; Anthropic Engineering, 2025-11-04; oraios/serena README, Unknown; Blinn et al., 2024-09-02; Khati et al., 2026-01-27; Ge et al. (vibe-coding survey), 2025-10-14; Zhong et al. (ImpossibleBench), 2025-10-23; Lang et al. (FPEval), 2026-01-05; Patel et al., 2026-08-06; Anthropic Engineering, 2025-11-24; Maxim (Bifrost), Unknown
+> Raw: [MCP design choices](../../raw/llm-scala-fusion/2026-02-17-mcp-design-choices-tool-orchestration-vs-code-execution.md); [Code execution with MCP](../../raw/llm-scala-fusion/2025-11-04-anthropic-code-execution-with-mcp.md); [Serena](../../raw/llm-scala-fusion/serena-mcp-semantic-coding-toolkit.md); [Typed holes (Hazel)](../../raw/llm-scala-fusion/2024-09-02-statically-contextualizing-llms-with-typed-holes.md); [Deterministic AST hallucination correction](../../raw/llm-scala-fusion/2026-01-27-deterministic-ast-hallucination-detection-correction.md); [Survey of vibe coding](../../raw/llm-scala-fusion/2025-10-14-survey-of-vibe-coding-with-llms.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [Bitter Lesson of Tool Calling](../../raw/llm-scala-fusion/2026-08-06-bitter-lesson-of-tool-calling.md); [Advanced tool use](../../raw/llm-scala-fusion/2025-11-24-anthropic-advanced-tool-use.md); [MCP design choices — results](../../raw/llm-scala-fusion/2026-02-17-mcp-design-choices-results-excerpts.md); [Bifrost code mode](../../raw/llm-scala-fusion/bifrost-code-mode-token-savings.md)
+> Updated: 2026-10-01
 
 ## Overview
 
@@ -26,6 +26,14 @@ collaborative development models". Every gap below is a context-engineering or e
    tool definitions no longer flood the context and intermediate results stay in the runtime. Felendler et al. confirm
    CE-MCP "significantly reduces token usage and execution latency" while warning that it "introduces a vastly expanded
    attack surface" (sixteen attack classes), answered by containerised sandboxing and semantic gating.
+
+   > **Status: Disputed**
+   > Later measurements bound the claim. The gain grows with tool count (Bifrost: 58.2% fewer input tokens at 96
+   > tools, 92.8% at 508), programmatic calling underperforms JSON by an absolute 14.1% in BFCL v4's parallel
+   > categories (Patel et al.), and CE-MCP scored lower task fulfillment on a subset of three-server tasks (Felendler et
+   > al., results section). Anthropic calls it less beneficial for "quick lookups with small responses". For the
+   > ScalaSemantic tools a local probe measured a small saving only — see
+   > [Roadmap: More Scala, Less LLM](roadmap-more-scala-less-llm.md), item 8.
 3. **Deterministic post-processing before the model sees an error.** Khati et al.'s AST-vs-knowledge-base check
    (100% precision) shows that a non-LLM validator on the output is more reliable than asking the model to repair.
 4. **Feedback translated into instructions.** FPEval's repair gains came from pairing each static finding with

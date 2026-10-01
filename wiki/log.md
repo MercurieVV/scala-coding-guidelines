@@ -223,3 +223,14 @@
 
 ## [2026-10-01] ingest | no material: raw/llm-scala-fusion/2026-05-14-given-when-then-again-bdd-subscenario-refactoring.md
 - Disposition: No material
+
+## [2026-10-01] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update; Disputed
+- Raw: raw/llm-scala-fusion/2024-02-01-codeact-executable-code-actions-llm-agents.md
+- Raw: raw/llm-scala-fusion/2026-08-06-bitter-lesson-of-tool-calling.md
+- Raw: raw/llm-scala-fusion/2025-11-24-anthropic-advanced-tool-use.md
+- Raw: raw/llm-scala-fusion/2026-02-17-mcp-design-choices-results-excerpts.md
+- Raw: raw/llm-scala-fusion/bifrost-code-mode-token-savings.md
+- Raw: raw/llm-scala-fusion/2026-10-01-local-probe-scalasemantic-code-execution.md
+- Tier 3 item 8 investigated and not pursued as a new surface: code-as-tool-use wins in proportion to tool count and result size, with measured losses (parallel calls, three-server orchestration); for ScalaSemantic the tool schemas are already deferred, symbol results are small, and a local probe measured a small saving. The published library already lets an agent script queries through scala-cli.
+- Updated: Harness and Tooling Gaps (Status: Disputed on code execution over tool-by-tool orchestration)
