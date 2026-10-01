@@ -237,13 +237,13 @@ in [Alternative Paradigms and the BDD Seam](alternative-paradigms-and-bdd-seam.m
 > (failed)` — `FEEDBACK: 10 passed, 1 failed (app.test)` — the remedy line, and the 11 dependents left unrun named;
 > after two blocks the third Stop released the turn as an unverified completion, as designed. The message's closing
 > line had still claimed "Tests are NOT run by this gate"; since b1c8ac4 it names the modules whose turnEndTests ran.
-
+>
 > **Follow-up shipped** (2026-10-01) — delete-only turns are checked. A probe in skreeep2 found the Stop gate blind to
-> deletions: a session whose only change was deleting `core`'s `RelativeTime.scala`, which dependents import, ended with
+> deletions: a session whose only change was deleting `RelativeTime.scala` from `core`, a file dependents import, ended with
 > `rc=0 secs=1` and no output, while `./mill -k app.compile` failed with `Not found: type RelativeTime`. The touched-file
-> list kept only files that still exist. Now a deleted `.scala`/`.sc` file (also a staged delete, or a rename's old name)
-> brings its owning module into the check, so its dependents' turnEndTests run too, and any error under that module's
-> directory blocks; a file already deleted at SessionStart is not counted. After scala-llm-template 834d4ea the same
+> list kept only files that still exist. Now a deleted `.scala`/`.sc` file (also a staged delete, or the old name of a rename)
+> brings its owning module into the check, so the turnEndTests of its dependents run too, and any error under the directory of that
+> module blocks; a file already deleted at SessionStart is not counted. After scala-llm-template 834d4ea the same
 > probe gave `rc=2 secs=15`, blocked by `turnEndTests: app (downstream of core)`.
 
 **8. Code-execution surface for the semantic tools.** *Closes:* context bloat and multi-step tool fragility.
