@@ -242,10 +242,14 @@ skreeep2: `holdout/test/src/com/github/mercurievv/skreeep2/holdout/SmokeHoldout.
    any file under a `sealed` row of `.dsh/frozen-paths` is tracked by git (`git ls-files`). Content that was ever
    committed stays in history: the adopter writes NEW holdout tests in `holdoutDir` (the old ones are readable from
    `.git` and no longer sealed); the README says so.
-4. **The holdout report carries only real test names.** `dsh_weaver_failures`' names are kept only when the test-name text
-   occurs verbatim in a file under `holdoutDir` (the hook reads it unsandboxed); at most 20 names, each at most 120
-   characters. Printed totals are not trusted: the report states the run's exit status and the count of verified failing
-   names, never a passed count taken from the run's output.
+4. **The holdout report carries only declared test names.** Once per report the hook (unsandboxed) builds an allowlist of
+   the string literals that are the first argument of `test(`, `pureTest(`, `loggedTest(`, `simpleTest(` or `property(`
+   in regular files under `holdoutDir`; a failing name is printed only when it equals an entry exactly, and only the test
+   name is printed — never the suite part, which the run's output controls. At most 1000 failure lines are examined, at
+   most 20 names printed, each at most 120 characters. The dropped count is bucketed (`none` / `some` / `more than 20`).
+   Printed totals are not trusted: the report states the run's exit status and the count of verified failing names. A
+   substring match was measured as an oracle (any fragment of holdout source "verified") and is not used. Interpolated or
+   multi-line test names fail closed.
 5. **Seams are not configuration.** check-harness FAILs on any `env.DSH_*` key in `.claude/settings.json` or
    `.claude/settings.local.json` (settings `env` reaches hooks).
 6. **Ruling 20.** A `holdout =` command `dsh_gate_command` cannot route (first word not `./mill`/`mill`) FAILs check-harness.
@@ -258,6 +262,8 @@ skreeep2: `holdout/test/src/com/github/mercurievv/skreeep2/holdout/SmokeHoldout.
   reaches the agent only as verified names (§10.2.4). Closing this needs the gate's Mill confined by a deny-default OS
   profile, which this design does not build.
 - Holdout content committed before the move remains in git history.
+- The report reveals which declared test names failed (by design), so agent code can probe the set of declared names
+  across turns; the verified-name count and the bucketed dropped count are small additional channels.
 - §5's residuals (the human's terminal server by port, file tools and MCP outside the sandbox, native Windows).
 
 ### 10.4 Success criteria (replace §2's for the seal)
