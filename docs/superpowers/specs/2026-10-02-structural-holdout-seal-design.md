@@ -142,3 +142,25 @@ reads `holdout/` normally; its compiled output lands in `out-agent/holdout`, whi
 
 scala-llm-template first (engine, seed, recipes doc), then skreeep2: re-vendor, the human copies the new settings block
 into `.claude/settings.json` (a human step — the file is frozen), first agent build populates `out-agent/`.
+
+## 8. Amendments after the final review (2026-10-02)
+
+The whole-branch review found the design incomplete in six places; each is now part of the design.
+
+1. **Writes, not only reads.** The sandbox allows writes in the working directory by default, so a sandboxed interpreter
+   could replace `.dsh/engine/mill-gate.sh`, the contract's `holdout =` line or `.dsh/frozen-paths`, and the next hook —
+   unsandboxed — would run it. The settings add `sandbox.filesystem.denyWrite` on `./.dsh/engine`, `./.dsh/contract`,
+   `./.dsh/frozen-paths`, `./.claude` and every sealed row; check-harness FAILs per missing entry.
+2. **Settings that switch the seal off FAIL.** A non-empty `sandbox.excludedCommands` (those commands run unsandboxed),
+   `enableWeakerNestedSandbox: true`, and a `.claude/settings.local.json` that overrides any required key with a weaker
+   value. health reads the local override for `sandbox.enabled`.
+3. **One Mill per contract command.** A command that runs Mill after a separator (`./mill a && ./mill holdout.test`) can be
+   routed only at its first Mill; check-harness FAILs it (`dsh_gate_command` exit 2).
+4. **The holdout's output path** is the selector's module segments without the task (`engine.holdout.test` →
+   `out-agent/engine/holdout`), not its first segment.
+5. **No holdout, no change.** Without a `holdout =` line and without `agentOutputDir`, the agent directory defaults to `out`,
+   so projects that need no seal keep one cache with the human's builds.
+6. **MCP servers** named in `.mcp.json` or the settings get a check-harness note (they run outside the sandbox).
+   `install.sh` does NOT generate `denyRead`/`denyWrite` from the sealed rows (§4.1 said it would): the seed is static for
+   the conventional `holdout` module, and check-harness names every exact entry a project with another layout must add —
+   the same result without editing JSON in POSIX sh.
