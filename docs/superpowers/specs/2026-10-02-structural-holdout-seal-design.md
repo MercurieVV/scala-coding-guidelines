@@ -164,3 +164,51 @@ The whole-branch review found the design incomplete in six places; each is now p
    `install.sh` does NOT generate `denyRead`/`denyWrite` from the sealed rows (§4.1 said it would): the seed is static for
    the conventional `holdout` module, and check-harness names every exact entry a project with another layout must add —
    the same result without editing JSON in POSIX sh.
+
+## 9. Addendum: the gate's own Mill runs confined (2026-10-02, approved)
+
+### 9.1 Why
+
+Live verification of §4 (scratch clone of skreeep2, one-line `core` edit) measured the cost of `--no-daemon` on every
+gate Mill call: turn-end warm 43–45 s → 71–73 s, post-edit 4–5 s → 15 s — success criterion 5 (<10 s added) failed.
+The final review also found the gate runs agent-writable code unsandboxed (`build.mill`, and the agent's production code
+the tests execute), which can copy `holdout/` somewhere the agent reads. Both come from the same fact: the gate's Mill is
+unconfined.
+
+### 9.2 Measured (macOS, `sandbox-exec`)
+
+| Setting | turn-end warm | post-edit | holdout run |
+|---|---|---|---|
+| old engine (unconfined server) | 43–45 s | 4–5 s | — |
+| §4 (`--no-daemon` everywhere) | 71–73 s | 15 s | 7 s (out-agent, unconfined) |
+| gate calls under a holdout-read-denying profile, server allowed | 48–51 s | 5 s | — |
+| holdout run confined (own output dir, no network, writes only there + Coursier `*.lock`) | — | — | 28 s first, then 3 s |
+
+An unsandboxed client joining the gate's confined server for `holdout.compile` got `…/holdout: Operation not
+permitted`. A process under the holdout-run profile could not write `/tmp`, the repository or `~/.cache/mill`, and had no
+network (`curl` rc 7); allowing only Coursier `*.lock` writes (Coursier needs its cache lock) kept `holdout.test` passing.
+
+### 9.3 Design
+
+- **Gate calls (everything except the holdout run).** On macOS `mill-gate.sh` runs Mill under
+  `sandbox-exec -p <gate profile>` and WITHOUT `--no-daemon`: any server it starts or joins is confined, so a server it
+  leaves behind is harmless to join. Gate profile: `(allow default)`; deny `file-read*` on every sealed row,
+  `<agent dir>/<holdout out path>`, `out-holdout`, `.dsh/.state/holdout.log`, `out/mill-daemon`; deny `file-write*` on
+  `.dsh/engine`, `.dsh/contract`, `.dsh/frozen-paths`, every sealed row, `out-holdout`. Paths are absolute and physical
+  (`pwd -P`). Without `sandbox-exec` (Linux, others) the gate keeps §4's `--no-daemon` — unconfined, slow, still no
+  server left behind; Linux `bwrap` is future work, unmeasured.
+- **The holdout run.** Its own output directory `out-holdout` (contract key `holdoutOutputDir`, same validation as
+  `agentOutputDir`), `--no-daemon`, the JVM temp directory inside it (`_JAVA_OPTIONS=-Djava.io.tmpdir=<dir>/tmp`), and
+  on macOS the holdout profile: `(allow default)`, `(deny network*)` except local unix sockets, `(deny file-write*)`
+  except `out-holdout`, Coursier `*.lock` files, `/dev/null`, `/dev/tty`, `/dev/fd/*`. It may read `holdout/`; nothing it
+  runs can write where the agent reads, except the residual below. Without `sandbox-exec`: unconfined, as §4.
+- **Agent settings.** `denyRead` and `denyWrite` gain `./out-holdout`; check-harness requires both.
+- **health** notes when the gate's Mill cannot be confined on this platform ("gate Mill runs unconfined and without a
+  server").
+
+### 9.4 Residuals
+
+- The holdout run can still write Coursier `*.lock` files the agent can read — a deliberate encoding channel for code the
+  holdout tests execute. Narrow; documented.
+- No confinement of the gate's Mill outside macOS until `bwrap` is measured.
+- The human's terminal server and file tools/MCP, as §5.
