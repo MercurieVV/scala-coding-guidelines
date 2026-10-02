@@ -274,3 +274,20 @@ skreeep2: `holdout/test/src/com/github/mercurievv/skreeep2/holdout/SmokeHoldout.
    and `git log -p`/`git cat-file` on the repository reveal no new holdout test.
 3. The gate's turn-end still reports the holdout: exit status and verified failing names only.
 4. A holdout-run line `- <arbitrary text>` that is not a test name in `holdoutDir` does not reach the agent.
+
+### 10.5 Amendments from the phase-3 final review (2026-10-02)
+
+Measured with Mill 1.1.8: a `--no-daemon` run writes `<output dir>/mill-console-tail` with the console's last lines;
+after a failing holdout it held verbatim holdout source. And the human's `DSH_HOLDOUT_DIR=… ./mill prePush` compiles the
+holdout into `./out/<holdout>` (classes, `test-report.xml`, `out.json` with source excerpts). Therefore:
+
+1. The gate's holdout run uses its own output directory: contract `holdoutOutputDir` (default `out-holdout`, validated
+   like `agentOutputDir`), selected by `mill-gate.sh` whenever `DSH_HOLDOUT_DIR` is set; the settings deny reads and
+   writes of it.
+2. With a holdout line, the settings deny reads of the whole `./out` (not only `./out/mill-daemon`).
+3. The `holdout =` command must be exactly one `./mill` call: `|`, `;`, `&&`, `||`, `&` FAIL check-harness (its exit
+   status is the verdict; `… || true` would fake a pass).
+4. An empty declaration allowlist reports `holdout: not verified — no test declarations under holdoutDir`.
+5. Failing names need weaver-style output; other frameworks report the exit status only.
+6. Residual added to §10.3: code the gate runs unsandboxed can also write or delete `holdoutDir` and force the verdict —
+   `holdout: passed` is not trustworthy against hostile production code.
