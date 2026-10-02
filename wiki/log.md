@@ -267,3 +267,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-01-local-holdout-cap-probe.md
 - Item 1 follow-up: the turn-end holdout run had no time cap (probe: `sleep 40` under a 20 s budget held the hook 40 s); now capped by `DSH_HOLDOUT_CAP` and the Stop budget. Closed in scala-llm-template 7d23e59.
+
+## [2026-10-02] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-02-local-script-file-seal-probe.md
+- Item 1 follow-up: shell script files (and `sh < f`, `cat f | sh`, `xargs sh`, a script written on the same line) reached the sealed holdout suite; tool-policy now reads them and holds their text to the sealed rules. Two live gated runs; residual: run-time-built selectors and non-shell interpreters. Closed in scala-llm-template 709d0ba.
