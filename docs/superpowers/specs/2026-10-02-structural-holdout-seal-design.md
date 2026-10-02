@@ -212,3 +212,59 @@ network (`curl` rc 7); allowing only Coursier `*.lock` writes (Coursier needs it
   holdout tests execute. Narrow; documented.
 - No confinement of the gate's Mill outside macOS until `bwrap` is measured.
 - The human's terminal server and file tools/MCP, as §5.
+
+## 10. Revision: the holdout leaves the repository (2026-10-02, approved — supersedes §9)
+
+### 10.1 Why §9 is withdrawn
+
+The phase-2 whole-branch review (real `sandbox-exec` probes) showed §9's `(allow default)` profiles escapable: code inside
+either profile launched an unconfined process through LaunchServices (`open`) and copied `holdout/` to an
+agent-readable file, and the gate profile let gate-run code write `.claude/settings.local.json`, `.git/config` (a planted
+`core.fsmonitor` ran in the gate's unsandboxed `git status`) and `$HOME`. Its left-behind server was also a sandbox
+downgrade for the agent that joined it. §9's code is kept under the git tag `phase2-confined-gate` in scala-llm-template;
+the branch returns to §4/§8 (the gate runs `--no-daemon`, measured +28 s per turn-end). Building deny-default profiles in
+the engine is not pursued.
+
+The same review found a seal-wide bypass independent of §9: a git-tracked `holdout/` is readable from `.git/objects`
+(`git cat-file -p <sha>` passes the text rules, and the sandbox's `denyRead ./holdout` does not cover `.git`). Measured in
+skreeep2: `holdout/test/src/com/github/mercurievv/skreeep2/holdout/SmokeHoldout.scala` is tracked.
+
+### 10.2 Design
+
+1. **The holdout lives outside the repository.** New required contract key `holdoutDir` (when a `holdout =` line exists):
+   an absolute path, or one starting with `../`, resolved physically (`pwd -P`); it must exist and must not be inside the
+   repository root. The holdout module's sources come from it only when the gate's holdout run sets
+   `DSH_HOLDOUT_DIR=<holdoutDir>`; otherwise the module has no sources (the agent's own builds and the gate's checks see
+   an empty holdout). The Mill recipe provides this as a `HoldoutModule` trait in `Gate.mill`.
+2. **The agent's sandbox denies it.** `sandbox.filesystem.denyRead` and `denyWrite` include the absolute `holdoutDir`;
+   check-harness FAILs when either is missing.
+3. **Nothing of it inside the repository.** check-harness FAILs while `holdoutDir` is inside the root, missing, or while
+   any file under a `sealed` row of `.dsh/frozen-paths` is tracked by git (`git ls-files`). Content that was ever
+   committed stays in history: the adopter writes NEW holdout tests in `holdoutDir` (the old ones are readable from
+   `.git` and no longer sealed); the README says so.
+4. **The holdout report carries only real test names.** `dsh_weaver_failures`' names are kept only when the test-name text
+   occurs verbatim in a file under `holdoutDir` (the hook reads it unsandboxed); at most 20 names, each at most 120
+   characters. Printed totals are not trusted: the report states the run's exit status and the count of verified failing
+   names, never a passed count taken from the run's output.
+5. **Seams are not configuration.** check-harness FAILs on any `env.DSH_*` key in `.claude/settings.json` or
+   `.claude/settings.local.json` (settings `env` reaches hooks).
+6. **Ruling 20.** A `holdout =` command `dsh_gate_command` cannot route (first word not `./mill`/`mill`) FAILs check-harness.
+7. **Docs.** README states what holds and what does not (below); the phase-1 claims stay true as written.
+
+### 10.3 Residuals
+
+- Code the gate runs unsandboxed — `build.mill`, and the agent's production code executed by the holdout run — can read
+  `holdoutDir` if it knows the path (the path is in the contract, which the agent can read); the holdout run's output
+  reaches the agent only as verified names (§10.2.4). Closing this needs the gate's Mill confined by a deny-default OS
+  profile, which this design does not build.
+- Holdout content committed before the move remains in git history.
+- §5's residuals (the human's terminal server by port, file tools and MCP outside the sandbox, native Windows).
+
+### 10.4 Success criteria (replace §2's for the seal)
+
+1. In skreeep2 after migration: `git ls-files` lists no holdout file; check-harness passes with `holdoutDir` set and the
+   settings denying it.
+2. A gated agent session cannot read a file under `holdoutDir` (`Operation not permitted`), cannot run the holdout suite,
+   and `git log -p`/`git cat-file` on the repository reveal no new holdout test.
+3. The gate's turn-end still reports the holdout: exit status and verified failing names only.
+4. A holdout-run line `- <arbitrary text>` that is not a test name in `holdoutDir` does not reach the agent.
