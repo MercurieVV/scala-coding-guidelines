@@ -272,3 +272,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-02-local-script-file-seal-probe.md
 - Item 1 follow-up: shell script files (and `sh < f`, `cat f | sh`, `xargs sh`, a script written on the same line) reached the sealed holdout suite; tool-policy now reads them and holds their text to the sealed rules. Two live gated runs; residual: run-time-built selectors and non-shell interpreters. Closed in scala-llm-template 709d0ba.
+
+## [2026-10-03] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-03-local-structural-holdout-seal.md
+- Item 1 follow-up: structural holdout seal — holdout tests outside the repository (`holdoutDir`, `HoldoutModule`), gate Mill without a daemon into `out-agent`, holdout run into `out-holdout`, Claude Code sandbox denies them to the agent; verified-names report. Live: 11 probes held, the run-time-built selector stopped by the sandbox. Shipped in scala-llm-template 05c0f00 (+0868142), skreeep2 6bf6c1b.
