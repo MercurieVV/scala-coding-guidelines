@@ -51,13 +51,15 @@ Candidate tasks (hidden spec, test count at HEAD):
 | noise | `signals/test/.../NoiseSpec.scala` (5) | pure signal maths |
 | mixer-modes | `control/test/.../MixerModeSpec.scala` (11) | control logic |
 | mcu | `control/midi/test/.../McuSpec.scala` (7) | protocol parsing |
-| mix-levels | `backend/cpu/test/.../topology/MixLevelsSpec.scala` (6) | mixing |
 | note-ring | `handoff/hostdriven/test/.../NoteRingSpec.scala` (3) | data structure |
 | backpressure | `backend/cpu/test/.../BackpressureSpec.scala` (9) | effects / streaming |
 | scope-view | `scope/test/.../ViewSpec.scala` (14) | UI maths |
-| melody-glide | `app/test/.../MelodyGlideSpec.scala` (3) | audio behaviour |
+| modes | `control/test/.../ModesSpec.scala` (4) | state machine |
+| midi-synth | `plugin/test/.../MidiSynthSpec.scala` (5) | voice allocation |
 
-The exact members cut per task are fixed in the plan after reading each feature's code. Prompt, both arms:
+Amended 2026-10-03 while planning: mix-levels (`CpuAggregate.master`) and melody-glide (`Melody`) were replaced by
+modes and midi-synth — cutting either of the first two breaks rendering for every other test and the holdout. The
+exact members cut per task are fixed in the plan after reading each feature's code. Prompt, both arms:
 "The implementation of <feature> in <files> has been removed: its members are `???`. Implement it as its scaladoc and
 the project's docs describe. The existing tests must keep passing. Stop when you are done."
 
