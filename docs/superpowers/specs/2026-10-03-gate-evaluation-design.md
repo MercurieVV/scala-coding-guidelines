@@ -90,9 +90,14 @@ Per run, from the scorer:
 
 - Per arm: solve rate with a Wilson 95% interval; `false_done`, `test_tampering`, contamination counts; median cost.
 - Per task: gated minus ungated solve count over 3 repeats; sign test across the 8 tasks.
-- The gate "pays off" if the gated solve rate is at least 0.20 higher, or `false_done` is at least halved, with median
-  wall time at most 2× the ungated arm's. With 24 runs per arm, differences under about 0.25 in solve rate are reported
-  as inconclusive, not as an effect.
+- The gate "pays off" if the gated solve rate is at least 0.20 higher, or the `false_done` RATE is at least halved, with
+  median wall time at most 2× the ungated arm's. With 24 runs per arm, differences under about 0.25 in solve rate are
+  reported as inconclusive, not as an effect.
+- `false_done` is compared as a rate over each arm's headline runs (runs with an error or contamination are excluded,
+  so the arms' n can differ), and the `false_done` branch needs at least 3 ungated `false_done` runs:
+  `u.false_done >= 3 and g.false_done / g.n <= (u.false_done / u.n) / 2`. Timeouts are reported beside it (a timeout is
+  neither solved nor `false_done`). Amended 2026-10-03, before any scored run: raw counts at small n declare "halved" on
+  1 vs 0, and a gate whose Stop hook keeps the agent working until the cap turns `false_done` runs into timeouts.
 - `gate_blocks` by hook says which parts fired; parts that never fire across 24 runs are candidates to drop.
 
 ## 8. Preserved results
