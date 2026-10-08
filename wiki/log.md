@@ -277,3 +277,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-03-local-structural-holdout-seal.md
 - Item 1 follow-up: structural holdout seal — holdout tests outside the repository (`holdoutDir`, `HoldoutModule`), gate Mill without a daemon into `out-agent`, holdout run into `out-holdout`, Claude Code sandbox denies them to the agent; verified-names report. Live: 11 probes held, the run-time-built selector stopped by the sandbox. Shipped in scala-llm-template 05c0f00 (+0868142), skreeep2 6bf6c1b.
+
+## [2026-10-08] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-08-local-gate-ab-evaluation.md
+- Item 1 evaluation: gated vs ungated agent on 8 remove-and-rebuild skreeep2 tasks, 16 runs per arm. Strict report inconclusive (6 tripwire false positives excluded); audited all-32: gated 14/16 vs 10/16 solved, false_done 2 vs 6, median wall 3.9×; pre-registered rule says "does not pay off" on the 2× wall bound. Holdout decided no run. Harness: scala-llm-template branch gate-evaluation (f1d5f62).
