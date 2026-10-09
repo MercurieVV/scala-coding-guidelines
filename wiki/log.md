@@ -292,3 +292,8 @@
 - Disposition: Update; Disputed
 - Raw: raw/llm-scala-fusion/2026-10-09-local-gate-same-day-ungated-control.md
 - Item 1 same-day control: ungated arm, 8 runs on backpressure, mcu, mixer-modes, scope-view, same day as arm t. Audited 8/8 solved, false_done 0, median wall 53.5 s. Pre-registered verdict "gap was day drift; gate gain not shown"; A/B and ablation gain claims marked Disputed. Harness: scala-llm-template master e85d36d, no code change.
+
+## [2026-10-09] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-09-local-gate-visible-tasks-screen.md
+- Item 1 gate-visible tasks: 4 tasks (adsr, sine, by-offset, sines-gen) validated as visible to downstream tests and the holdout; ungated screen 8/8 solved, holdout passed, no regressions. Verdict "no gate-visible failure found; ungated sonnet handles these"; gated test phase not run. Harness: scala-llm-template master b5aeea9.
