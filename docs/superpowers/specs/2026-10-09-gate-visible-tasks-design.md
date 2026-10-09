@@ -48,7 +48,11 @@ HEAD. Added: on the cut tree, at least one downstream test (outside `TASK_MODULE
 - Run root `~/gate-eval-hard/` with its own HEAD copy (from `~/gate-eval/head`) and settings snapshot copy; the A/B,
   ablation and control results stay untouched. Old run directories are made unreadable during campaigns, as in the
   control.
-- Screen: each validated task × 2 ungated runs (at most 8). A task is kept if ungated solved ≤ 1 of 2.
+- Screen: each validated task × 2 ungated runs (at most 8). A task is kept if ungated solved ≤ 1 of 2 and at least
+  one of its unsolved screen runs shows `holdout_passed` false or a downstream regression in `score.json` — the gate's
+  checks would have seen that failure. Amended 2026-10-09, before any screen run (final review of the harness): the
+  §4 check runs on the `???` cut, which breaks every caller, so it shows only that callers exist, not that a subtle
+  wrong rebuild is visible.
 - Test, same day as the screen where possible: each kept task (at most 3) × 2 gated + 2 fresh ungated runs (at most
   12). Screen runs are not counted in the comparison: they were selected for failing.
 
