@@ -287,3 +287,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-09-local-gate-ablation-turn-end.md
 - Item 1 ablation: arm t (gate without the turn-end Stop hook), 8 runs on backpressure, mcu, mixer-modes, scope-view. Audited: gated 8/8, no turn-end 8/8, ungated 4/8; median wall 200 s / 80 s / 52 s. Verdict "the gain comes without turn-end"; no mechanism found (several t runs solved with no block, test run or MCP call); different-day arms, no same-day ungated control. Harness: scala-llm-template branch gate-ablation (38a9d12).
+
+## [2026-10-09] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update; Disputed
+- Raw: raw/llm-scala-fusion/2026-10-09-local-gate-same-day-ungated-control.md
+- Item 1 same-day control: ungated arm, 8 runs on backpressure, mcu, mixer-modes, scope-view, same day as arm t. Audited 8/8 solved, false_done 0, median wall 53.5 s. Pre-registered verdict "gap was day drift; gate gain not shown"; A/B and ablation gain claims marked Disputed. Harness: scala-llm-template master e85d36d, no code change.
