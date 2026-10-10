@@ -308,3 +308,8 @@
 - Raw: raw/llm-scala-fusion/2026-05-14-swe-chain-chained-release-upgrades-excerpts.md
 - Updated: Roadmap: More Scala, Less LLM
 - Research refresh: new defect class 8 (feature-level regressions / scope creep / cross-file names); roadmap Tier 5 items 11-13; scope caveat on the turn-end safety default.
+
+## [2026-10-10] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-10-local-gate-feature-requests.md
+- Item 11 measured: gf 4/4, gs 4/4, u 4/4 on kept feature tasks, regressions 0; no gain for either mode; safety default stands; screen failures were silent no-op python edits.
