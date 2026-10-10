@@ -297,3 +297,6 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-09-local-gate-visible-tasks-screen.md
 - Item 1 gate-visible tasks: 4 tasks (adsr, sine, by-offset, sines-gen) validated as visible to downstream tests and the holdout; ungated screen 8/8 solved, holdout passed, no regressions. Verdict "no gate-visible failure found; ungated sonnet handles these"; gated test phase not run. Harness: scala-llm-template master b5aeea9.
+
+## [2026-10-10] update | Roadmap: More Scala, Less LLM
+- Item 1 turn-end safety mode: scala-llm-template master (`kit/harness`, merge 89b151c) adds frozen `.dsh/policy/turn-end.tsv`; fresh installs seed `mode safety` (frozen-path check, diff-scoped verification, vericoding only); no table means full, so existing installs are unchanged. Saving for safety mode itself not measured.
