@@ -300,3 +300,11 @@
 
 ## [2026-10-10] update | Roadmap: More Scala, Less LLM
 - Item 1 turn-end safety mode: scala-llm-template master (`kit/harness`, merge 89b151c) adds frozen `.dsh/policy/turn-end.tsv`; fresh installs seed `mode safety` (frozen-path check, diff-scoped verification, vericoding only); no table means full, so existing installs are unchanged. Saving for safety mode itself not measured.
+
+## [2026-10-10] ingest | What Goes Wrong in LLM-Generated Code: The Opposite Vector
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-02-18-featbench-feature-level-code-generation-excerpts.md
+- Raw: raw/llm-scala-fusion/2026-02-11-featurebench-agentic-feature-development-excerpts.md
+- Raw: raw/llm-scala-fusion/2026-05-14-swe-chain-chained-release-upgrades-excerpts.md
+- Updated: Roadmap: More Scala, Less LLM
+- Research refresh: new defect class 8 (feature-level regressions / scope creep / cross-file names); roadmap Tier 5 items 11-13; scope caveat on the turn-end safety default.

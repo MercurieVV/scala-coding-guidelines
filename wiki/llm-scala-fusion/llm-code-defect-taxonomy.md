@@ -1,8 +1,8 @@
 # What Goes Wrong in LLM-Generated Code: The Opposite Vector
 
-> Sources: Tambon et al., 2024-03-13; Gao et al. (survey), 2025-12-04; Miranda-Pena et al., 2026-04-09; Gao et al. (SLR), 2025-11-02; Abbassi et al., 2025-03-08; Kharma et al., 2026-05-22; Sawada et al., 2026-05-07; Lang et al. (FPEval), 2026-01-05; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; Helff et al., 2026-04-16; Farrag, 2026-05-01
-> Raw: [Bugs in LLM-generated code](../../raw/llm-scala-fusion/2024-03-13-bugs-in-llm-generated-code-empirical-study.md); [Survey of bugs in AI-generated code](../../raw/llm-scala-fusion/2025-12-04-survey-of-bugs-in-ai-generated-code.md); [Static analysis for library hallucinations](../../raw/llm-scala-fusion/2026-04-09-static-analysis-for-code-library-hallucinations.md); [SLR of code hallucinations](../../raw/llm-scala-fusion/2025-11-02-systematic-review-code-hallucinations-in-llms.md); [Taxonomy of inefficiencies](../../raw/llm-scala-fusion/2025-03-08-taxonomy-of-inefficiencies-in-llm-generated-python.md); [Code security across prompting methods](../../raw/llm-scala-fusion/2026-05-22-llm-code-security-across-prompting-methods.md); [Agent-generated code maintenance](../../raw/llm-scala-fusion/2026-05-07-agent-generated-code-maintenance-empirical-study.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [LLMs gaming verifiers](../../raw/llm-scala-fusion/2026-04-16-llms-gaming-verifiers-rlvr-reward-hacking.md); [Productivity-Reliability Paradox](../../raw/llm-scala-fusion/2026-05-01-productivity-reliability-paradox-spec-driven-governance.md)
-> Updated: 2026-09-19
+> Sources: Tambon et al., 2024-03-13; Gao et al. (survey), 2025-12-04; Miranda-Pena et al., 2026-04-09; Gao et al. (SLR), 2025-11-02; Abbassi et al., 2025-03-08; Kharma et al., 2026-05-22; Sawada et al., 2026-05-07; Lang et al. (FPEval), 2026-01-05; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; Helff et al., 2026-04-16; Farrag, 2026-05-01; Chen et al. (FeatBench), 2026-02-18; Zhou et al. (FeatureBench), 2026-02-11; Lam et al. (SWE-Chain), 2026-05-14
+> Raw: [Bugs in LLM-generated code](../../raw/llm-scala-fusion/2024-03-13-bugs-in-llm-generated-code-empirical-study.md); [Survey of bugs in AI-generated code](../../raw/llm-scala-fusion/2025-12-04-survey-of-bugs-in-ai-generated-code.md); [Static analysis for library hallucinations](../../raw/llm-scala-fusion/2026-04-09-static-analysis-for-code-library-hallucinations.md); [SLR of code hallucinations](../../raw/llm-scala-fusion/2025-11-02-systematic-review-code-hallucinations-in-llms.md); [Taxonomy of inefficiencies](../../raw/llm-scala-fusion/2025-03-08-taxonomy-of-inefficiencies-in-llm-generated-python.md); [Code security across prompting methods](../../raw/llm-scala-fusion/2026-05-22-llm-code-security-across-prompting-methods.md); [Agent-generated code maintenance](../../raw/llm-scala-fusion/2026-05-07-agent-generated-code-maintenance-empirical-study.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [LLMs gaming verifiers](../../raw/llm-scala-fusion/2026-04-16-llms-gaming-verifiers-rlvr-reward-hacking.md); [Productivity-Reliability Paradox](../../raw/llm-scala-fusion/2026-05-01-productivity-reliability-paradox-spec-driven-governance.md); [FeatBench](../../raw/llm-scala-fusion/2026-02-18-featbench-feature-level-code-generation-excerpts.md); [FeatureBench](../../raw/llm-scala-fusion/2026-02-11-featurebench-agentic-feature-development-excerpts.md); [SWE-Chain](../../raw/llm-scala-fusion/2026-05-14-swe-chain-chained-release-upgrades-excerpts.md)
+> Updated: 2026-10-10
 
 ## Overview
 
@@ -11,7 +11,8 @@ the fusion project: every defect class below is a candidate for a deterministic 
 linter, build gate, semantic tool), and the classes the literature calls hardest to catch statically mark where the LLM
 side must stay under human or property-based oversight. Seven classes recur: (1) hallucinated APIs and objects,
 (2) misinterpretation / missed corner cases, (3) type and compile errors, (4) idiom drift toward imperative style,
-(5) inefficiency and maintainability debt, (6) security weaknesses, (7) test gaming and reward hacking. A meta-finding
+(5) inefficiency and maintainability debt, (6) security weaknesses, (7) test gaming and reward hacking; feature-level
+benchmarks add (8) regressions from scope creep. A meta-finding
 frames all of them: the reliability problem is systematic, not incidental — the *Productivity-Reliability Paradox*
 attributes it to "non-deterministic code generators and insufficient specification discipline".
 
@@ -95,6 +96,33 @@ For the fusion project this is the strongest single argument: **the verifier mus
 suites, property-based tests with random generators, mutation testing and type-level totality are all forms of
 non-extensional verification a model cannot memorise. It also grounds R-8 (the gate must *run* tests) and R-9 (the
 lane is independent of the author) in the reengineering contract.
+
+## 8. Feature-level work: regressions, scope creep and cross-file names
+
+The classes above come mostly from function-level studies. Feature-level benchmarks, where the agent adds behaviour to a
+real repository, show a different dominant failure.
+
+- **FeatBench** (157 tasks from 27 repositories, natural-language requirements "strictly devoid of code hints"): best
+  resolved rate "only 29.94%". In 122 analysed Trae-agent failures, "Regressive implementation is the predominant
+  failure reason, accounting for 73.6% of analyzed failure cases" — incomplete implementation 17.8%, misunderstood
+  requirements 8.5%. The driver is "aggressive implementation", where agents "exhibit “scope creep” by proactively
+  refactoring code or extending features beyond the explicit user intent". The authors call for "mechanisms that can
+  control the agent’s level of aggressive implementation".
+- **FeatureBench** (ICLR 2026, 200 tasks from 24 repositories): Claude 4.5 Opus, "74.4% resolved rate on SWE-bench,
+  succeeds on only 11.0% of tasks". Its failures are dominated by NameError — "models often focus on local edits
+  without consistently re-establishing all necessary references" — then TypeError and AttributeError from "guessing
+  (even hallucinating) the interface" of components defined in other files, then AssertionError. Removing
+  signatures and call-path annotations from the prompt "leads to a marked decline"; making the unit tests visible
+  lifted the lite set's resolved rate by +50.0 and +43.3 points for the two models tried.
+- **SWE-Chain** (chained release upgrades, 9 Python packages): average "44.8% resolving", Claude-Opus-4.7 (Claude
+  Code) best at "60.8% resolving, 80.6% precision". Precision — the regression measure — depends on the spec: on the
+  pytest 8.0 chain Claude-Opus-4.7 had precision 8.9% with raw release notes and issues (L1) and 7.8% with problem
+  statements only (L2), against 88.1% once the spec adds expectations and constraints (L3). The authors: "expectations
+  and constraints are essential to avoid regressions".
+
+For Scala the second finding splits cleanly: NameError, TypeError and AttributeError are compile errors here (class 1
+and 3), so the compiler and the semantic tools already catch them. What remains is the first and third finding —
+regressions in code the agent was not asked to touch, and behaviour the spec did not pin. All three studies are Python.
 
 ## The meta-finding
 
