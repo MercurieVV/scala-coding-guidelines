@@ -53,7 +53,7 @@ harness/
 The repository root `project.scala` gets `//> using exclude "harness/**"` so `scala-cli compile .` at the root does not
 pick up the harness.
 
-CLI: `harness <prepare|run|score|campaign|chain|report|chain-report|rescore|validate> --experiment <file.conf> [args]`.
+CLI: `harness <prepare|run|score|campaign|chain|report|chain-report|rescore|validate|dsh-profile> --experiment <file.conf> [args]`.
 A packaged launcher (`scala-cli package`) avoids recompiling per call.
 
 ## 4. Abstractions
@@ -79,11 +79,14 @@ The user's `scala` profile is a TUI front door (dsh-tui) and cannot run unattend
 agent stack under dsh's one-shot runner (`@deepseek-ai/dsh-headless`: task as positional argument, final answer on
 stdout, exit 0 on a completed `turn/end`, 1 otherwise):
 
-- **Profile** — a `scala-headless` profile: bundles `@deepseek-ai/dsh-base` + `@deepseek-ai/dsh-headless`, and the
-  scala profile's patch rows that matter to a run (LSP with metals, scalasemantic MCP, hook bridge, permission
-  presets); TUI-only rows (beep, budget status line, browser MCP) dropped. Its template ships in
-  `harness/agents/dsh/`; creating it under `~/.dsh/profiles/` is a one-time step the user runs (the harness never
-  writes `~/.dsh`). Profile name is a config knob.
+- **Profile** — the target is the user's Scala profiles (`scala`, `scala-arhitect`); the mechanism takes any profile
+  name. For a source profile `<p>`, `harness dsh-profile --from <p>` derives `<p>-headless`: bundles
+  `@deepseek-ai/dsh-base` + `@deepseek-ai/dsh-headless`, plus `<p>`'s own patch layer with rows bound to the TUI
+  front door (beep, budget status line) and the browser MCP dropped; LSP (metals), scalasemantic MCP, hook bridge and
+  permission presets kept. It writes under `~/.dsh/profiles/` only when the user runs that command; runs never write
+  `~/.dsh`. Tested live with `scala` only.
+- **Model** — any model dsh's providers accept; set per arm (`model`), passed through the overlay. Per-model token
+  prices in HOCON are optional (cost null without them).
 - **Per-run overlay** — `dsh --profile <p> --patch <run-dir>/dsh-overlay.yml "<prompt>"` from the run copy's root,
   `DSH_PERMISSION_MODE=danger-full-access` (approval never). The overlay points `@deepseek-ai/dsh-hooks-claude-code`'s
   `configPath` at the arm's hooks file in the run copy (ungated arm: an empty hooks file), so the user's global
