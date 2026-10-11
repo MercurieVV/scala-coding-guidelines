@@ -17,7 +17,7 @@ separate decision after parity (§7).
 Success: every feature of gate-ab works in the new harness (single runs, resumable campaigns, prepare and validation,
 hidden-spec scoring, regressions, holdout, isolation lock, tamper / contamination / hardcoding / env-leak tripwires,
 gate blocks, chain mode, erosion, reports and verdicts); the parity checks of §7 pass; Claude Code, Codex CLI, Gemini CLI
-and a generic command agent each run through one interface.
+DeepSeek Harness (dsh), and a generic command agent each run through one interface; dsh is tested live.
 
 ## 2. Style
 
@@ -40,7 +40,7 @@ harness/
   core/                    pure: Transcript, TestLog, MillLog, Diff, Contamination, Verdicts, Stats,
                            Report, ChainReport, Erosion
   config/                  Experiment, AgentSpec, TargetSpec, ArmSpec, TaskSpec, SetupStep
-  agent/                   Agent trait; ClaudeCode, CodexCli, GeminiCli, Generic
+  agent/                   Agent trait; ClaudeCode, Dsh, CodexCli, GeminiCli, Generic
   target/                  Target trait; MillScala
   run/                     Prepare, Run, Score, Campaign, Chain, Rescore, Validate (IO)
   cli/                     Main
@@ -69,10 +69,34 @@ A packaged launcher (`scala-cli package`) avoids recompiling per call.
   USD cost), final text, tool calls `(kind: shell|edit|write|read|mcp|other, name, input, result, isError)`, hook
   messages. Gate blocks, contamination, env leaks and false_done read only the normalized form.
 
-Adapters: `claude-code`, `codex-cli`, `gemini-cli`, `generic` (argv template; `transcript = none` scores the diff only,
+Adapters: `claude-code`, `dsh`, `codex-cli`, `gemini-cli`, `generic` (argv template; `transcript = none` scores the diff only,
 turns and cost null). CLI flags and event shapes of Codex and Gemini are verified against the installed CLIs
 (`/opt/homebrew/bin/codex`, `/opt/homebrew/bin/gemini`) with one live smoke run each (budget asked first); fixture
 transcripts back their parser tests.
+
+**DeepSeek Harness adapter (`dsh`)** — required, and live-tested (§7.6). dsh 0.1.5-rc.1 at `/opt/homebrew/bin/dsh`.
+The user's `scala` profile is a TUI front door (dsh-tui) and cannot run unattended; the adapter runs the same Scala
+agent stack under dsh's one-shot runner (`@deepseek-ai/dsh-headless`: task as positional argument, final answer on
+stdout, exit 0 on a completed `turn/end`, 1 otherwise):
+
+- **Profile** — a `scala-headless` profile: bundles `@deepseek-ai/dsh-base` + `@deepseek-ai/dsh-headless`, and the
+  scala profile's patch rows that matter to a run (LSP with metals, scalasemantic MCP, hook bridge, permission
+  presets); TUI-only rows (beep, budget status line, browser MCP) dropped. Its template ships in
+  `harness/agents/dsh/`; creating it under `~/.dsh/profiles/` is a one-time step the user runs (the harness never
+  writes `~/.dsh`). Profile name is a config knob.
+- **Per-run overlay** — `dsh --profile <p> --patch <run-dir>/dsh-overlay.yml "<prompt>"` from the run copy's root,
+  `DSH_PERMISSION_MODE=danger-full-access` (approval never). The overlay points `@deepseek-ai/dsh-hooks-claude-code`'s
+  `configPath` at the arm's hooks file in the run copy (ungated arm: an empty hooks file), so the user's global
+  `~/.claude/settings.json` hooks never reach a run, and sets the model.
+- **Transcript** — dsh persists `~/.dsh/sessions/<slug>/session-<id>/session.v3.jsonl.zstd` (slug: the cwd with `/`
+  as `-`, wrapped in `--`). After the run the adapter copies the session file into the run dir and decompresses it
+  (zstd) as `transcript.jsonl`. Events used: `tool/call`, `tool/result`, `hook/result` (`decision: block` → gate
+  blocks), `assistant/message` (final text), `turn/end` (`reason.kind`), `step/*` (turns), usage fields for tokens.
+  Cost = tokens × per-model prices in HOCON (`Option`, null when no price is configured).
+- **Isolation** — the run cwd's session dir is wiped before the run (as Claude Code's projects dir is today);
+  `CLAUDE*` env vars unset.
+- **Gated arms** — dsh reads the dsh engine's `.dsh/hooks.json` (Claude Code hook dialect) through the hook bridge;
+  arms gs / p for dsh differ from Claude Code's only in which file the overlay names.
 
 **Target** (adapter `mill-scala`; skreeep2 is a config of it): `export(commit)`, `compile`, `testModules`,
 `allModules`, `runTests(modules, keepGoing)`, `parseFailures(log)`, `suites(tree, module)`, `buildBroken(log)`,
@@ -120,7 +144,10 @@ Unchanged from gate-ab: `run.json`, `prompt.txt`, `settings.json`, `transcript.j
 3. **Reports** — old `report.py`, `chain_report.py` vs new on the same roots: text diff empty.
 4. **Arm setup** — for each of u, g, t, gf, gs, p: the run copy's settings, `.mcp.json` and `.dsh/` after setup equal
    gate-ab's (no agent started).
-5. Every intended difference (a bug fixed in the port) is listed in `PARITY.md` with its reason.
+6. **Live agents** (budget confirmed before spending): dsh — one ungated and one gated (gs) run on one skreeep2 task,
+   scored end to end, transcript fields and gate blocks checked against the session log by hand; Codex and Gemini — one
+   ungated smoke run each; Claude Code — one ungated run, compared in shape with an old gate-ab run of the same task.
+7. Every intended difference (a bug fixed in the port) is listed in `PARITY.md` with its reason.
 
 Originals are never written.
 
