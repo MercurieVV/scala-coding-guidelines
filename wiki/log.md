@@ -327,3 +327,8 @@
 - Raw: raw/llm-scala-fusion/2026-05-19-code-cleanliness-coding-agents-minimal-pair.md
 - Updated: Roadmap: More Scala, Less LLM
 - Research refresh: new defect class 9 (long-horizon erosion, false success); roadmap Tier 6 items 14-16.
+
+## [2026-10-11] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-11-local-chained-feature-work.md
+- Item 14 measured: chained feature work, u 1 failure vs gs 0 (unclear), chain checks 21 pass / 0 fail; items 15 and 16 not pursued.
