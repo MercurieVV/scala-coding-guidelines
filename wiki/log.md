@@ -313,3 +313,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-10-local-gate-feature-requests.md
 - Item 11 measured: gf 4/4, gs 4/4, u 4/4 on kept feature tasks, regressions 0; no gain for either mode; safety default stands; screen failures were silent no-op python edits.
+
+## [2026-10-11] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-11-local-scala-interp-edit-rule.md
+- Item 11 follow-ups: `!` false positive fixed; tool-policy rule against Scala edits through an interpreter or sed (p 8/8, u 8/8, failure not reproduced); items 12 and 13 not pursued.
