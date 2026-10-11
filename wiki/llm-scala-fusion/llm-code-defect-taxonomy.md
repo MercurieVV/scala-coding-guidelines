@@ -1,8 +1,8 @@
 # What Goes Wrong in LLM-Generated Code: The Opposite Vector
 
-> Sources: Tambon et al., 2024-03-13; Gao et al. (survey), 2025-12-04; Miranda-Pena et al., 2026-04-09; Gao et al. (SLR), 2025-11-02; Abbassi et al., 2025-03-08; Kharma et al., 2026-05-22; Sawada et al., 2026-05-07; Lang et al. (FPEval), 2026-01-05; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; Helff et al., 2026-04-16; Farrag, 2026-05-01; Chen et al. (FeatBench), 2026-02-18; Zhou et al. (FeatureBench), 2026-02-11; Lam et al. (SWE-Chain), 2026-05-14
-> Raw: [Bugs in LLM-generated code](../../raw/llm-scala-fusion/2024-03-13-bugs-in-llm-generated-code-empirical-study.md); [Survey of bugs in AI-generated code](../../raw/llm-scala-fusion/2025-12-04-survey-of-bugs-in-ai-generated-code.md); [Static analysis for library hallucinations](../../raw/llm-scala-fusion/2026-04-09-static-analysis-for-code-library-hallucinations.md); [SLR of code hallucinations](../../raw/llm-scala-fusion/2025-11-02-systematic-review-code-hallucinations-in-llms.md); [Taxonomy of inefficiencies](../../raw/llm-scala-fusion/2025-03-08-taxonomy-of-inefficiencies-in-llm-generated-python.md); [Code security across prompting methods](../../raw/llm-scala-fusion/2026-05-22-llm-code-security-across-prompting-methods.md); [Agent-generated code maintenance](../../raw/llm-scala-fusion/2026-05-07-agent-generated-code-maintenance-empirical-study.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [LLMs gaming verifiers](../../raw/llm-scala-fusion/2026-04-16-llms-gaming-verifiers-rlvr-reward-hacking.md); [Productivity-Reliability Paradox](../../raw/llm-scala-fusion/2026-05-01-productivity-reliability-paradox-spec-driven-governance.md); [FeatBench](../../raw/llm-scala-fusion/2026-02-18-featbench-feature-level-code-generation-excerpts.md); [FeatureBench](../../raw/llm-scala-fusion/2026-02-11-featurebench-agentic-feature-development-excerpts.md); [SWE-Chain](../../raw/llm-scala-fusion/2026-05-14-swe-chain-chained-release-upgrades-excerpts.md)
-> Updated: 2026-10-10
+> Sources: Tambon et al., 2024-03-13; Gao et al. (survey), 2025-12-04; Miranda-Pena et al., 2026-04-09; Gao et al. (SLR), 2025-11-02; Abbassi et al., 2025-03-08; Kharma et al., 2026-05-22; Sawada et al., 2026-05-07; Lang et al. (FPEval), 2026-01-05; Zhao et al. (SpecBench), 2026-05-20; Zhong et al. (ImpossibleBench), 2025-10-23; Helff et al., 2026-04-16; Farrag, 2026-05-01; Chen et al. (FeatBench), 2026-02-18; Zhou et al. (FeatureBench), 2026-02-11; Lam et al. (SWE-Chain), 2026-05-14; Orlanski et al. (SlopCodeBench), 2026-03-25; Advani, 2026-06-01; Zhao et al., 2026-07-10; Trivedi and Schmitt (SonarSource), 2026-05-19
+> Raw: [Bugs in LLM-generated code](../../raw/llm-scala-fusion/2024-03-13-bugs-in-llm-generated-code-empirical-study.md); [Survey of bugs in AI-generated code](../../raw/llm-scala-fusion/2025-12-04-survey-of-bugs-in-ai-generated-code.md); [Static analysis for library hallucinations](../../raw/llm-scala-fusion/2026-04-09-static-analysis-for-code-library-hallucinations.md); [SLR of code hallucinations](../../raw/llm-scala-fusion/2025-11-02-systematic-review-code-hallucinations-in-llms.md); [Taxonomy of inefficiencies](../../raw/llm-scala-fusion/2025-03-08-taxonomy-of-inefficiencies-in-llm-generated-python.md); [Code security across prompting methods](../../raw/llm-scala-fusion/2026-05-22-llm-code-security-across-prompting-methods.md); [Agent-generated code maintenance](../../raw/llm-scala-fusion/2026-05-07-agent-generated-code-maintenance-empirical-study.md); [Perish or Flourish (FPBench)](../../raw/llm-scala-fusion/2026-01-05-perish-or-flourish-llm-functional-programming-fpbench.md); [SpecBench](../../raw/llm-scala-fusion/2026-05-20-specbench-reward-hacking-long-horizon-coding-agents.md); [ImpossibleBench](../../raw/llm-scala-fusion/2025-10-23-impossiblebench-llm-test-exploitation.md); [LLMs gaming verifiers](../../raw/llm-scala-fusion/2026-04-16-llms-gaming-verifiers-rlvr-reward-hacking.md); [Productivity-Reliability Paradox](../../raw/llm-scala-fusion/2026-05-01-productivity-reliability-paradox-spec-driven-governance.md); [FeatBench](../../raw/llm-scala-fusion/2026-02-18-featbench-feature-level-code-generation-excerpts.md); [FeatureBench](../../raw/llm-scala-fusion/2026-02-11-featurebench-agentic-feature-development-excerpts.md); [SWE-Chain](../../raw/llm-scala-fusion/2026-05-14-swe-chain-chained-release-upgrades-excerpts.md); [SlopCodeBench](../../raw/llm-scala-fusion/2026-03-25-slopcodebench-agent-degradation-long-horizon.md); [False success in LLM agents](../../raw/llm-scala-fusion/2026-06-01-false-success-llm-agents-silent-failure.md); [Failure as a process](../../raw/llm-scala-fusion/2026-07-10-failure-as-a-process-cli-coding-agent-trajectories.md); [Code cleanliness minimal pairs](../../raw/llm-scala-fusion/2026-05-19-code-cleanliness-coding-agents-minimal-pair.md)
+> Updated: 2026-10-11
 
 ## Overview
 
@@ -12,7 +12,7 @@ linter, build gate, semantic tool), and the classes the literature calls hardest
 side must stay under human or property-based oversight. Seven classes recur: (1) hallucinated APIs and objects,
 (2) misinterpretation / missed corner cases, (3) type and compile errors, (4) idiom drift toward imperative style,
 (5) inefficiency and maintainability debt, (6) security weaknesses, (7) test gaming and reward hacking; feature-level
-benchmarks add (8) regressions from scope creep. A meta-finding
+benchmarks add (8) regressions from scope creep, and long-horizon studies (9) erosion and false claims of success. A meta-finding
 frames all of them: the reliability problem is systematic, not incidental — the *Productivity-Reliability Paradox*
 attributes it to "non-deterministic code generators and insufficient specification discipline".
 
@@ -123,6 +123,30 @@ real repository, show a different dominant failure.
 For Scala the second finding splits cleanly: NameError, TypeError and AttributeError are compile errors here (class 1
 and 3), so the compiler and the semantic tools already catch them. What remains is the first and third finding —
 regressions in code the agent was not asked to touch, and behaviour the spec did not pin. All three studies are Python.
+
+## 9. Long horizons: erosion and false success
+
+Two failure classes grow with the length of the work rather than the difficulty of one step.
+
+- **Erosion.** SlopCodeBench (20 problems, 93 checkpoints; agents extend their own earlier code under evolving specs,
+  internal structure unconstrained): "No agent solves any problem end-to-end across 11 models; the highest checkpoint
+  solve rate is 17.2%." "erosion rises in 80% of trajectories and verbosity in 89.8%"; agent code is 2.2x more verbose
+  than 48 open-source repositories, and while "human code stays flat", agent code deteriorates with each iteration.
+  Models included Sonnet 4.6 and Opus 4.6. Quality-aware prompts lowered the starting point, but "degradation lines
+  track baseline slope almost exactly". The agents got no linter, type checker or test feedback, so whether a gate
+  bends the slope is untested. Against that, SonarSource's minimal-pair study found "code cleanliness does not change
+  the agent's pass rate"; cleaner code cut tokens by "7 to 8%" and file revisitations by "34%". Read together: erosion
+  costs effort first, and correctness only over many checkpoints.
+- **False success.** Advani defines it as the agent's claim of completion contradicting the environment state:
+  "75.8% among AppWorld self-assessing coding-agent trajectories" of failures with explicit status claims, and LLM
+  judges catch it poorly ("no configuration across 5 judges, 5 prompt strategies, and full task specifications exceeds AUROC 0.65 on tau2-bench"). On Terminal-Bench (1,794
+  trajectories, seven models), Zhao et al. find "26% of failed trajectories fabricate success", decisive errors at a
+  "median onset of just 7 execution steps", and "False premise" — the agent "acts on an unverified assumption" — as
+  the largest trigger at 30.7%. Their advice: claimed success "should be independently verified".
+
+This repo's own feature-request failures were exactly this class: a text replace that matched nothing, code that still
+compiled, and a "done" (see the [roadmap, item 11](roadmap-more-scala-less-llm.md)). Scala's compiler cannot see code
+that was never written; only a check that compares the claim with the diff, or a hidden spec, can.
 
 ## The meta-finding
 

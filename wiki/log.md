@@ -318,3 +318,12 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-11-local-scala-interp-edit-rule.md
 - Item 11 follow-ups: `!` false positive fixed; tool-policy rule against Scala edits through an interpreter or sed (p 8/8, u 8/8, failure not reproduced); items 12 and 13 not pursued.
+
+## [2026-10-11] ingest | What Goes Wrong in LLM-Generated Code: The Opposite Vector
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-03-25-slopcodebench-agent-degradation-long-horizon.md
+- Raw: raw/llm-scala-fusion/2026-06-01-false-success-llm-agents-silent-failure.md
+- Raw: raw/llm-scala-fusion/2026-07-10-failure-as-a-process-cli-coding-agent-trajectories.md
+- Raw: raw/llm-scala-fusion/2026-05-19-code-cleanliness-coding-agents-minimal-pair.md
+- Updated: Roadmap: More Scala, Less LLM
+- Research refresh: new defect class 9 (long-horizon erosion, false success); roadmap Tier 6 items 14-16.
