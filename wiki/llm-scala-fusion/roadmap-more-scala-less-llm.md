@@ -514,8 +514,8 @@ payoff is effort, not correctness.
 > dsh gated timed out at the cap after its hidden spec passed; Gemini not measured (gemini-cli login refused; the
 > agy path stopped for design approval under a global plugin). Isolation differs by agent: Codex loads the user's
 > global `AGENTS.md` and skills, dsh runs had no ScalaSemantic and can read `~/.dsh`; the scorer flags such reads as
-> contamination. One task, rep 1: an adapter smoke test, not an agent comparison. `eval/gate-ab` still exists;
-> retiring it is a separate decision.
+> contamination. One task, rep 1: an adapter smoke test, not an agent comparison. `eval/gate-ab` was
+> retired from scala-llm-template the same day (2026-10-12); the harness is its successor.
 > ([local measurement](../../raw/llm-scala-fusion/2026-10-12-local-agent-eval-harness.md))
 
 ## What not to do
