@@ -332,3 +332,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-11-local-chained-feature-work.md
 - Item 14 measured: chained feature work, u 1 failure vs gs 0 (unclear), chain checks 21 pass / 0 fail; items 15 and 16 not pursued.
+
+## [2026-10-12] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-12-local-agent-eval-harness.md
+- Evaluation harness shipped: gate-ab generalized to any agent and ported to scala-cli; parity 0 mismatches; live smoke on fr-pan for Claude Code, Codex, dsh, Gemini (agy).
