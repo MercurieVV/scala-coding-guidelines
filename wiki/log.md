@@ -337,3 +337,6 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-12-local-agent-eval-harness.md
 - Evaluation harness shipped: gate-ab generalized to any agent and ported to scala-cli; parity 0 mismatches; live smoke on fr-pan for Claude Code, Codex, dsh, Gemini (agy).
+
+## [2026-10-12] update | Roadmap: More Scala, Less LLM
+- Evaluation harness status: `eval/gate-ab` retired from scala-llm-template; the harness is its successor.

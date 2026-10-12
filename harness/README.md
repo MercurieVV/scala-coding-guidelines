@@ -1,7 +1,7 @@
 # harness
 
 Scala 3 (scala-cli) agent-eval harness: runs coding agents against a target repo, scores the results and records them
-as JSON. A port of the gate-ab shell/python scripts (`scala-llm-template/eval/gate-ab`): same run root layout, same
+as JSON. A port of the gate-ab shell/python scripts (`scala-llm-template/eval/gate-ab`, retired 2026-10-12; last at commit `98f5652`): same run root layout, same
 `run.json` / `score.json` / `chain.json` fields, same `campaign.log` lines, same `gate-ab: <msg>` error texts.
 
 ## Build, test, launcher

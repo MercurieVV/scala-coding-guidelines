@@ -1,6 +1,8 @@
 # Parity with gate-ab (GA)
 
-GA = `scala-llm-template/eval/gate-ab` (read-only reference). Every tier below ran on copies in a scratch dir; the run
+GA = `scala-llm-template/eval/gate-ab` (read-only reference; retired on 2026-10-12, last at scala-llm-template commit
+`98f5652`). To re-run a tier: `git -C <scala-llm-template> worktree add /tmp/ga 98f5652`, then pass
+`--ga /tmp/ga/eval/gate-ab`. Every tier below ran on copies in a scratch dir; the run
 roots `~/gate-eval*`, skreeep2, skreeep2-holdout and GA were only read. Results from 2026-10-12, branch
 `agent-eval-harness`. Spec §7 numbers the tiers; the build tier (§7.2) is Task 19, live agents (§7.6) Task 20.
 

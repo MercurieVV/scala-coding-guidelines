@@ -108,7 +108,7 @@ object Cli:
     Opts.subcommand(name, help)((experiment, overrides, cmd).mapN(Invocation.apply))
 
   private val runDirs = Opts.arguments[String]("run-dir").map(_.toList)
-  private val gaDir = Opts.option[String]("ga", "GA gate-ab dir (default <template>/eval/gate-ab).", metavar = "dir").orNone
+  private val gaDir = Opts.option[String]("ga", "GA gate-ab dir (default <template>/eval/gate-ab; retired, check out scala-llm-template 98f5652 and pass its eval/gate-ab).", metavar = "dir").orNone
 
   private val commands: Opts[Invocation] = List(
     sub("prepare", "Build <root>/base/<task> (cut tree, hidden spec, validation.txt); exit 1 unless every line is yes.")(
