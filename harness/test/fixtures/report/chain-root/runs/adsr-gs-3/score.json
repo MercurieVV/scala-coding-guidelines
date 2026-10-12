@@ -1,0 +1,12 @@
+{
+  "run_id": "adsr-gs-3",
+  "task": "adsr",
+  "arm": "gs",
+  "rep": 3,
+  "solved": false,
+  "regression_count": 1,
+  "false_done": true,
+  "wall_seconds": 212,
+  "cost_usd": 0.2,
+  "error": null
+}

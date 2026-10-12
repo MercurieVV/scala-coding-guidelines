@@ -1,0 +1,10 @@
+{
+  "run_id": "fr-pan-u-2",
+  "task": "fr-pan",
+  "arm": "u",
+  "rep": 2,
+  "start_epoch": 1760000000,
+  "end_epoch": 1760000100,
+  "exit_code": 0,
+  "timed_out": false
+}

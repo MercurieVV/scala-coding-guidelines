@@ -1,0 +1,12 @@
+{
+  "run_id": "noise-gs-1",
+  "task": "noise",
+  "arm": "gs",
+  "rep": 1,
+  "solved": true,
+  "regression_count": 0,
+  "false_done": false,
+  "wall_seconds": 177,
+  "cost_usd": 1,
+  "error": null
+}

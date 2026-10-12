@@ -1,0 +1,12 @@
+{
+  "run_id": "fr-pan-gs-3",
+  "task": "fr-pan",
+  "arm": "gs",
+  "rep": 3,
+  "solved": true,
+  "regression_count": 0,
+  "false_done": false,
+  "wall_seconds": 205,
+  "cost_usd": 0.1,
+  "error": null
+}

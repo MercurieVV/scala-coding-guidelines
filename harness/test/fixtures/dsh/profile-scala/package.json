@@ -1,0 +1,27 @@
+{
+  "name": "dsh-profile-scala",
+  "private": true,
+  "dependencies": {
+    "@deepseek-ai/dsh-lsp": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-lsp-stdio": "0.1.5-rc.1",
+    "@deepseek-ai/dsh-tool-lsp": "0.1.5-rc.1",
+    "@deepseek-harness-tui/dsh-tui": "^0.10.1",
+    "@jasonfreelab/dsh-superpowers": "^0.2.0",
+    "dsh-cc-skills": "^0.1.2",
+    "dsh-deepseek-budget": "link:/Users/viktorskalinins/.dsh/plugins/dsh-deepseek-budget",
+    "dsh-tui-beep": "link:/Users/viktorskalinins/.dsh/plugins/dsh-tui-beep",
+    "oh-my-dsh-slim": "^0.5.1"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-harness-tui/dsh-tui",
+        "dsh-cc-skills",
+        "@jasonfreelab/dsh-superpowers",
+        "oh-my-dsh-slim"
+      ],
+      "patchReload": "live"
+    }
+  }
+}

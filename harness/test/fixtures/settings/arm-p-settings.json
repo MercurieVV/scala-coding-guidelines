@@ -1,0 +1,25 @@
+{
+  "env": {
+    "MILL_OUTPUT_DIR": "out-agent"
+  },
+  "permissions": {
+    "deny": [
+      "Read(./holdout/**)"
+    ],
+    "note": "caf\u00e9 \u2014 ok"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/.dsh/engine/gate.sh\" tool-policy",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

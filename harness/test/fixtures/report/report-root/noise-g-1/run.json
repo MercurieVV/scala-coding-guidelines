@@ -1,0 +1,10 @@
+{
+  "run_id": "noise-g-1",
+  "task": "noise",
+  "arm": "g",
+  "rep": 1,
+  "start_epoch": 1760000000,
+  "end_epoch": 1760000100,
+  "exit_code": 0,
+  "timed_out": false
+}

@@ -1,0 +1,12 @@
+{
+  "run_id": "fr-pan-u-1",
+  "task": "fr-pan",
+  "arm": "u",
+  "rep": 1,
+  "solved": true,
+  "regression_count": 1,
+  "false_done": false,
+  "wall_seconds": 100,
+  "cost_usd": 0.12345,
+  "error": null
+}

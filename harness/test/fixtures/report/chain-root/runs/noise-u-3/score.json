@@ -1,0 +1,12 @@
+{
+  "run_id": "noise-u-3",
+  "task": "noise",
+  "arm": "u",
+  "rep": 3,
+  "solved": true,
+  "regression_count": 1,
+  "false_done": false,
+  "wall_seconds": 156,
+  "cost_usd": null,
+  "error": null
+}

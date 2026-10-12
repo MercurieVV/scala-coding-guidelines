@@ -1,0 +1,12 @@
+{
+  "run_id": "adsr-u-3",
+  "task": "adsr",
+  "arm": "u",
+  "rep": 3,
+  "solved": false,
+  "regression_count": 0,
+  "false_done": true,
+  "wall_seconds": 149,
+  "cost_usd": 0.2,
+  "error": null
+}

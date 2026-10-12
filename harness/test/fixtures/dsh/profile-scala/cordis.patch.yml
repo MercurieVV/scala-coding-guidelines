@@ -1,0 +1,119 @@
+# scala profile patch — English dsh-tui front door + a Scala-focused agent stack.
+# Bundle layers (in order): @deepseek-ai/dsh-base, @deepseek-harness-tui/dsh-tui,
+# dsh-cc-skills, @jasonfreelab/dsh-superpowers, oh-my-dsh-slim.
+
+# ── LSP: official trio pinned to the core's 0.1.5-rc.1 line ────────────────
+- insert:
+    - id: lsp
+      name: '@deepseek-ai/dsh-lsp'
+    - id: lsp-stdio
+      name: '@deepseek-ai/dsh-lsp-stdio'
+      config:
+        servers:
+          scala:
+            command: '/Users/viktorskalinins/Library/Application Support/Coursier/bin/metals'
+            extensionToLanguage:
+              .scala: scala
+              .sc: scala
+              .sbt: scala
+              .mill: scala
+          typescript:
+            command: npx
+            args:
+              - '-y'
+              - typescript-language-server
+              - '--stdio'
+            extensionToLanguage:
+              .ts: typescript
+              .tsx: typescript
+              .js: javascript
+              .jsx: javascript
+              .mjs: javascript
+              .cjs: javascript
+    - id: tool-lsp
+      name: '@deepseek-ai/dsh-tool-lsp'
+
+# ── MCP servers ────────────────────────────────────────────────────────────
+# scalasemantic: dynamic, resolves to whichever Scala project's root you
+# launched from (that project must have scalasemantic-mcp.sh at its root).
+- insert:
+    - name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: scalasemantic
+        transport: stdio
+        command: !!js process.cwd() + '/scalasemantic-mcp.sh'
+        args: ['serve', '.']
+        cwd: !!js process.cwd()
+# Chrome browser automation (mirrors the Claude Code playwright MCP entry).
+- insert:
+    - name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: browser
+        transport: stdio
+        command: npx
+        args:
+          - '-y'
+          - '@playwright/mcp@latest'
+          - '--browser'
+          - chrome
+          - '--user-data-dir'
+          - /Users/viktorskalinins/.claude/playwright-profile-linkedin
+          - '--output-dir'
+          - /Users/viktorskalinins/.claude/playwright-output
+          - '--save-session'
+
+# ── Claude Code hook bridge (rtk proxy, scala-semantic-guard.sh) ───────────
+- insert:
+    - name: '@deepseek-ai/dsh-hooks-claude-code'
+      config:
+        configPath: /Users/viktorskalinins/.claude/settings.json
+
+# ── Permission posture ─────────────────────────────────────────────────────
+# Scala tooling writes outside the workspace (coursier/sbt/bloop caches), so
+# this profile defaults to full access instead of the bundle's workspace-write.
+# Approval stays `ask` (the bundle's own rule when DSH_PERMISSION_MODE is unset),
+# so consequential commands are still confirmable.
+# Override per launch with DSH_PERMISSION_MODE=workspace-write (or use the
+# Shift+Tab session-mode cycle in the TUI).
+- id: sandbox-policy
+  config:
+    mode: !!js process.env.DSH_PERMISSION_MODE ?? 'danger-full-access'
+    workspaceRoot: !!js process.cwd()
+# The permission service only accepts sandbox+approval defaults that match a
+# declared preset, so declare `scala-full` (full access + ask) next to the
+# built-ins. No defaultPreset is pinned, so the composed defaults (and
+# DSH_PERMISSION_MODE overrides) still select the matching entry.
+- id: permission
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+      scala-full:
+        sandbox: danger-full-access
+        approval: ask
+
+# ── DeepSeek account balance ───────────────────────────────────────────────
+# dsh-deepseek-budget, installed at /Users/viktorskalinins/.dsh/plugins/dsh-deepseek-budget.
+# Official dsh-tui: a keyed status-line segment above the prompt.
+# tianshu: /budget — that TUI publishes no status-line contribution seam.
+# Endpoint: https://api.deepseek.com/user/balance
+- insert:
+    - id: deepseek-budget
+      name: 'dsh-deepseek-budget'
+
+# ── Beep when the agent is waiting on you ───────────────────────────────────
+# dsh-tui-beep, installed at $DSH_HOME/plugins/dsh-tui-beep.
+# Beeps (terminal BEL + system sound) on the three moments the agent hands
+# control back: it went idle, it needs an approval decision, or it asked you a
+# question. Silent for subagent sessions, after Esc, and without a terminal.
+# Row config: enabled/bell/sound/events/settleMs/debounceMs — see the README.
+- insert:
+    - id: tui-beep
+      name: 'dsh-tui-beep'

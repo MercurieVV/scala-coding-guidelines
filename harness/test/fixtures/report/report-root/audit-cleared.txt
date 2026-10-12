@@ -1,0 +1,5 @@
+# cleared after transcript audit
+
+  adsr-t-3  
+fr-pan-g-3
+adsr-u-3

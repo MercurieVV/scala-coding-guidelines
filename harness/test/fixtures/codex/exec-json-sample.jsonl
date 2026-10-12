@@ -1,0 +1,12 @@
+{"type":"thread.started","thread_id":"<thread id>"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"reasoning","text":"<reasoning>"}}
+{"type":"item.started","item":{"id":"item_1","type":"command_execution","command":"/bin/zsh -lc 'ls src'","aggregated_output":"","exit_code":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"command_execution","command":"/bin/zsh -lc 'ls src'","aggregated_output":"Main.scala\n","exit_code":0,"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_2","type":"mcp_tool_call","server":"scala-semantic","tool":"find_symbol","arguments":{"name":"Main"},"result":{"content":[{"type":"text","text":"src/Main.scala:3"}]},"error":null,"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_3","type":"file_change","changes":[{"path":"src/Main.scala","kind":"update"}],"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_4","type":"file_change","changes":[{"path":"src/New.scala","kind":"add"}],"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_5","type":"command_execution","command":"/bin/zsh -lc 'mill test'","aggregated_output":"1 test failed\n","exit_code":1,"status":"failed"}}
+{"type":"item.completed","item":{"id":"item_6","type":"mcp_tool_call","server":"other","tool":"x","arguments":{},"result":null,"error":{"message":"boom"},"status":"failed"}}
+{"type":"item.completed","item":{"id":"item_7","type":"agent_message","text":"<final answer>"}}
+{"type":"turn.completed","usage":{"input_tokens":24763,"cached_input_tokens":24448,"output_tokens":122}}

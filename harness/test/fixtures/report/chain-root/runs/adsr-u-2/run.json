@@ -1,0 +1,10 @@
+{
+  "run_id": "adsr-u-2",
+  "task": "adsr",
+  "arm": "u",
+  "rep": 2,
+  "start_epoch": 1760000000,
+  "end_epoch": 1760000100,
+  "exit_code": 0,
+  "timed_out": false
+}

@@ -1,0 +1,12 @@
+{
+  "run_id": "noise-gs-3",
+  "task": "noise",
+  "arm": "gs",
+  "rep": 3,
+  "solved": true,
+  "regression_count": 0,
+  "false_done": false,
+  "wall_seconds": 219,
+  "cost_usd": 0.3,
+  "error": "agent crashed"
+}

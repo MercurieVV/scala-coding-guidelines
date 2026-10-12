@@ -1,0 +1,11 @@
+{
+  "run_id": "noise-gs-3",
+  "statuses": {},
+  "chain_regressions": 1,
+  "erosion": {
+    "methods": 10,
+    "total_mass": 12.5,
+    "erosion": 0.16
+  },
+  "error": null
+}

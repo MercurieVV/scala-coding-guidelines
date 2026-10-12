@@ -1,0 +1,10 @@
+{
+  "run_id": "broken-g-1",
+  "task": "broken",
+  "arm": "g",
+  "rep": 1,
+  "start_epoch": 1760000000,
+  "end_epoch": 1760000100,
+  "exit_code": 0,
+  "timed_out": false
+}
