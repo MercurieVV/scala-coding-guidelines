@@ -46,6 +46,16 @@ final class Dsh(val spec: AgentSpec) extends Agent:
       Yaml.jmap("id" -> Yaml.str(model, "id").get,
         "config" -> Yaml.jmap((provider.map("provider" -> _).toList :+ ("model" -> ctx.arm.model))*))))
     os.write.over(overlay(ctx), Yaml.dump(doc))
+    // the profile's MCP row runs `<cwd>/scalasemantic-mcp.sh serve .`; written before the arm's commit, so not in the diff
+    str("scalasemantic-command").foreach { cmd =>
+      val sh = ctx.repo / "scalasemantic-mcp.sh"
+      os.write.over(sh, s"#!/bin/sh\nexec '${cmd.replace("'", "'\\''")}' \"$$@\"\n")
+      os.perms.set(sh, "rwxr-xr-x")
+      // final.diff runs `git add -A -N`: keep the launcher out of it, as skreeep2's .gitignore does for .mcp.json
+      val exclude = ctx.repo / ".git" / "info" / "exclude"
+      if os.isDir(ctx.repo / ".git") && !(os.exists(exclude) && os.read.lines(exclude).contains("/scalasemantic-mcp.sh")) then
+        os.write.append(exclude, "/scalasemantic-mcp.sh\n", createFolders = true)
+    }
 
   /** `{"hooks": <the run copy's hook map>}` for arms that allow hooks, else no hooks: read after the arm's setup steps. */
   override def afterSteps(ctx: RunCtx): IO[Unit] = IO.blocking:

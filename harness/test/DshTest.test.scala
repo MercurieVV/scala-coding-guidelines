@@ -279,6 +279,26 @@ class DshTest extends CatsEffectSuite:
       assertEquals(os.read(c.runDir / "dsh-hooks.json"), """{"hooks":{}}""" + "\n")
       assert(os.read(c.runDir / "dsh-overlay.yml").contains(s"configPath: ${c.runDir}/dsh-hooks.json"))
 
+  test("setup writes the run copy's scalasemantic-mcp.sh launcher when scalasemantic-command is set, none otherwise"):
+    val home = os.temp.dir(); val c = ctx("u"); val c2 = ctx("u")
+    val (bin, _) = fakeBin(dump)
+    val tool = os.temp.dir() / "fake-mcp"
+    os.write(tool, "#!/bin/sh\nprintf '%s|' \"$@\"\n"); os.perms.set(tool, "rwxr-xr-x")
+    val withCmd = agent(home, Seq("bin" -> ujson.Str(bin.toString), "scalasemantic-command" -> ujson.Str(tool.toString)))
+    val without = agent(home, Seq("bin" -> ujson.Str(bin.toString)))
+    os.proc("git", "init", "-q").call(cwd = c.repo)
+    for
+      _ <- withCmd.setup(c)
+      _ <- without.setup(c2)
+    yield
+      val sh = c.repo / "scalasemantic-mcp.sh"
+      assert(os.perms(sh).toString.startsWith("rwx"), "launcher is executable")
+      // the profile runs `<cwd>/scalasemantic-mcp.sh serve .`: the launcher passes its args through
+      assertEquals(os.proc(sh, "serve", ".").call(cwd = c.repo).out.text(), "serve|.|")
+      assert(!os.exists(c2.repo / "scalasemantic-mcp.sh"))
+      // final.diff runs `git add -A -N`: the launcher must stay out of it, as .mcp.json does via skreeep2's .gitignore
+      assertEquals(os.proc("git", "status", "--porcelain", "--", "scalasemantic-mcp.sh").call(cwd = c.repo).out.text(), "")
+
   test("setup fails when the profile lacks the hooks or the default-model row"):
     val c = ctx("g")
     val noHooks = fakeBin(dump.replace("- id: claude-code-hooks\n  name", "- name"))._1 // the source profile's id-less bridge row
