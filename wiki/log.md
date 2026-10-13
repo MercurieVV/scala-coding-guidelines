@@ -350,3 +350,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-13-local-dsh-subagent-token-recount.md
 - dsh costs recounted with subagent sessions: dsh-u rep 2 0.1320, dsh-gs rep 2 0.3129 USD.
+
+## [2026-10-13] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-13-local-gate-cheap-model.md
+- Tier 7 item 17 measured: gate on deepseek-flash (dsh), u 0 vs gs 0 failures over 8 runs each — no gain; ungated 8 of 8, saturated.

@@ -20,3 +20,10 @@ class GateTest extends FunSuite:
     val b = Gate.gateBlocks(names.map(n => call(s"BLOCKED by $n")) :+ call("BLOCKED by zeta"), Nil)
     assertEquals(b.keys.toList, names)
     assertEquals(b("zeta"), 2)
+
+  // live dsh-gs (gate-cheap fr-tuning rep 1): the engine's post-edit check blocks with "BLOCKED by the DSH gate: …",
+  // which the name regex read as a gate called "the"
+  test("gateBlocks counts the DSH gate's post-edit block as post-edit, not \"the\""):
+    def call(r: String) = ToolCall("edit", ToolKind.Edit, ujson.Obj(), r, true, 1)
+    assertEquals(Gate.gateBlocks(Seq(call("BLOCKED by the DSH gate: song failed 3 of 4 checks for song/src/S.scala.")), Nil),
+      Map("post-edit" -> 1))
