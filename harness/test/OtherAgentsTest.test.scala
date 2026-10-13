@@ -113,11 +113,16 @@ class OtherAgentsTest extends CatsEffectSuite:
       List("codex", "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--ignore-user-config", "--ignore-rules",
         "--dangerously-bypass-approvals-and-sandbox", "-C", c.repo.toString, "-m", "m-1",
         "-c", """mcp_servers.scala-semantic.command="/Users/viktorskalinins/.local/bin/scalasemantic-mcp"""",
-        "-c", """mcp_servers.scala-semantic.args=["serve", "."]""", "do it"))
+        "-c", """mcp_servers.scala-semantic.args=["serve", "."]""", "--", "do it"))
 
   test("codex command: no mcp-servers, no overrides"):
     val c = ctx()
-    assertEquals(codex("mcp-servers" -> ujson.Obj()).command(c, "p").takeRight(3), List("-m", "m-1", "p"))
+    assertEquals(codex("mcp-servers" -> ujson.Obj()).command(c, "p").takeRight(4), List("-m", "m-1", "--", "p"))
+
+  // deferred minor (Task 17): clap read a prompt starting with `-` as an option (`codex exec -x`: "unexpected argument
+  // '-x' found ... use '-- -x'"); `--` makes it the PROMPT (checked read-only: `codex exec -- -x extra` rejects only `extra`)
+  test("codex command: `--` before the prompt, so a prompt starting with - stays the prompt"):
+    assertEquals(codex().command(ctx(), "-x do it").takeRight(2), List("--", "-x do it"))
 
   test("codex setup: project-level .codex/config.toml with the MCP server"):
     val c = ctx()
@@ -235,6 +240,16 @@ class OtherAgentsTest extends CatsEffectSuite:
   test("gemini envLeaks: MCP servers beyond allowed-mcp"):
     val t = gemini().parse(lines(fx / "gemini" / "stream-json-sample.jsonl").iterator)
     assertEquals(gemini().envLeaks(t, arm("t")), List("mcp_servers=other"))
+
+  // deferred minor (Task 17): tool names are mcp_<server>_<tool>; a server name with `_` was cut at its first `_`
+  test("gemini envLeaks: server names with `_` are matched against configured / allowed names, not cut at the first `_`"):
+    def use(n: String) = s"""{"type":"tool_use","tool_name":"$n","tool_id":"$n","parameters":{}}"""
+    val g = gemini(extra = Seq(
+      "mcp-servers" -> ujson.Obj("scala-semantic" -> ujson.Obj("command" -> "x"), "my_srv" -> ujson.Obj("command" -> "y")),
+      "allowed-mcp" -> ujson.Arr("scala-semantic", "ok_srv")))
+    val t = g.parse(Iterator(use("mcp_my_srv_find"), use("mcp_ok_srv_x"), use("mcp_scala-semantic_a_b"), use("mcp_other_x"),
+      """{"type":"result","status":"success","stats":{}}"""))
+    assertEquals(g.envLeaks(t, arm("t")), List("mcp_servers=my_srv,other"))
 
   test("gemini privateStateDirs: tmp/, own project dir from the registry"):
     val home = os.temp.dir()

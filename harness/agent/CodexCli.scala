@@ -29,7 +29,8 @@ final class CodexCli(val spec: AgentSpec) extends Agent:
     List(bin, "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--ignore-user-config", "--ignore-rules",
       "--dangerously-bypass-approvals-and-sandbox", "-C", ctx.repo.toString, "-m", ctx.arm.model) ++
       servers.flatMap(s => List("-c", s"mcp_servers.${s.name}.command=${McpServers.tomlStr(s.command)}",
-        "-c", s"mcp_servers.${s.name}.args=${McpServers.tomlArr(s.args)}")) :+ prompt
+        "-c", s"mcp_servers.${s.name}.args=${McpServers.tomlArr(s.args)}")) ++
+      List("--", prompt) // clap: a prompt starting with `-` (or naming a subcommand) stays the PROMPT
 
   def env(ctx: RunCtx): Map[String, Option[String]] = ClaudeCode.SessionVars.map(_ -> Option.empty[String]).toMap
 

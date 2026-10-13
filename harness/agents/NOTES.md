@@ -46,6 +46,8 @@ Read from `--help` and the installed sources; no model call was made. Versions: 
   copy of `auth.json`; not tried, because a ChatGPT-login refresh in the copy may rotate the user's refresh token.
   Known limitation: the user declined a separate `CODEX_HOME` (2026-10-12), so Codex runs keep this exposure; compare
   Codex numbers with that in mind and read `contamination` per run.
+- Prompt: passed last, after `--` (2026-10-13). clap otherwise reads a prompt starting with `-` as an option (`codex exec -x`:
+  "unexpected argument '-x' found ... use '-- -x'"); checked read-only with `codex exec -- -x extra`, which rejects only `extra`.
 - Cost: Codex reports none, `costUsd = None`. Turns: not reported, `turns = None`; `ToolCall.turn` is the call's sequence number.
 
 ## gemini-cli (`agents/gemini.conf`) - parser verified against source, unverified live
@@ -74,6 +76,8 @@ Read from `--help` and the installed sources; no model call was made. Versions: 
   `error`, `stats{input_tokens, output_tokens, cached, ...}`). Fixtures are hand-written from that schema, not captured
   (no earlier session had tool calls), so tool names (`run_shell_command`, `replace`, `write_file`, `read_file`, `grep_search`,
   `mcp_<server>_<tool>`) are unverified live.
+- envLeaks: MCP tool names are `mcp_<server>_<tool>`; the server is the longest configured (`mcp-servers`) or allowed
+  name that prefixes the tool name, so `my_srv` is not cut to `my`; an unknown server is read up to its first `_`.
 - Cost: none; turns: none.
 
 ## dsh (`agents/dsh.conf`) - verified live (Task 20, 2026-10-12)
@@ -121,7 +125,9 @@ dsh 0.1.5-rc.1, profile `scala-headless` (derived by `harness dsh-profile --from
 ## generic (`agents/generic.conf`)
 
 - `command` is an argv template (`{prompt}`, `{model}`, `{repo}`); any other `{name}` is rejected at load (it used to
-  reach argv literally). `transcript = none` is the only mode. The transcript is empty
+  reach argv literally). The template owns argv: `{prompt}` becomes one element as written, and the harness adds no `--`.
+  A prompt starting with `-` therefore reaches the agent's option parser when `{prompt}` sits where options are parsed;
+  put it after a flag that takes a value (`-p {prompt}`, as `agy` does) or after a `--` in the template. `transcript = none` is the only mode. The transcript is empty
   (`resultFromExit`: Score takes the result from run.json `exit_code == 0`, so a crashed run reports `no result event`), so the
   diff alone is scored: turns, tokens and cost are null.
 - Unchecked, not clean: with no tool calls nothing can be checked, so `score.json` has `contaminated`, `contamination`,

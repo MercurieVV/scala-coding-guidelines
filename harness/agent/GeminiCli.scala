@@ -49,8 +49,11 @@ final class GeminiCli(val spec: AgentSpec) extends Agent:
 
   def envLeaks(t: Transcript, arm: ArmSpec): List[String] =
     val allowed = McpServers.allowed(spec)
-    val extra = t.toolCalls.filter(_.kind == ToolKind.Mcp).map(_.name).filterNot(n => allowed.exists(a => n.startsWith(s"mcp_${a}_")))
-      .map(_.stripPrefix("mcp_").takeWhile(_ != '_')).distinct.sorted
+    // tool names are mcp_<server>_<tool> and server names may hold `_`: the longest configured or allowed name that
+    // prefixes the tool name is the server; an unknown server is read up to its first `_`
+    val known = (allowed ++ servers.map(_.name)).distinct.sortBy(-_.length)
+    def server(n: String) = known.find(k => n.startsWith(s"mcp_${k}_")).getOrElse(n.stripPrefix("mcp_").takeWhile(_ != '_'))
+    val extra = t.toolCalls.filter(_.kind == ToolKind.Mcp).map(_.name).map(server).filterNot(allowed.contains).distinct.sorted
     if extra.isEmpty then Nil else List("mcp_servers=" + extra.mkString(","))
 
   def privateStateDirs(ctx: RunCtx): (List[os.Path], List[os.Path]) =
