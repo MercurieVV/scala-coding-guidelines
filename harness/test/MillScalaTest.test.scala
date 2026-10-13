@@ -150,6 +150,12 @@ class MillScalaTest extends CatsEffectSuite:
     assert(!t.isCompileCommand("./mill signals.test"))
     assert(!t.isCompileCommand("sbt compile"))
 
+  test("isTestSource: Mill's test/src layout (GA tampering)"):
+    assert(t.isTestSource("x/test/src/A.scala"))
+    assert(t.isTestSource("test/src/A.scala"))
+    assert(!t.isTestSource("x/src/A.scala"))
+    assert(!t.isTestSource("x/test/resources/a.txt"))
+
   test("isBuildFile and outDirs"):
     assert(t.isBuildFile("build.mill"))
     assert(t.isBuildFile("x/package.mill"))

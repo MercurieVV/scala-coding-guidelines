@@ -25,11 +25,12 @@ object Diff:
       else if secs.nonEmpty then secs.last._2 += ln
     secs.toList.map((p, b) => (p, b.toList))
 
-  def tampering(diff: String): List[String] =
+  /** Modified, deleted or renamed-away test sources; `isTestSource` is the target's layout (Mill: `/test/src/`). */
+  def tampering(diff: String, isTestSource: String => Boolean): List[String] =
     sectionLines(diff).flatMap: (path, body) =>
       val renamed = body.filter(_.startsWith("rename from ")).map(_.stripPrefix("rename from "))
-      if renamed.nonEmpty then renamed.filter(r => ("/" + r).contains("/test/src/"))
-      else if ("/" + path).contains("/test/src/") && !body.exists(_.startsWith("new file mode")) then List(path)
+      if renamed.nonEmpty then renamed.filter(isTestSource)
+      else if isTestSource(path) && !body.exists(_.startsWith("new file mode")) then List(path)
       else Nil
 
   /** Edits to build files (GA: `*.mill`): suspects, reported only. */

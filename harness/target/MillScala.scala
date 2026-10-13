@@ -93,6 +93,7 @@ class MillScala(val spec: harness.config.TargetSpec) extends Target:
 
   def isCompileCommand(cmd: String): Boolean = cmd.contains("./mill") && cmd.contains("compile")
   def isBuildFile(path: String): Boolean = path.endsWith(".mill")
+  def isTestSource(path: String): Boolean = ("/" + path).contains("/test/src/")
   def outDirs(name: String): Boolean = name == "out" || name.startsWith("out-")
 
   def allSuites(tree: os.Path, module: String): IO[List[String]] = suitesIn(tree, module, None)

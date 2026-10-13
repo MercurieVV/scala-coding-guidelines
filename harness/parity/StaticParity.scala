@@ -140,7 +140,7 @@ for req in json.load(sys.stdin):
       out("contamination") = strs(Contamination.check(t.toolCalls, Score.fence(exp, run.orig, agent.privateStateDirs(ctx))))
       val hiddenText = Json.readLenient(run.copyRoot / "base" / taskName / "hidden" / os.RelPath(ts.hiddenSpec))
       val diff = Json.readLenient(rd / "final.diff")
-      out("tampering") = strs(Diff.tampering(diff))
+      out("tampering") = strs(Diff.tampering(diff, target.isTestSource))
       out("build_edits") = strs(Diff.buildEdits(diff, target.isBuildFile))
       out("hardcoding") = strs(Diff.hardcoding(diff, hiddenText))
       val fq = target.suiteName(hiddenText)

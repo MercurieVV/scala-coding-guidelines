@@ -218,7 +218,7 @@ object Score:
         else
           rec("gate_blocks") = ujson.Obj.from(Gate.gateBlocks(t.toolCalls, t.hookTexts).map((k, v) => k -> ujson.Num(v)))
           rec("contamination") = strArr(contamination); rec("contaminated") = contamination.nonEmpty
-        rec("test_tampering") = strArr(Diff.tampering(diff))
+        rec("test_tampering") = strArr(Diff.tampering(diff, target.isTestSource))
         rec("build_edits") = strArr(Diff.buildEdits(diff, target.isBuildFile))
         rec("hardcoding_suspects") = strArr(Diff.hardcoding(diff, hiddenText))
       }

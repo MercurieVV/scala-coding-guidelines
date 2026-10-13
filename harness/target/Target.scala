@@ -23,6 +23,7 @@ trait Target:
   def parseFailures(log: String, modules: Seq[String], allModules: Seq[String]): MillFailures
   def isCompileCommand(cmd: String): Boolean
   def isBuildFile(path: String): Boolean
+  def isTestSource(path: String): Boolean // a diff path the tampering check guards (GA tampering: `/test/src/`)
   def outDirs(name: String): Boolean
   // effectful
   def allSuites(tree: os.Path, module: String): IO[List[String]]
