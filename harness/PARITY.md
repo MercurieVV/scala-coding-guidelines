@@ -145,12 +145,13 @@ field in score.json; it came out equal anyway, both read it from run.json), then
 regression run the 1200 s cap on both sides).
 
 (*) No run in the six roots timed out, so `mixer-modes-t-2` is a synthetic variant: both copies' `run.json` got
-`"timed_out": true` (everything else original). Rescoring cannot reproduce the agent-side outcome of an exit-code-only
-run either: `unsolved` here is three invalid-runs (agent died on an API 429 within seconds), scored like any other run.
+`"timed_out": true` (everything else original). Unsolved coverage is thin: the only unsolved runs in this tier are the
+three invalid-runs `mcu-g-3`, `noise-u-3` and `backpressure-u-3`, whose agent died on an API 429 within seconds; no run in
+which an agent worked and failed was rescored here.
 
 ## Live agents (§7.6)
 
-`experiments/live-smoke.conf` (all five arms; `cap-seconds = 1200`), fresh root `~/agent-eval-live`, fr-pan, rep 1,
+`experiments/live-smoke.conf` (all six arms; `cap-seconds = 1200`), fresh root `~/agent-eval-live`, fr-pan, rep 1,
 2026-10-12. `warm-head`, then `baseline` (prepare of an FR task reads `head-baseline.json`, as GA's prepare.sh), then
 `campaign --set 'harness.tasks=[fr-pan]' --set 'harness.reps=[1]' --set 'harness.arms=[claude-u]'`, then the same with
 `[codex-u,gemini-u]`, later `[agy-u]`. The dsh arms (profile `scala-headless`) were run by the user with `[dsh-u]`, then `[dsh-gs]`.
@@ -162,19 +163,24 @@ run either: `unsolved` here is three invalid-runs (agent died on an API 429 with
 | gemini-u | gemini-cli 0.38.1 / gemini-2.5-pro | `no result event` | no | 5 | — | — | 0 | unverified live (IneligibleTierError): the account login is refused before any model call; nothing of the adapter verified past argument parsing. The user has subscriptions only; next: upgrade gemini-cli, log in again |
 | agy-u | Gemini via agy (generic, diff-only): agy 1.3.3 / gemini-3.1-pro-high | none | no (false_done) | 358 | — | — | unknown (subscription) | the user's global superpowers plugin made it stop for design approval: empty diff, exit 0; `regressions` `control.test` = the hidden spec does not compile on the untouched tree. Global MCP and plugins load, state written under `~/.gemini/antigravity-cli` (agents/NOTES.md) |
 | dsh-u | dsh 0.1.5-rc.1 / deepseek-flash | none | yes | 241 | 30 | 51868 / 26349 / 1378432 | null: dsh reports no cost and `prices` is empty | gate blocks none (arm u, no hook ran); MCP not loaded (profile's `scalasemantic-mcp.sh` missing in the tree); contamination `bash: /out` ×5 (`grep -v "/out/"`, GA's heuristic) |
-| dsh-gs | dsh 0.1.5-rc.1 / deepseek-flash | none | no (timed out at the 1200 s cap, not false_done) | 1200 | 107 | 128993 / 100906 / 13899648 (child subagent session not counted) | null (as dsh-u) | hidden 100 %, no regressions, holdout passed: the agent had finished and the cap hit during its final Stop (turn-end) hook. Gate blocks semantic-guard 7, tool-policy 3 (rescored after the fix below; first score also had turn-end 1). MCP not loaded; contamination: the agent read `~/.dsh` (settings.yaml, presets) and the run's `holdout/` path (blocked by tool-policy) |
+| dsh-gs | dsh 0.1.5-rc.1 / deepseek-flash | none | no (timed out at the 1200 s cap, not false_done) | 1200 | 107 | 179266 / 133476 / 14859776 (incl. subagent sessions; rescored 2026-10-13, top-level alone 128993 / 100906 / 13899648) | null (as dsh-u) | hidden 100 %, no regressions, holdout passed: apparently the agent had finished and the cap hit during its final Stop (turn-end) hook (inferred from the transcript tail). Gate blocks semantic-guard 7, tool-policy 3 (rescored after the fix below; first score also had turn-end 1). MCP not loaded; contamination: the agent read `~/.dsh` (settings.yaml, presets) and the run's `holdout/` path (blocked by tool-policy) |
 
 Reruns, rep 2 (2026-10-12/13, after the follow-ups: scala-semantic launcher for dsh, `prices.deepseek-flash` at
 DeepSeek's peak rates, agy with `--disable-slash-commands`; dsh-gs with `--set harness.cap-seconds=2700`). Rep 1 dsh
-costs from rescoring with the same prices: dsh-u 0.0554, dsh-gs 0.2432.
+costs from rescoring with the same prices: dsh-u 0.0554, dsh-gs 0.3031 (incl. subagent sessions; 0.2432 without).
 
 | arm | solved | wall s | turns | tokens in / out / cache read | cost USD (peak) | notes |
 |---|---|---|---|---|---|---|
 | dsh-u | yes | 526 | 48 | 78909 / 47076 / 3504256 | 0.1012 | MCP tools listed, none called; contamination `subagent: /` |
-| dsh-gs | yes | 1060 | 97 | 149760 / 104093 / 13881088 | 0.2531 | hidden 100 %, no regressions, holdout passed; gate blocks semantic-guard 9, semantic-guard-sealed 2, turn-end 1 (a live Stop block); 48 scala-semantic MCP calls; contamination `subagent: /` |
+| dsh-gs | yes | 1060 | 97 | 208481 / 132954 / 15138816 (incl. subagent sessions) | 0.3129 (incl. subagent sessions; 0.2531 without) | hidden 100 %, no regressions, holdout passed; gate blocks semantic-guard 9, semantic-guard-sealed 2, turn-end 1 (a live Stop block); 48 scala-semantic MCP calls; contamination `subagent: /` |
 | agy-u | yes | 754 | — | — | unknown (subscription) | `--disable-slash-commands`: no plugin stop; contamination, gate blocks, env leaks unchecked (no transcript) |
 
 dsh-gs rep 2 finished inside the old 1200 s cap, so rep 1's timeout says little about the arm.
+
+`first_clean_compile_turn` above `turns` (claude-u rep 1: 28 vs 17) is GA's own semantics, not a port bug. `turns` is the
+`result` event's `num_turns` (17); a tool call's turn counts `assistant` stream events, and Claude Code writes one such
+event per content block (29 events, 16 message ids in this transcript), so the compile call sits at event 28. GA
+`score.py` at `98f5652` (`parse_transcript` + `first_clean_compile`) gives the same 17 and 28 on this transcript.
 
 Adapter defect found live (fixed, failing test first): Codex `input_tokens` counted the cached tokens too (OpenAI usage
 includes `cached_input_tokens` in `input_tokens`), so it was not comparable with Claude Code's uncached figure; the adapter
@@ -209,12 +215,24 @@ Each was ruled during the build (progress ledger) or is inherent to the port; th
 | 5 | Erosion runs scalameta in process; a parse failure reads `<file>: <scalameta message>`. GA ran `erosion.scala` through scala-cli and reported `erosion.scala exit N`. | No scala-cli process per measurement; the file and message are more useful. Figures identical (chain reference line above). Task 13. | ErosionTest "measure failure text is `<file>: <scalameta message>`" |
 | 6 | Chain check's catch-all records `<JVM class>: <message>` for failures with no Python counterpart, and JSON errors as `JSONDecodeError: <ujson message>`; score.json's catch-all likewise `JSONDecodeError('<ujson message>')`. GA: python's exception names and json's messages. | The exception type names are mapped where a Python one exists; messages come from the JVM libraries. Task 13. | ChainCheckTest "an unparsable score.json is recorded as JSONDecodeError with ujson's message", "any other failure is recorded as `<class>: <message>`"; ScoreTest "pyRepr of exceptions (GA repr(e))" |
 | 7 | Report's `Unreadable score.json skipped:` line uses GA's wording for a blank file and Errno 2/13/21, ujson's message for a syntax error. ujson rejects `NaN` / `Infinity`, which python's json loads, so such a score.json is unreadable here. | The JSON parser is ujson; GA never writes NaN (score.json values are counts, ratios, costs from the agent). Task 14. | ReportTest "unreadable score.json: ujson wording for syntax errors, NaN rejected" |
-| 8 | The agent and Mill processes start in their own process group through `/usr/bin/perl -e 'setpgrp(0,0); exec @ARGV'` and are killed with `kill -TERM -<pgid>`, 5 s grace, `kill -KILL -<pgid>`, plus a sweep of the JVM-visible descendants. GA's timeout.py starts the child in a new session (`start_new_session=True`) and `killpg`s it. | The JVM cannot setsid/setpgid a child; without a group, reparented daemons (Mill server, `cmd &`) survive. Needs perl on the host. Task 2 ruling. | ProcTest "timeout kills a reparented background grandchild (process group)" |
+| 8 | The agent and Mill processes (and, since 2026-10-13, setup `run` steps and every captured git command) start in their own process group through `/usr/bin/perl -e 'setpgrp(0,0); exec { $ARGV[0] } @ARGV or …exit 127'` and are killed with `kill -TERM -<pgid>`, 5 s grace, `kill -KILL -<pgid>`, plus a sweep of the JVM-visible descendants. GA's timeout.py starts the child in a new session (`start_new_session=True`) and `killpg`s it. | The JVM cannot setsid/setpgid a child; without a group, reparented daemons (Mill server, `cmd &`) survive. Needs perl on the host. Task 2 ruling. | ProcTest "timeout kills a reparented background grandchild (process group)" |
 | 9 | For the dsh agent the run dir's `settings.json` artefact is the profile overlay (`dsh-overlay.yml`), not a hooks file. GA has no dsh agent; for Claude Code the artefact is `.claude/settings.json` as in GA (arm tier above). | The overlay is what selects the gate for a dsh run. Task 16. | DshTest "setup + afterSteps, gated arm: overlay names the profile's rows, hooks file is the run copy's map" |
 | 10 | `score.json` / `run.json` bytes: ujson writes `1` where python writes `1.0` and raw UTF-8 where python escapes; field names, values and order equal. `chain.json` keeps python's `json.dump(indent=2)` form. | Old readers parse JSON; parity is parsed-JSON equality (Task 10 ruling). | ScoreTest "score.json: GA fields in GA order"; ChainCheckTest "chain.json is written like python json.dump(indent=2) with float repr" |
 
-Minor differences recorded as deferred in the progress ledger, not ruled and not pinned: a tool_use `input` that is not
-an object becomes `{}` (GA keeps a truthy non-dict); `run`'s rep accepts `05`, `+3` (GA `[1-9]`); `pyInt` of `null` has a different error text; `experiments/chain.conf` has no `${?GA_ROOT}`
-override (GA honours `GA_ROOT`).
+Minor differences from GA still deferred (progress ledger; not ruled, not pinned): a tool_use `input` that is not an
+object becomes `{}` (GA keeps a truthy non-dict); `pyInt` of `null` has a different error text; chain check's
+`own_passed` truthiness of `[]` / `{}` / `true`; `runBuild` sets `MILL_OUTPUT_DIR` over a caller's (GA: the caller's extra
+env wins); `modulePasses` iterates an unordered map (more than four modules); the `{home}` variable is `user.home`, not
+`$HOME`; arm t's stderr line is not printed; a missing holdout dir reuses the `holdout export` text; the contamination
+ancestor check also flags paths inside the holdout when the run dir is outside `<root>/runs` (wider than GA).
+Fixed 2026-10-13: `run`'s rep takes `[1-9]` only (GA's text for `05`, `+3`, ` 3`); `experiments/chain.conf` honours
+`${?GA_ROOT}`.
+
+Accepted, not to be fixed (2026-10-13)[^dropped].
+
+[^dropped]: Byte-level python parity nits (number formatting, #10; `str.strip` vs `trim` unicode whitespace; UTF-16 vs
+code-point sort order; ASCII vs unicode `\s` / `\b`; NaN / Infinity, #7), test temp-dir cleanup, dead asserts, test names,
+the quadratic section parse, the `wilson` Int overflow above ~23k runs, the baseline line format duplicated in Main and
+Score, and the double killTree when a cancel meets a timeout (harmless).
 
 New agents (dsh, Codex CLI, Gemini CLI, generic) and the generic agent's `resultFromExit` have no GA counterpart.

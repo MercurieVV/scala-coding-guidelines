@@ -34,7 +34,7 @@ Every subcommand but `dsh-profile` takes `--experiment <file.conf>` (required) a
 
 | command | does | GA |
 |---|---|---|
-| `validate` | load the experiment, resolve every adapter, print root, target, agents, arms (with their setup), campaign arms / reps / tasks / chain | — |
+| `validate` | load the experiment, resolve the target and the campaign arms' agents, print root, target, agents, arms (with their setup), campaign arms / reps / tasks / chain | — |
 | `warm-head` | export the target at its commit to `<root>/head`, compile everything once | `warm-cache.sh` |
 | `prepare <task>` | `<root>/base/<task>`: cut tree, hidden spec, `validation.txt`; exit 1 unless every line is `yes` | `prepare.sh` |
 | `baseline` | run every test module at HEAD, write `head-baseline.json`, print `module pass/FAIL` | `score.py --baseline` |
