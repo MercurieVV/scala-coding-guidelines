@@ -103,3 +103,13 @@ class ConfigTest extends FunSuite:
   test("a missing experiment file is a config error naming the file"):
     val f = os.temp.dir() / "nope.conf"
     assertEquals(Load.experiment(f), Left(s"experiment file $f not found"))
+
+  // deferred minor (Task 8): the confs hard-coded the author's home; `${HOME}` renders the same text on that machine
+  test("agents/ and experiments/ confs hold no hard-coded home; mcp-json renders GA's text under $HOME"):
+    val confs = (os.list(harnessDir / "agents") ++ os.list(harnessDir / "experiments")).filter(_.ext == "conf")
+    confs.foreach(f => assert(!os.read(f).contains("/Users/"), f.toString))
+    val e = Load.experiment(gateAb).fold(fail(_), identity)
+    val home = sys.env("HOME")
+    assertEquals(e.agents("claude-code").raw("mcp-json").str,
+      s"""{ "mcpServers": { "scala-semantic": { "command": "$home/.local/bin/scalasemantic-mcp", "args": ["serve", "."] } } }""")
+    assertEquals(e.template, os.Path(s"$home/IdeaProjects/my/scala-llm-template"))
