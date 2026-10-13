@@ -164,6 +164,18 @@ run either: `unsolved` here is three invalid-runs (agent died on an API 429 with
 | dsh-u | dsh 0.1.5-rc.1 / deepseek-flash | none | yes | 241 | 30 | 51868 / 26349 / 1378432 | null: dsh reports no cost and `prices` is empty | gate blocks none (arm u, no hook ran); MCP not loaded (profile's `scalasemantic-mcp.sh` missing in the tree); contamination `bash: /out` ×5 (`grep -v "/out/"`, GA's heuristic) |
 | dsh-gs | dsh 0.1.5-rc.1 / deepseek-flash | none | no (timed out at the 1200 s cap, not false_done) | 1200 | 107 | 128993 / 100906 / 13899648 (child subagent session not counted) | null (as dsh-u) | hidden 100 %, no regressions, holdout passed: the agent had finished and the cap hit during its final Stop (turn-end) hook. Gate blocks semantic-guard 7, tool-policy 3 (rescored after the fix below; first score also had turn-end 1). MCP not loaded; contamination: the agent read `~/.dsh` (settings.yaml, presets) and the run's `holdout/` path (blocked by tool-policy) |
 
+Reruns, rep 2 (2026-10-12/13, after the follow-ups: scala-semantic launcher for dsh, `prices.deepseek-flash` at
+DeepSeek's peak rates, agy with `--disable-slash-commands`; dsh-gs with `--set harness.cap-seconds=2700`). Rep 1 dsh
+costs from rescoring with the same prices: dsh-u 0.0554, dsh-gs 0.2432.
+
+| arm | solved | wall s | turns | tokens in / out / cache read | cost USD (peak) | notes |
+|---|---|---|---|---|---|---|
+| dsh-u | yes | 526 | 48 | 78909 / 47076 / 3504256 | 0.1012 | MCP tools listed, none called; contamination `subagent: /` |
+| dsh-gs | yes | 1060 | 97 | 149760 / 104093 / 13881088 | 0.2531 | hidden 100 %, no regressions, holdout passed; gate blocks semantic-guard 9, semantic-guard-sealed 2, turn-end 1 (a live Stop block); 48 scala-semantic MCP calls; contamination `subagent: /` |
+| agy-u | yes | 754 | — | — | unknown (subscription) | `--disable-slash-commands`: no plugin stop; contamination, gate blocks, env leaks unchecked (no transcript) |
+
+dsh-gs rep 2 finished inside the old 1200 s cap, so rep 1's timeout says little about the arm.
+
 Adapter defect found live (fixed, failing test first): Codex `input_tokens` counted the cached tokens too (OpenAI usage
 includes `cached_input_tokens` in `input_tokens`), so it was not comparable with Claude Code's uncached figure; the adapter
 now subtracts them. Test: OtherAgentsTest "codex parse: live exec --json capture" (fixture captured from the run). The

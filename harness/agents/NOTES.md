@@ -97,7 +97,12 @@ dsh 0.1.5-rc.1, profile `scala-headless` (derived by `harness dsh-profile --from
 - MCP: did not load in either run. The profile's MCP client starts `<cwd>/scalasemantic-mcp.sh`, which the skreeep2 tree
   does not have; the header lists no `mcp__` tool, and the gs agent logged "no scala-semantic MCP tool exposed in this
   session". So dsh arms ran without ScalaSemantic, unlike the Claude Code and Codex arms. `env_leaks` is empty (no extra
-  servers).
+  servers). Fixed 2026-10-12 (`scalasemantic-command` in `agents/dsh.conf`: setup writes the launcher into the run copy,
+  git-excluded): in the rep-2 reruns the header lists the `mcp__scalasemantic__*` tools; dsh-gs rep 2 called them 48 times
+  (annotated_source 25, search_text 15, resolve_references 4, find_usages 2, find_symbol 1, document_outline 1), dsh-u
+  rep 2 none.
+- Stop (turn-end) block observed live in dsh-gs rep 2: one `hook/result` at point `Stop`, decision block, counted as
+  `turn-end` 1.
 - Request header config: `provider deepseek-official, model deepseek-flash, maxTokens 131072, reasoningEffort high`
   (`adapterDefaults` mark the last two as defaults; `maxTokens` matches the user's `~/.dsh/settings.yaml`).
 - Run-dir files: `dsh-overlay.yml` (the `--patch`) and `dsh-hooks.json` (the hook map) sit in the run dir, which the
@@ -141,6 +146,6 @@ dsh 0.1.5-rc.1, profile `scala-headless` (derived by `harness dsh-profile --from
   `mcp/playwright`), and the user's plugins under `~/.gemini/config/plugins` (superpowers): in the live run the agent
   answered "This task looks **bounded** ... I'll present a short design here for your approval before writing any code",
   ended with "Does this approach look good to proceed?" and changed nothing (superpowers brainstorming), exit 0.
-  `--disable-slash-commands` ("disable slash command and skill expansion in print mode") is the candidate fix; not yet run
-  with it, so it is unverified.
+  `--disable-slash-commands` ("disable slash command and skill expansion in print mode") fixes it: `live-smoke.conf` passes
+  it since 2026-10-12, and agy-u rep 2 ran with it and solved fr-pan (754 s).
 

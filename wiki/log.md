@@ -340,3 +340,8 @@
 
 ## [2026-10-12] update | Roadmap: More Scala, Less LLM
 - Evaluation harness status: `eval/gate-ab` retired from scala-llm-template; the harness is its successor.
+
+## [2026-10-13] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-13-local-agent-eval-harness-reruns.md
+- Evaluation harness reruns: dsh with ScalaSemantic, DeepSeek prices, agy with --disable-slash-commands; dsh-u, dsh-gs, agy-u all solved fr-pan.
