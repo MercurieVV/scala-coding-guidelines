@@ -345,3 +345,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-13-local-agent-eval-harness-reruns.md
 - Evaluation harness reruns: dsh with ScalaSemantic, DeepSeek prices, agy with --disable-slash-commands; dsh-u, dsh-gs, agy-u all solved fr-pan.
+
+## [2026-10-13] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-13-local-dsh-subagent-token-recount.md
+- dsh costs recounted with subagent sessions: dsh-u rep 2 0.1320, dsh-gs rep 2 0.3129 USD.
