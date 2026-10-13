@@ -36,6 +36,13 @@ trait Agent:
 
   def parse(lines: Iterator[String]): harness.core.Transcript
 
+  /** At scoring, after [[parse]]: work the agent delegated to sessions outside the transcript (dsh subagents) added to
+    * its token and cost totals. `startedAtMillis`: the run's start (run.json `start_epoch`), when known.
+    */
+  def withDelegated(
+      @scala.annotation.unused ctx: RunCtx, t: harness.core.Transcript, @scala.annotation.unused startedAtMillis: Option[Long]
+  ): IO[harness.core.Transcript] = IO.pure(t)
+
   def envLeaks(t: harness.core.Transcript, arm: harness.config.ArmSpec): List[String]
 
   /** dirs the agent keeps state in that a run must not read (contamination fence), minus the run's own. */

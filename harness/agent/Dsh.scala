@@ -98,6 +98,31 @@ final class Dsh(val spec: AgentSpec) extends Agent:
 
   def parse(lines: Iterator[String]): Transcript = Dsh.parse(lines, price)
 
+  /** A `subagent` call runs in a child session (own dir under the slug, `parentSession` = its parent's id). Every
+    * session descending from the run's session (its `init` id), created at or after the start, adds its tokens and cost;
+    * turns, tool calls and texts stay the run's own. Reads the dsh home only.
+    */
+  override def withDelegated(ctx: RunCtx, t: Transcript, startedAtMillis: Option[Long]): IO[Transcript] = IO.blocking:
+    val top = t.init.flatMap(s(_, "id"))
+    val dir = if os.isDir(ctx.repo) then Some(dshHome / "sessions" / slug(ctx)).filter(os.isDir(_)) else None
+    (top, dir) match
+      case (Some(id), Some(d)) =>
+        val headers = os.list(d).filter(os.isDir(_)).flatMap(x => SessionFiles.map(x / _).find(os.isFile(_))).toList
+          .flatMap(f => header(f).map(f -> _))
+          .filter((_, h) => startedAtMillis.forall(st => h.value.get("createdAt").flatMap(_.numOpt).exists(_ >= st)))
+        @scala.annotation.tailrec
+        def closure(ids: Set[String]): Set[String] =
+          val more = headers.flatMap((_, h) => s(h, "id").filter(_ => s(h, "parentSession").exists(ids))).toSet ++ ids
+          if more == ids then ids else closure(more)
+        val kids = headers.filter((_, h) => s(h, "id").exists(k => k != id && closure(Set(id))(k)))
+          .sortBy((f, _) => f.toString).map((f, _) => withZstd(f)(in => Dsh.parse(scala.io.Source.fromInputStream(in, "UTF-8").getLines(), price)))
+        def add(a: Option[Long], b: Option[Long]) = if a.isEmpty && b.isEmpty then None else Some(a.getOrElse(0L) + b.getOrElse(0L))
+        kids.foldLeft(t)((acc, k) => acc.copy(
+          inputTokens = add(acc.inputTokens, k.inputTokens), outputTokens = add(acc.outputTokens, k.outputTokens),
+          cacheReadTokens = add(acc.cacheReadTokens, k.cacheReadTokens),
+          costUsd = acc.costUsd.map(_ + k.costUsd.getOrElse(0.0))))
+      case _ => t
+
   /** From the request header: MCP servers beyond allowed-mcp; hooks that ran in an arm without hooks; arm t's turn-end. */
   def envLeaks(t: Transcript, arm: ArmSpec): List[String] =
     t.init match
@@ -141,6 +166,12 @@ object Dsh:
   private def withZstd[A](f: os.Path)(use: java.io.InputStream => A): A =
     val in = com.github.luben.zstd.ZstdInputStream(java.io.BufferedInputStream(java.io.FileInputStream(f.toIO)))
     try use(in) finally in.close()
+
+  /** the `session` header (first line); None when unreadable */
+  private def header(f: os.Path): Option[ujson.Obj] =
+    scala.util.Try(withZstd(f) { in =>
+      ujson.read(java.io.BufferedReader(java.io.InputStreamReader(in, "UTF-8")).readLine()).obj
+    }).toOption.map(ujson.Obj.from(_))
 
   /** the `session` header's createdAt (first line); None when unreadable or a delegated (subagent) child session */
   private def topLevelCreatedAt(f: os.Path): Option[Long] =

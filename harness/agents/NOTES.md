@@ -89,8 +89,11 @@ dsh 0.1.5-rc.1, profile `scala-headless` (derived by `harness dsh-profile --from
   `~/.dsh/sessions/<slug>/session-*/session.v3.jsonl.zstd`. Every `tool/call` has its `tool/result` (50/50, 128/128).
   Usage: `inputTokens` excludes `cacheReadTokens` (Claude Code's meaning), summed over `assistant/message`.
 - Subagents: a `subagent` call starts a child session (`parentSession`, `delegationDepth 1`, own dir under the slug).
-  `collect` skips it, so its steps, tool calls and tokens are not in the run's figures (dsh-gs: child 18 steps, 50273 in /
-  32570 out / 960128 cache read not counted).
+  `collect` keeps the top-level session as the transcript; at scoring, `Dsh.withDelegated` adds the tokens and cost of
+  every session descending from the run's session (`parentSession` chain, same slug, created at or after the run's
+  `start_epoch`) to `input_tokens` / `output_tokens` / `cache_read_tokens` / `cost_usd` (2026-10-13). Turns, tool calls,
+  gate blocks and contamination stay the top-level session's (dsh-gs rep 1: child 18 steps, 50273 in / 32570 out / 960128
+  cache read, now counted). Rescoring reads the child sessions from the dsh home, so they must still be there.
 - Gate blocks: a blocking PreToolUse hook reaches the agent as the call's `Error: BLOCKED by …` tool result, so it is counted
   there (one per blocked call; dsh-gs had 11 PreToolUse block events on 10 calls, two hooks blocked the same call). Only a
   Stop block is a hook text (`Stop hook feedback`, turn-end). Fixed live: PreToolUse block texts were also hook texts,

@@ -195,6 +195,43 @@ class DshTest extends CatsEffectSuite:
     agent(home).collect(c, start).map: _ =>
       assertEquals(os.read(c.runDir / "transcript.jsonl"), header("parent", start + 10) + "\n" + """{"type":"x","n":"parent"}""" + "\n")
 
+  // deferred minor (Task 20): a `subagent` call's child session (own dir under the slug) was not in the run's tokens
+  private def sess(id: String, at: Long, parent: Option[String], in: Long, out: Long, cache: Long): Seq[String] =
+    Seq(ujson.write(ujson.Obj.from(Seq("type" -> ujson.Str("session"), "version" -> ujson.Num(3), "id" -> ujson.Str(id),
+        "createdAt" -> ujson.Num(at.toDouble)) ++ parent.toSeq.flatMap(p => Seq("parentSession" -> ujson.Str(p), "delegationDepth" -> ujson.Num(1))))),
+      """{"type":"request/header","data":{"header":{"config":{"provider":"p","model":"deepseek-flash"},"tools":[]}}}""",
+      """{"type":"step/start","data":{}}""",
+      s"""{"type":"assistant/message","data":{"message":{"content":[]},"usage":{"inputTokens":$in,"outputTokens":$out,"cacheReadTokens":$cache}}}""",
+      """{"type":"turn/end","data":{"reason":{"kind":"completed"}}}""")
+
+  test("withDelegated: child sessions of the run's session (transitively, created at/after start) add their tokens, not turns"):
+    val home = os.temp.dir(); val c = ctx("g"); val start = 1_790_000_000_000L
+    val dir = home / "sessions" / Dsh.dshSlug(real(c.repo))
+    val top = sess("top", start + 10, None, 100, 10, 1000)
+    zst(dir / "top" / "session.v3.jsonl.zstd", top*)
+    zst(dir / "kid" / "session.v3.jsonl.zstd", sess("kid", start + 20, Some("top"), 7, 3, 50)*)
+    zst(dir / "grandkid" / "session.v3.jsonl.zstd", sess("grandkid", start + 30, Some("kid"), 1, 1, 1)*)
+    zst(dir / "other-kid" / "session.v3.jsonl.zstd", sess("other-kid", start + 20, Some("other"), 1000, 1000, 1000)*)
+    zst(dir / "early-kid" / "session.v3.jsonl.zstd", sess("early-kid", start - 1, Some("top"), 1000, 1000, 1000)*)
+    val priced = agent(home, Seq("prices" -> ujson.Obj("deepseek-flash" -> ujson.Obj(
+      "input-per-mtok" -> 1.0, "output-per-mtok" -> 1.0, "cache-read-per-mtok" -> 1.0))))
+    val t0 = priced.parse(top.iterator)
+    priced.withDelegated(c, t0, Some(start)).map: t =>
+      assertEquals((t.inputTokens, t.outputTokens, t.cacheReadTokens), (Some(108L), Some(14L), Some(1051L)))
+      assertEquals(t.turns, t0.turns)
+      assertEquals(t.costUsd.map(c => math.round(c * 1e9)), Some(1173L * 1000L))
+      assertEquals(t.toolCalls, t0.toolCalls)
+
+  test("withDelegated: no child sessions, no init or no slug dir leave the transcript as it is"):
+    val home = os.temp.dir(); val c = ctx("g")
+    val t0 = agent(home).parse(sess("top", 5, None, 1, 1, 1).iterator)
+    for
+      a <- agent(home).withDelegated(c, t0, None)
+      b <- agent(home).withDelegated(c, agent(home).parse(Iterator.empty), None)
+    yield
+      assertEquals(a, t0)
+      assertEquals(b, agent(home).parse(Iterator.empty))
+
   test("collect: no session after start leaves an empty transcript (no result event)"):
     val home = os.temp.dir(); val c = ctx("g"); val start = 1_790_000_000_000L
     val dir = home / "sessions" / Dsh.dshSlug(real(c.repo))

@@ -198,8 +198,10 @@ object Score:
       arm = armSpec(exp, run("arm").str, agentName, run.obj.get("model").flatMap(_.strOpt).getOrElse(""))
 
       // transcript-derived: never lost to a later build failure
-      t <- IO.blocking(agent.parse(Json.readLenient(rd / "transcript.jsonl").linesIterator))
+      t0 <- IO.blocking(agent.parse(Json.readLenient(rd / "transcript.jsonl").linesIterator))
       ctx = harness.agent.RunCtx(exp, arm, ts, rd.last, rd, repo, None, None)
+      // dsh: tokens of the run's subagent sessions (none for the other agents)
+      t <- agent.withDelegated(ctx, t0, run.obj.get("start_epoch").flatMap(_.numOpt).map(e => (e * 1000).toLong))
       contamination <- IO.blocking(Contamination.check(t.toolCalls, fence(exp, rd, agent.privateStateDirs(ctx))))
       diff <- IO.blocking(Json.readLenient(rd / "final.diff"))
       hiddenSrc = root / "base" / taskName / "hidden" / os.RelPath(ts.hiddenSpec)

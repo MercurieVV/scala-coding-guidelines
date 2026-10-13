@@ -469,6 +469,33 @@ class ScoreTest extends CatsEffectSuite:
     e.target = FakeMill(exp.target, Map.empty, _ => ())
     Score.withAdapters(exp, e.rd, e.target, _ => Right(g))
 
+  // deferred minor (Task 20): Score adds the dsh child sessions' tokens (Agent.withDelegated) to the transcript's
+  test("dsh agent: child session tokens are in score.json, turns are the run's own"):
+    withEnv { e =>
+      val home = e.tmp / "dsh-home"
+      val d = harness.agent.Dsh(AgentSpec("dsh", "dsh", ujson.Obj("adapter" -> "dsh", "profile" -> "p", "dsh-home" -> home.toString)))
+      def lines(id: String, parent: Option[String], in: Int) = Seq(
+        ujson.write(ujson.Obj.from(Seq("type" -> ujson.Str("session"), "id" -> ujson.Str(id), "createdAt" -> ujson.Num(200000)) ++
+          parent.map("parentSession" -> ujson.Str(_)))),
+        """{"type":"request/header","data":{"header":{"config":{"model":"m"},"tools":[]}}}""",
+        """{"type":"step/start","data":{}}""",
+        s"""{"type":"assistant/message","data":{"message":{"content":[]},"usage":{"inputTokens":$in,"outputTokens":1,"cacheReadTokens":1}}}""",
+        """{"type":"turn/end","data":{"reason":{"kind":"completed"}}}""")
+      val slug = harness.agent.Dsh.dshSlug((e.rd / "repo").toNIO.toRealPath().toString)
+      val f = home / "sessions" / slug / "child" / "session.v3.jsonl.zstd"
+      os.makeDir.all(f / os.up)
+      val out = com.github.luben.zstd.ZstdOutputStream(java.io.FileOutputStream(f.toIO))
+      try out.write(lines("child", Some("top"), 7).map(_ + "\n").mkString.getBytes("UTF-8")) finally out.close()
+      e.patchRun("agent" -> "dsh", "model" -> "m")
+      e.setTranscript(lines("top", None, 100).map(_ + "\n").mkString)
+      val exp = e.exp.copy(agents = e.exp.agents + ("dsh" -> d.spec))
+      e.target = FakeMill(exp.target, Map.empty, _ => ())
+      Score.withAdapters(exp, e.rd, e.target, _ => Right(d)).map { s =>
+        assertEquals((s("input_tokens"), s("output_tokens"), s("cache_read_tokens")), (ujson.Num(107), ujson.Num(2), ujson.Num(2)))
+        assertEquals(s("turns"), ujson.Num(1))
+      }
+    }
+
   test("generic agent: exit_code 0 is a result"):
     withEnv { e => genericScore(e, 0).map(s => assertNotEquals(err(s), Some("no result event"))) }
 
