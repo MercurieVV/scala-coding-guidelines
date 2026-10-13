@@ -267,3 +267,8 @@ class ContaminationTest extends FunSuite:
     assertEquals(Contamination.candidatePaths("subagent", ToolKind.Other, prose), Nil)
     assert(Contamination.candidatePaths("Task", ToolKind.Other, prose).nonEmpty)
 
+  // rescore after the subagent-session scan: a child's `send_message` (its report to the parent) is prose too
+  test("dsh send_message message is prose, not paths"):
+    val msg = ujson.Obj("agent_id" -> "session-1", "message" -> "VERDICT on uncommitted pan change (control/ + control/midi/) / Press")
+    assertEquals(Contamination.candidatePaths("send_message", ToolKind.Other, msg).filter(_.startsWith("/")), Nil)
+

@@ -355,3 +355,8 @@
 - Disposition: Update
 - Raw: raw/llm-scala-fusion/2026-10-13-local-gate-cheap-model.md
 - Tier 7 item 17 measured: gate on deepseek-flash (dsh), u 0 vs gs 0 failures over 8 runs each — no gain; ungated 8 of 8, saturated.
+
+## [2026-10-13] ingest | Roadmap: More Scala, Less LLM
+- Disposition: Update
+- Raw: raw/llm-scala-fusion/2026-10-13-local-contamination-subagent-rescore.md
+- Item 17 follow-up: contamination reads dsh subagent sessions; flags 10 of 16 → 6 of 16, no real hits.

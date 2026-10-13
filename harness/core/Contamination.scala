@@ -186,14 +186,15 @@ object Contamination:
     * regexes excluded). Dispatches on the call's [[ToolKind]] (final review I2): a shell call's `command` goes through
     * [[bashTokens]] for every agent, not only Claude's `Bash`.
     */
-  private val SubagentProse = Set("description", "prompt")
+  // dsh tools whose fields are prose: a subagent's task, a child's report to its parent
+  private val ProseKeys = Map("subagent" -> Set("description", "prompt"), "send_message" -> Set("message"))
 
   def candidatePaths(tool: String, kind: ToolKind, inp: ujson.Value): List[String] =
     val out = scala.collection.mutable.ListBuffer.empty[String]
     for (key, v) <- leaves(inp, None) do
       if key.exists(ContentKeys.contains) then ()
       else if regexPattern(tool, kind) && key.contains("pattern") then ()
-      else if tool == "subagent" && key.exists(SubagentProse.contains) then () // dsh: prose; the child session's calls are scanned
+      else if ProseKeys.get(tool).exists(ks => key.exists(ks.contains)) then () // dsh prose; a child session's calls are scanned
       else if kind == ToolKind.Shell && key.contains("command") then out ++= bashTokens(v)
       else if v.exists(c => Character.isWhitespace(c) || Character.isSpaceChar(c)) then out ++= findAll(Token, v)
       else out += v
