@@ -77,6 +77,13 @@ class MainTest extends CatsEffectSuite:
   test("a missing --experiment exits 2"):
     cli("validate")().map(r => assertEquals(r.code, 2))
 
+  test("a missing --experiment file exits 1 with harness: experiment file <path> not found"):
+    val f = os.temp.dir() / "nope.conf"
+    cli("validate", "--experiment", f.toString)().map { r =>
+      assertEquals(r.code, 1)
+      assertEquals(r.err, s"harness: experiment file $f not found\n")
+    }
+
   test("a --set without '=' exits 2"):
     cli("validate", "--experiment", gateAb, "--set", "root")().map { r =>
       assertEquals(r.code, 2)

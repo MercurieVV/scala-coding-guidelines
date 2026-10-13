@@ -75,7 +75,8 @@ agents/<name>.conf        agents.<name> { adapter, … adapter knobs }
 tasks/<task>/             task.env (or task.conf), prompt.txt, stub/<path>, hidden/<path>, reference.patch
 ```
 
-Relative paths resolve against the experiment file. Values from the environment use HOCON substitution
+Relative paths under `harness` resolve against the experiment file; `target.repo`, `target.holdout-repo` and
+`target.settings-source` must be absolute (a relative one fails as `target.<key>: expected an absolute path, got …`). Values from the environment use HOCON substitution
 (`root = ${?GA_ROOT}`). `experiments/chain.conf` shows an experiment that includes another and changes a few keys.
 
 `--set` overrides one value before resolution: a path starting with `target.`, `agents.` or `arms.` is taken as is,

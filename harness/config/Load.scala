@@ -21,6 +21,7 @@ object Load:
 
   def experiment(file: os.Path, overrides: Map[String, String] = Map.empty): Either[String, Experiment] =
     for
+      _ <- Either.cond(os.isFile(file), (), s"experiment file $file not found")
       cfg <- loadConfig(file, overrides)
       root = cfg.root()
       harness <- section(root, "harness")
@@ -152,17 +153,20 @@ object Load:
     val p = "target."
     for
       adapter <- str(t, p, "adapter")
-      repo <- str(t, p, "repo")
+      repo <- absPath(t, p, "repo")
       commit <- str(t, p, "commit")
-      hRepo <- str(t, p, "holdout-repo")
+      hRepo <- absPath(t, p, "holdout-repo")
       hCommit <- str(t, p, "holdout-commit")
       hExp <- int(t, p, "holdout-expected")
       excl <- strings(t, p, "excluded-regression")
       pre <- strings(t, p, "precompile")
       mill <- str(t, p, "mill")
-      ss <- str(t, p, "settings-source")
+      ss <- absPath(t, p, "settings-source")
       all <- strings(t, p, "all-tasks")
-    yield TargetSpec(adapter, os.Path(repo), commit, os.Path(hRepo), hCommit, hExp, excl, pre, mill, os.Path(ss), all)
+    yield TargetSpec(adapter, repo, commit, hRepo, hCommit, hExp, excl, pre, mill, ss, all)
+
+  private def absPath(o: ujson.Obj, path: String, k: String): Either[String, os.Path] =
+    str(o, path, k).flatMap(s => Try(os.Path(s)).toOption.toRight(s"$path$k: expected an absolute path, got $s"))
 
   private def decodeAgent(name: String, v: ujson.Value): Either[String, AgentSpec] =
     v match

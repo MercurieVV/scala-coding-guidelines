@@ -183,8 +183,10 @@ object Cli:
   private def nonEmptyChain(exp: Experiment): IO[Unit] = if exp.chain.isEmpty then die("harness.chain is empty") else IO.unit
 
   private def execute(inv: Invocation, backend: Experiment => Commands, term: Term): IO[ExitCode] =
+    val file = path(inv.experiment)
     for
-      exp <- IO.blocking(Load.experiment(path(inv.experiment), inv.overrides)).flatMap(_.fold(die, IO.pure))
+      _ <- IO.blocking(os.isFile(file)).ifM(IO.unit, IO.raiseError(HarnessError(s"experiment file $file not found", "harness")))
+      exp <- IO.blocking(Load.experiment(file, inv.overrides)).flatMap(_.fold(die, IO.pure))
       _ <- adapters(exp).fold(die, IO.pure)
       cmds = backend(exp)
       code <- inv.cmd match

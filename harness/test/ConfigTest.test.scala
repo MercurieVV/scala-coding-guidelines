@@ -91,3 +91,15 @@ class ConfigTest extends FunSuite:
   test("Vars.expand"):
     assertEquals(Vars.expand("{repo}/x", Map("repo" -> "/r")), Right("/r/x"))
     assert(Vars.expand("{nope}/x", Map("repo" -> "/r")).isLeft)
+
+  // deferred minor (Task 3): a relative path threw (os.Path) instead of a config error naming the key
+  test("relative target.repo / holdout-repo / settings-source are config errors naming the key"):
+    def load(set: String) = Load.experiment(tempConf(set))
+    assertEquals(load("target.repo = rel/skreeep2\ntarget.settings-source = /abs/s.json"),
+      Left("target.repo: expected an absolute path, got rel/skreeep2"))
+    assertEquals(load("target.holdout-repo = rel/h"), Left("target.holdout-repo: expected an absolute path, got rel/h"))
+    assertEquals(load("target.settings-source = s.json"), Left("target.settings-source: expected an absolute path, got s.json"))
+
+  test("a missing experiment file is a config error naming the file"):
+    val f = os.temp.dir() / "nope.conf"
+    assertEquals(Load.experiment(f), Left(s"experiment file $f not found"))
