@@ -1,6 +1,7 @@
 package harness.cli
 
 import cats.effect.{Deferred, ExitCode, IO, Ref}
+import cats.syntax.all.*
 import harness.config.Experiment
 import harness.core.Py
 import harness.run.HarnessError
@@ -158,6 +159,16 @@ class MainTest extends CatsEffectSuite:
     cli("run", "noise", "g", "x", "--experiment", gateAb)().map { r =>
       assertEquals(r.code, 1)
       assertEquals(r.err, "gate-ab: rep must be 1..9, got x\n")
+    }
+
+  // deferred minor (Task 15): toIntOption took `05` and `+3`; GA ga_run_id accepts one digit [1-9] only
+  test("run accepts only a rep matching [1-9]: 05, +3 and ' 3' get GA's rep text"):
+    List("05", "+3", " 3", "3 ", "10").traverse_ { rep =>
+      cli("run", "noise", "g", rep, "--experiment", gateAb)().map { r =>
+        assertEquals(r.code, 1, rep)
+        assertEquals(r.err, s"gate-ab: rep must be 1..9, got $rep\n")
+        assertEquals(calls(r), Nil)
+      }
     }
 
   test("run dispatches task, arm, rep and an absolute seed"):

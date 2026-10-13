@@ -195,7 +195,7 @@ object Cli:
         case Cmd.WarmHead => cmds.warmHead.as(ExitCode.Success)
         case Cmd.Baseline => cmds.baselineCli.map(ExitCode(_))
         case Cmd.Run(task, arm, rep, seed) =>
-          val r = rep.toIntOption.getOrElse(-1)
+          val r = if rep.matches("[1-9]") then rep.toInt else -1 // GA ga_run_id: `case $rep in [1-9])`
           Run.runId(task, arm, r, exp.armSpecs.keySet)
             .left.map(m => if m.startsWith("rep must") then s"rep must be 1..9, got $rep" else m)
             .fold(die, _ => cmds.run(task, arm, r, seed.map(path)).as(ExitCode.Success))
