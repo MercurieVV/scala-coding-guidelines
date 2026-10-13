@@ -209,11 +209,15 @@ object Cli:
         case p: (Cmd.ParityStatic | Cmd.ParityArms | Cmd.ParityReports | Cmd.ParityErosion) => parity(exp, p, term)
     yield code
 
-  /** Spec §6 "validated at load" (final review I3): the target and every configured agent resolve, each adapter's
-    * required knobs present, before any command does work.
+  /** Spec §6 "validated at load" (final review I3): the target and every agent the campaign arms (`harness.arms`, after
+    * `--set`) use resolve, each adapter's required knobs present, before any command does work. An agent no campaign arm
+    * uses is not checked, so it cannot block report / unlock on an archived experiment; `run` with another arm resolves
+    * that arm's agent itself.
     */
   private def adapters(exp: Experiment): Either[String, Unit] =
-    Target.of(exp.target).flatMap(_ => exp.agents.values.toList.sortBy(_.name).traverse_(Agent.of(_).void))
+    val used = exp.arms.flatMap(exp.armSpecs.get).map(_.agent).toSet
+    Target.of(exp.target).flatMap(_ =>
+      exp.agents.values.toList.filter(a => used(a.name)).sortBy(_.name).traverse_(Agent.of(_).void))
 
   private def parity(exp: Experiment, cmd: Cmd, term: Term): IO[ExitCode] =
     def ga(o: Option[String]) = o.fold(exp.template / "eval" / "gate-ab")(path)

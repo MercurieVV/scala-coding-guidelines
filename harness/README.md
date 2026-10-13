@@ -62,7 +62,8 @@ run (isolation locks restored, temp dirs removed) before the process exits.
 ## Config layout
 
 HOCON (typesafe config), validated at load; every error names the HOCON path. Right after loading, every subcommand
-resolves the target and every configured agent (not only the ones an arm uses) and checks each adapter's required knobs
+resolves the target and every agent the campaign arms use (`harness.arms` after `--set`; `run` with another arm resolves
+that arm's agent itself) and checks each adapter's required knobs
 (`claude-code`: `mcp-json`; `dsh`: `profile`, `dsh-home`; `codex-cli` / `gemini-cli`: `mcp-servers.<n>.command`;
 `generic`: a non-empty `command` whose placeholders are only `{prompt}`, `{model}`, `{repo}`), so a typo fails as
 `gate-ab: agents.<name>.<key>: …` before any prepare, baseline or run work.

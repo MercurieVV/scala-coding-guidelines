@@ -131,6 +131,15 @@ class MainTest extends CatsEffectSuite:
         "--set", "agents.codex.mcp-servers.scala-semantic.command=null") *>
       failsAtLoad("agents.agy.command: missing", "campaign", "--experiment", liveSmoke, "--set", "agents.agy.command=null")
 
+  // deferred minor (final review): a broken agent no campaign arm uses must not block report / unlock on an archived experiment
+  test("config validated at load: only agents of the campaign arms (harness.arms after --set) are checked"):
+    cli("report", "--experiment", liveSmoke, "--set", "harness.arms=[claude-u]", "--set", "agents.dsh.profile=null",
+      "--set", "harness.report.treatment=claude-u", "--set", "harness.report.control=claude-u")().map { r =>
+      assertEquals(r.code, 0, r.err)
+      assertEquals(calls(r), List("report"))
+    } *> failsAtLoad("agents.dsh.profile: missing", "report", "--experiment", liveSmoke, "--set", "harness.arms=[dsh-u]",
+      "--set", "agents.dsh.profile=null")
+
   test("config validated at load: the generic command template has only known placeholders"):
     failsAtLoad("agents.agy.command[2]: unknown placeholder {holdout} (one of {prompt}, {model}, {repo})",
       "campaign", "--experiment", liveSmoke, "--set", """agents.agy.command=[agy, "-p", "--dir={holdout}"]""")

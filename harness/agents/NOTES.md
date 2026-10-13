@@ -4,7 +4,7 @@ Read from `--help` and the installed sources; no model call was made. Versions: 
 
 ## All adapters (final review fixes, 2026-10-12)
 
-- Load-time check: `Agent.of` runs the adapter's `validate`, and every subcommand resolves all configured agents right
+- Load-time check: `Agent.of` runs the adapter's `validate`, and every subcommand resolves the agents of the campaign arms (`harness.arms`) right
   after loading (see README "Config layout"). A missing knob fails as `agents.<name>.<key>: missing`.
 - Contamination dispatches on `ToolKind`, not Claude tool names: every Shell call's `command` goes through the Bash
   tokenizer (file-bound here-document bodies dropped, a bare `/` kept only as a walker's argument) and the chmod/chown
