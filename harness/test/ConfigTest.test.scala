@@ -113,3 +113,10 @@ class ConfigTest extends FunSuite:
     assertEquals(e.agents("claude-code").raw("mcp-json").str,
       s"""{ "mcpServers": { "scala-semantic": { "command": "$home/.local/bin/scalasemantic-mcp", "args": ["serve", "."] } } }""")
     assertEquals(e.template, os.Path(s"$home/IdeaProjects/my/scala-llm-template"))
+
+  // deferred minor (Task 3): GA honours GA_ROOT for the chain root too. HOCON looks `${?GA_ROOT}` up in the config
+  // before the environment, so a top-level GA_ROOT stands in for the variable here.
+  test("chain.conf: GA_ROOT overrides the root"):
+    val d = os.temp.dir()
+    os.write(d / "t.conf", s"include file(\"${harnessDir / "experiments" / "chain.conf"}\")\nGA_ROOT = /tmp/ga-root\n")
+    assertEquals(Load.experiment(d / "t.conf").map(_.root), Right(os.Path("/tmp/ga-root")))
