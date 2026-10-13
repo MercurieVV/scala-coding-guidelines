@@ -41,7 +41,8 @@ class DshTest extends CatsEffectSuite:
     assertEquals(conf("bin").str, "dsh")
     assertEquals(conf("profile").str, "scala-headless")
     assertEquals(conf("hooks-from").str, ".dsh/hooks.json")
-    assertEquals(conf("prices"), ujson.Obj())
+    assertEquals(conf("prices"), ujson.Obj("deepseek-flash" -> ujson.Obj(
+      "input-per-mtok" -> 0.30, "output-per-mtok" -> 1.20, "cache-read-per-mtok" -> 0.006)))
     assertEquals(conf("dsh-home").str, sys.env.getOrElse("DSH_HOME", s"${sys.env("HOME")}/.dsh"))
 
   test("Agent.of: dsh resolves"):
@@ -55,7 +56,7 @@ class DshTest extends CatsEffectSuite:
 
   // ---- parse ----
   test("parse: real session sample"):
-    val t = agent().parse(sample.iterator)
+    val t = agent(extra = Seq("prices" -> ujson.Obj())).parse(sample.iterator)
     assertEquals(t.toolCalls.map(_.name), Vector("bash", "ask_user_question", "grep"))
     assertEquals(t.toolCalls.map(_.kind), Vector(ToolKind.Shell, ToolKind.Other, ToolKind.Search))
     assertEquals(t.toolCalls.map(_.isError), Vector(true, true, false))
@@ -285,7 +286,8 @@ class DshTest extends CatsEffectSuite:
     val tool = os.temp.dir() / "fake-mcp"
     os.write(tool, "#!/bin/sh\nprintf '%s|' \"$@\"\n"); os.perms.set(tool, "rwxr-xr-x")
     val withCmd = agent(home, Seq("bin" -> ujson.Str(bin.toString), "scalasemantic-command" -> ujson.Str(tool.toString)))
-    val without = agent(home, Seq("bin" -> ujson.Str(bin.toString)))
+    val without = Dsh(AgentSpec("dsh", "dsh", ujson.Obj.from(spec(home, "bin" -> ujson.Str(bin.toString)).raw.value.toSeq
+      .filterNot(_._1 == "scalasemantic-command"))))
     os.proc("git", "init", "-q").call(cwd = c.repo)
     for
       _ <- withCmd.setup(c)
