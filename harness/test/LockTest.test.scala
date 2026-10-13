@@ -57,3 +57,23 @@ class LockTest extends CatsEffectSuite:
       assert(res.isLeft)
       assertEquals(mode(a), 0x1ed); assertEquals(mode(b), 0x1c0); assert(!os.exists(rec))
     }
+
+  test("restore tries every dir after a failing chmod and reports each failure naming the dir"):
+    val (a, b, rec) = setup()
+    for
+      warned <- IO.ref(Vector.empty[String])
+      r <- Lock.locked(List(a, os.Path("/usr"), b), rec, m => warned.update(_ :+ m)).use(_ => IO.unit).attempt
+      ws <- warned.get
+    yield
+      assert(r.isLeft)
+      assertEquals(mode(a), 0x1ed); assertEquals(mode(b), 0x1c0); assert(!os.exists(rec))
+      assertEquals(ws.size, 1, ws)
+      assert(ws.head.startsWith("gate-ab: lock restore failed for /usr (mode 755): "), ws.head)
+
+  test("restore reports nothing when every dir is restored"):
+    val (a, b, rec) = setup()
+    for
+      warned <- IO.ref(Vector.empty[String])
+      _ <- Lock.locked(List(a, b), rec, m => warned.update(_ :+ m)).use(_ => IO.unit)
+      ws <- warned.get
+    yield assertEquals(ws, Vector.empty)
