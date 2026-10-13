@@ -171,7 +171,7 @@ costs from rescoring with the same prices: dsh-u 0.0554, dsh-gs 0.3031 (incl. su
 
 | arm | solved | wall s | turns | tokens in / out / cache read | cost USD (peak) | notes |
 |---|---|---|---|---|---|---|
-| dsh-u | yes | 526 | 48 | 78909 / 47076 / 3504256 | 0.1012 | MCP tools listed, none called; contamination `subagent: /` |
+| dsh-u | yes | 526 | 48 | 109981 / 61862 / 4123648 (incl. subagent sessions) | 0.1320 | MCP tools listed, none called; contamination `subagent: /` |
 | dsh-gs | yes | 1060 | 97 | 208481 / 132954 / 15138816 (incl. subagent sessions) | 0.3129 (incl. subagent sessions; 0.2531 without) | hidden 100 %, no regressions, holdout passed; gate blocks semantic-guard 9, semantic-guard-sealed 2, turn-end 1 (a live Stop block); 48 scala-semantic MCP calls; contamination `subagent: /` |
 | agy-u | yes | 754 | — | — | unknown (subscription) | `--disable-slash-commands`: no plugin stop; contamination, gate blocks, env leaks unchecked (no transcript) |
 
