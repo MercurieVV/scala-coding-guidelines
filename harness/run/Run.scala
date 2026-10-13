@@ -30,6 +30,8 @@ object Run:
   // GA: the failing tool's own stderr reaches the console, then ga_die's text
   private def orDie[A](io: IO[A], msg: => String): IO[A] =
     io.handleErrorWith(e => Console[IO].errorln(e.getMessage) *> die(msg))
+  private def lockedDir(d: os.Path): Boolean =
+    os.isDir(d) && !(java.nio.file.Files.isReadable(d.toNIO) && java.nio.file.Files.isExecutable(d.toNIO))
   private def epoch: IO[Long] = IO.realTime.map(_.toSeconds)
   private val Gate = Seq("-c", "user.name=gate-eval", "-c", "user.email=gate-eval@local", "-c", "commit.gpgsign=false")
   private val OutDirs = List("out", "out-agent", "out-holdout")
@@ -46,6 +48,8 @@ object Run:
       ts <- TaskSpec.load(exp.tasksDir, task).fold(die, IO.pure)
       spec = exp.armSpecs(arm)
       base = exp.root / "base" / task
+      // final review M4: a hard crash (no finalizer) leaves base/ at 000, which would read as "not prepared"
+      _ <- check(!List(exp.root / "base", base).exists(lockedDir), "base is locked (a run crashed?): run `harness unlock`")
       _ <- check(os.isDir(base / "tree" / ".git"), s"task $task not prepared (run prepare.sh $task)")
       rd = exp.root / "runs" / id
       repo = rd / "repo"

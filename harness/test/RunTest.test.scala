@@ -322,6 +322,13 @@ class RunTest extends CatsEffectSuite:
     failsWith(e.run("g", 1, "np"), "task t1 not prepared (run prepare.sh t1)") *>
       failsWith(e.run("x", 1, "np"), "arm must be one of g, gf, gs, p, t, u, got x").map(_ => assert(!os.exists(e.runs / "t1-g-1")))
 
+  // final review M4: after a hard crash (no finalizer) base/ stays at 000; say so instead of "task not prepared"
+  test("run with base/ or base/<task> locked at 000 says base is locked and points to harness unlock"):
+    val e = Env()
+    val msg = "base is locked (a run crashed?): run `harness unlock`"
+    def locked(d: os.Path) = IO(os.perms.set(d, 0)) *> failsWith(e.run("g", 1, "lk"), msg).guarantee(IO(os.perms.set(d, "rwxr-xr-x")))
+    locked(e.root / "base") *> locked(e.root / "base" / "t1").map(_ => assert(!os.exists(e.f("lk", "ls"))))
+
   // Task 18: the setup phase alone (arm-setup parity drives it): run copy, agent config, arm steps, settings artefact,
   // `arm <name>` commit and base tag; no precompile, no agent, no run.json
   test("setupOnly: run copy set up and tagged, nothing built or started"):
