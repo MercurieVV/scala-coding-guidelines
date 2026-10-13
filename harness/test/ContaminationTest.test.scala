@@ -253,3 +253,10 @@ class ContaminationTest extends FunSuite:
 
   test("dsh_glob_pattern_still_a_path"):
     assertEquals(checked(dshCall("glob", "pattern" -> "/Users/someone/gate-eval/base/**")), List("glob: /Users/someone/gate-eval/base"))
+
+  // deferred minor (Task 6): Paths.get threw InvalidPathException on a NUL byte and crashed the whole check
+  test("nul_byte_path_does_not_crash_and_is_judged_unresolved"):
+    assertEquals(Contamination.realpath("/nonexistent/a\u0000b/../c"), "/nonexistent/c")
+    assertEquals(Contamination.realpath("/nonexistent/a\u0000b/c/d"), "/nonexistent/a\u0000b/c/d")
+    assertEquals(tool("Read", "file_path" -> s"$Skreeep2/a\u0000b"), List(s"Read: $Skreeep2/a\u0000b"))
+    assertEquals(Contamination.check(List(call("Read", ujson.Obj("file_path" -> s"$Run/repo/a\u0000.scala"))), fence()), Nil)

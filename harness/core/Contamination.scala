@@ -57,10 +57,11 @@ object Contamination:
       case ".." :: t => go(done.dropRight(1), t)
       case c :: t =>
         val cand = done :+ c
-        val jp = Paths.get("/" + cand.mkString("/"))
-        if Files.isSymbolicLink(jp) && links < 40 then
+        // a NUL byte is no valid path (InvalidPathException): never a symlink, normalised only (deferred minor, Task 6)
+        val jp = Option.unless(cand.exists(_.contains('\u0000')))(Paths.get("/" + cand.mkString("/")))
+        if jp.exists(Files.isSymbolicLink) && links < 40 then
+          val target = Files.readSymbolicLink(jp.get).toString
           links += 1
-          val target = Files.readSymbolicLink(jp).toString
           val comps = target.split("/", -1).toList
           if target.startsWith("/") then go(Nil, comps ++ t) else go(done, comps ++ t)
         else go(cand, t)
