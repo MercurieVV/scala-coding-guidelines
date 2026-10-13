@@ -496,6 +496,36 @@ class ScoreTest extends CatsEffectSuite:
       }
     }
 
+  // gate-cheap audit (2026-10-13): a subagent's own tool calls run in its child session, which contamination never read
+  test("dsh agent: a child session's tool call on forbidden material is contamination, labelled subagent-session"):
+    withEnv { e =>
+      val home = e.tmp / "dsh-home"
+      val d = harness.agent.Dsh(AgentSpec("dsh", "dsh", ujson.Obj("adapter" -> "dsh", "profile" -> "p", "dsh-home" -> home.toString)))
+      val forbidden = (e.root / "head" / "x.scala").toString
+      def lines(id: String, parent: Option[String], calls: Seq[String]) = Seq(
+        ujson.write(ujson.Obj.from(Seq("type" -> ujson.Str("session"), "id" -> ujson.Str(id), "createdAt" -> ujson.Num(200000)) ++
+          parent.map("parentSession" -> ujson.Str(_)))),
+        """{"type":"request/header","data":{"header":{"config":{"model":"m"},"tools":[]}}}""",
+        """{"type":"step/start","data":{}}""") ++ calls ++ Seq(
+        """{"type":"assistant/message","data":{"message":{"content":[]},"usage":{"inputTokens":1,"outputTokens":1,"cacheReadTokens":1}}}""",
+        """{"type":"turn/end","data":{"reason":{"kind":"completed"}}}""")
+      val read = ujson.write(ujson.Obj("type" -> "tool/call", "data" -> ujson.Obj("turn" -> 1, "callId" -> "c1", "name" -> "read",
+        "arguments" -> ujson.write(ujson.Obj("file_path" -> forbidden)))))
+      val slug = harness.agent.Dsh.dshSlug((e.rd / "repo").toNIO.toRealPath().toString)
+      val f = home / "sessions" / slug / "child" / "session.v3.jsonl.zstd"
+      os.makeDir.all(f / os.up)
+      val out = com.github.luben.zstd.ZstdOutputStream(java.io.FileOutputStream(f.toIO))
+      try out.write(lines("child", Some("top"), Seq(read)).map(_ + "\n").mkString.getBytes("UTF-8")) finally out.close()
+      e.patchRun("agent" -> "dsh", "model" -> "m")
+      e.setTranscript(lines("top", None, Nil).map(_ + "\n").mkString)
+      val exp = e.exp.copy(agents = e.exp.agents + ("dsh" -> d.spec))
+      e.target = FakeMill(exp.target, Map.empty, _ => ())
+      Score.withAdapters(exp, e.rd, e.target, _ => Right(d)).map { s =>
+        assertEquals(s("contamination").arr.map(_.str).toList, List(s"subagent-session read: ${harness.core.Contamination.realpath(forbidden)}"))
+        assertEquals(s("contaminated"), ujson.True)
+      }
+    }
+
   test("generic agent: exit_code 0 is a result"):
     withEnv { e => genericScore(e, 0).map(s => assertNotEquals(err(s), Some("no result event"))) }
 

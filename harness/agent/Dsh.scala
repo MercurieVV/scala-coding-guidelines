@@ -127,7 +127,8 @@ final class Dsh(val spec: AgentSpec) extends Agent:
         kids.foldLeft(t)((acc, k) => acc.copy(
           inputTokens = add(acc.inputTokens, k.inputTokens), outputTokens = add(acc.outputTokens, k.outputTokens),
           cacheReadTokens = add(acc.cacheReadTokens, k.cacheReadTokens),
-          costUsd = acc.costUsd.map(_ + k.costUsd.getOrElse(0.0))))
+          costUsd = acc.costUsd.map(_ + k.costUsd.getOrElse(0.0)),
+          delegatedCalls = acc.delegatedCalls ++ k.toolCalls ++ k.delegatedCalls))
       case _ => t
 
   /** Session files descending from session `id` (transitively via `parentSession`), created at or after the start, in

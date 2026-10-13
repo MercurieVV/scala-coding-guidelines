@@ -202,7 +202,10 @@ object Score:
       ctx = harness.agent.RunCtx(exp, arm, ts, rd.last, rd, repo, None, None)
       // dsh: tokens of the run's subagent sessions (none for the other agents)
       t <- agent.withDelegated(ctx, t0, run.obj.get("start_epoch").flatMap(_.numOpt).map(e => (e * 1000).toLong))
-      contamination <- IO.blocking(Contamination.check(t.toolCalls, fence(exp, rd, agent.privateStateDirs(ctx))))
+      contamination <- IO.blocking {
+        val f = fence(exp, rd, agent.privateStateDirs(ctx))
+        Contamination.check(t.toolCalls, f) ++ Contamination.check(t.delegatedCalls, f).map("subagent-session " + _)
+      }
       diff <- IO.blocking(Json.readLenient(rd / "final.diff"))
       hiddenSrc = root / "base" / taskName / "hidden" / os.RelPath(ts.hiddenSpec)
       hiddenText <- IO.blocking(Json.readLenient(hiddenSrc))

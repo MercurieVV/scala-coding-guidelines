@@ -22,7 +22,9 @@ final case class Transcript(
     hasResult: Boolean,
     init: Option[ujson.Obj],
     hookEvents: Vector[String],
-    apiError: Option[String])
+    apiError: Option[String],
+    // tool calls made in delegated (subagent) sessions: scanned for contamination only
+    delegatedCalls: Vector[ToolCall] = Vector.empty)
 
 object ClaudeTranscript:
   def kindOf(toolName: String): ToolKind = toolName match

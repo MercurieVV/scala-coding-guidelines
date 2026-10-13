@@ -260,3 +260,10 @@ class ContaminationTest extends FunSuite:
     assertEquals(Contamination.realpath("/nonexistent/a\u0000b/c/d"), "/nonexistent/a\u0000b/c/d")
     assertEquals(tool("Read", "file_path" -> s"$Skreeep2/a\u0000b"), List(s"Read: $Skreeep2/a\u0000b"))
     assertEquals(Contamination.check(List(call("Read", ujson.Obj("file_path" -> s"$Run/repo/a\u0000.scala"))), fence()), Nil)
+
+  // gate-cheap audit (2026-10-13): dsh `subagent` input is prose (description, prompt); its `/` tokens were read as paths
+  test("dsh subagent prompt and description are prose, not paths; Claude Task keeps GA's scan"):
+    val prose = ujson.Obj("description" -> "Independent verification lane", "prompt" -> "check / the /fatal flow and /test sources")
+    assertEquals(Contamination.candidatePaths("subagent", ToolKind.Other, prose), Nil)
+    assert(Contamination.candidatePaths("Task", ToolKind.Other, prose).nonEmpty)
+
