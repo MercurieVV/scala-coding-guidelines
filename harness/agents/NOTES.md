@@ -65,8 +65,8 @@ Read from `--help` and the installed sources; no model call was made. Versions: 
   `scala-semantic` were accepted (no argument error; the CLI reached auth). The harness run `fr-pan-gemini-u-1` scored
   `error: no result event`. Tool names and MCP loading stay unverified until a run with an API key or an eligible account.
   `GEMINI_CLI_HOME=<d>` means `<d>/.gemini` (gemini-cli `homedir()`).
-  The user has subscriptions only (no API key). Next try: upgrade gemini-cli and log in again (`gemini`, then `/auth`); until
-  then the adapter stays unverified live. Gemini models run through `agy` instead (generic adapter, below).
+  Not pursued (2026-10-13): the user runs Gemini models through `agy` (generic adapter, below), not gemini-cli; this
+  adapter stays in the code, unverified live.
 - State: `<gemini-home>/tmp/<id>/chats/session-*.json`, `<id>` = `projects.json` entry of the project's real path
   (`GEMINI_CLI_HOME` overrides the home). `wipeState` removes only the run copy's `<id>` dir, nothing when unregistered.
   Older versions keyed the dir by a hash of the path; not handled.
