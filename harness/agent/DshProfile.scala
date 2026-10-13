@@ -128,7 +128,10 @@ object DshProfile:
     dsh("profile") = profile
     pkg("dsh") = dsh
 
-    val patch = patchList(Yaml.load(os.read(src / "cordis.patch.yml")))
+    val srcPatch = Yaml.load(os.read(src / "cordis.patch.yml"))
+    val bridges = rows(srcPatch).count(_.name.contains(HooksBridge))
+    if bridges > 1 then die(s"${src / "cordis.patch.yml"} has $bridges $HooksBridge rows; a run's overlay retargets only one")
+    val patch = patchList(srcPatch)
     os.makeDir.all(dest)
     os.write(dest / "package.json", ujson.write(pkg, indent = 2) + "\n")
     os.write(dest / "cordis.yml", "[]\n") // the root: an empty entry list, the tree is the bundles plus the patch layer

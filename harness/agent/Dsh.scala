@@ -35,8 +35,14 @@ final class Dsh(val spec: AgentSpec) extends Agent:
     if r.exitCode != 0 then
       throw new RuntimeException(s"dsh: --profile $profile --dump-config failed (exit ${r.exitCode}): ${r.err.text().trim}")
     val rows = Yaml.list(Yaml.load(r.out.text())).flatMap(Yaml.map)
-    def row(name: String) = rows.find(m => Yaml.str(m, "name").contains(name) && Yaml.str(m, "id").isDefined)
-      .getOrElse(throw new RuntimeException(s"dsh: profile $profile has no $name row (see dsh --dump-config)"))
+    // the overlay patches one row by id: a second row of the same plugin would run unpatched (e.g. the user's own hooks)
+    def row(name: String) =
+      val named = rows.filter(m => Yaml.str(m, "name").contains(name))
+      if named.size > 1 then
+        throw new RuntimeException(s"dsh: profile $profile has ${named.size} $name rows " +
+          s"(${named.map(Yaml.str(_, "id").getOrElse("no id")).mkString(", ")}); a run's overlay retargets only one (see dsh --dump-config)")
+      named.find(m => Yaml.str(m, "id").isDefined)
+        .getOrElse(throw new RuntimeException(s"dsh: profile $profile has no $name row (see dsh --dump-config)"))
     val hooks = row(DshProfile.HooksBridge)
     val model = row(DefaultModel)
     val provider = Option(model.get("config")).flatMap(Yaml.map).flatMap(Yaml.str(_, "provider"))

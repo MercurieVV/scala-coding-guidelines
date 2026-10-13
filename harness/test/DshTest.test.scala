@@ -312,6 +312,13 @@ class DshTest extends CatsEffectSuite:
       assertEquals(r1.left.map(_.getMessage), Left("dsh: profile scala-headless has no @deepseek-ai/dsh-hooks-claude-code row (see dsh --dump-config)"))
       assertEquals(r2.left.map(_.getMessage), Left("dsh: profile scala-headless has no @deepseek-ai/dsh-agent-default-model row (see dsh --dump-config)"))
 
+  // deferred minor (Task 16): only the first bridge row was retargeted; a second one would still load its own hook file
+  test("setup fails when the profile has more than one hooks bridge row"):
+    val two = fakeBin(dump + "- id: more-hooks\n  name: '@deepseek-ai/dsh-hooks-claude-code'\n  config:\n    configPath: /x.json\n")._1
+    agent(extra = Seq("bin" -> ujson.Str(two.toString))).setup(ctx("g")).attempt.map: r =>
+      assertEquals(r.left.map(_.getMessage), Left("dsh: profile scala-headless has 2 @deepseek-ai/dsh-hooks-claude-code rows " +
+        "(claude-code-hooks, more-hooks); a run's overlay retargets only one (see dsh --dump-config)"))
+
   test("afterSteps fails when a gated arm's run copy has no hook map"):
     val c = ctx("g")
     agent().afterSteps(c).attempt.map: r =>
@@ -366,6 +373,15 @@ class DshTest extends CatsEffectSuite:
       assert(js.contains(Js -> "process.cwd() + '/scalasemantic-mcp.sh'"), js.toString)
       assert(js.contains(Js -> "process.env.DSH_PERMISSION_MODE ?? 'danger-full-access'"), js.toString)
       assert(text.contains("command: !!js 'process.cwd() + ''/scalasemantic-mcp.sh'''"), text)
+
+  test("DshProfile.derive refuses a source with more than one hooks bridge row"):
+    val home = homeWithScala()
+    val src = home / "profiles" / "scala" / "cordis.patch.yml"
+    os.write.append(src, "- name: '@deepseek-ai/dsh-hooks-claude-code'\n  config:\n    configPath: /x.json\n")
+    DshProfile.derive(home, "scala").attempt.map: r =>
+      assertEquals(r.left.map(_.getMessage),
+        Left(s"dsh-profile: $src has 2 @deepseek-ai/dsh-hooks-claude-code rows; a run's overlay retargets only one"))
+      assert(!os.exists(home / "profiles" / "scala-headless"))
 
   test("DshProfile.derive refuses an existing target"):
     val home = homeWithScala()
