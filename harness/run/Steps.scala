@@ -38,13 +38,9 @@ object Steps:
 
   // GA `sh install.sh <repo> >/dev/null || ga_die ...`: stdout discarded, stderr to the console
   // a command that cannot be launched (missing argv[0]) fails the same way as one that exits non-zero
+  // (exit 127 from Proc's launcher); the command runs in its own process group, killed on cancel
   private def runCmd(argv: List[String], fail: Option[String], repo: os.Path, arm: String): IO[Unit] =
-    IO.interruptible {
-      import java.lang.ProcessBuilder.Redirect
-      import scala.jdk.CollectionConverters.*
-      new ProcessBuilder(argv.asJava).directory(repo.toIO).redirectInput(Redirect.from(new java.io.File("/dev/null")))
-        .redirectOutput(Redirect.DISCARD).redirectError(Redirect.INHERIT).start().waitFor()
-    }.attempt.flatMap {
+    Proc.quiet(argv, repo).attempt.flatMap {
         case Right(0)  => IO.unit
         case Right(rc) => die(fail.getOrElse(s"arm $arm: ${argv.mkString(" ")} failed (rc=$rc)"))
         case Left(e)   => die(fail.getOrElse(s"arm $arm: ${argv.mkString(" ")} failed (${e.getMessage})"))

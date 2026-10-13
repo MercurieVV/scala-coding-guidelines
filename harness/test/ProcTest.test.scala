@@ -125,3 +125,21 @@ class ProcTest extends CatsEffectSuite:
           .filter(h => h.info.commandLine.orElse("").contains("sleep 100") && h.parent.map(_.pid) == java.util.Optional.of(ProcessHandle.current.pid)).toList
         assertEquals(sleepers.size, 0)
       }
+
+  // deferred minor (Task 2): capture had no process group and no kill on cancel
+  test("capture: cancel kills the child and a reparented grandchild (process group), promptly"):
+    val d = os.temp.dir()
+    val (pidFile, gcFile) = (d / "pid", d / "gc.pid")
+    val cmd = Seq("/bin/sh", "-c", s"""/bin/sh -c 'sleep 300 & echo $$! > $gcFile'; echo $$$$ > $pidFile; exec sleep 100""")
+    def pids = List(pidFile, gcFile).filter(pidReady).map(readPid)
+    (for
+      fib <- Proc.capture(cmd, d).start
+      _ <- pollUntil(pidReady(pidFile) && pidReady(gcFile), 100)
+      ps = pids
+      _ <- fib.cancel.timeoutTo(15.seconds, IO.unit)
+      _ <- pollUntil(ps.forall(!alive(_)), 50)
+    yield ps.foreach(p => assert(!alive(p), s"$p survived cancel"))).guarantee(IO(pids.foreach(p => ProcessHandle.of(p).ifPresent(_.destroyForcibly()))))
+
+  test("capture: a command that cannot be launched is a non-zero rc, not an exception"):
+    val d = os.temp.dir()
+    Proc.capture(Seq("/nonexistent/x"), d).map { (rc, _) => assertEquals(rc, 127) }

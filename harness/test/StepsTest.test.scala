@@ -134,6 +134,23 @@ class StepsTest extends CatsEffectSuite:
         case other                 => fail(s"expected HarnessError, got $other")
       }
 
+  // deferred minor (Task 9): a run step's command was not killed on fiber cancel
+  test("run: cancel kills the step's command and its process group"):
+    val r = repo()
+    val (pidFile, gcFile) = (r / "pid", r / "gc.pid")
+    def ready(p: os.Path) = os.exists(p) && os.read(p).trim.nonEmpty
+    def pids = List(pidFile, gcFile).filter(ready).map(os.read(_).trim.toLong)
+    def alive(p: Long) = ProcessHandle.of(p).map(_.isAlive).orElse(false)
+    def poll(c: => Boolean, n: Int): IO[Unit] = IO(c).flatMap(ok => if ok || n <= 0 then IO.unit else IO.sleep(scala.concurrent.duration.DurationInt(100).millis) *> poll(c, n - 1))
+    val step = SetupStep.Run(List("/bin/sh", "-c", s"/bin/sh -c 'sleep 300 & echo $$! > $gcFile'; echo $$$$ > $pidFile; exec sleep 100"))
+    (for
+      fib <- run(List(step), r).start
+      _ <- poll(ready(pidFile) && ready(gcFile), 100)
+      ps = pids
+      _ <- fib.cancel
+      _ <- poll(ps.forall(!alive(_)), 50)
+    yield ps.foreach(p => assert(!alive(p), s"$p survived cancel"))).guarantee(IO(pids.foreach(p => ProcessHandle.of(p).ifPresent(_.destroyForcibly()))))
+
   test("arm p filter looks only at hooks[].command (a matcher holding the text does not count)"):
     val r = repo()
     val p = settingsCopy(r,
