@@ -36,15 +36,15 @@ final class Dsh(val spec: AgentSpec) extends Agent:
       throw new RuntimeException(s"dsh: --profile $profile --dump-config failed (exit ${r.exitCode}): ${r.err.text().trim}")
     val rows = Yaml.list(Yaml.load(r.out.text())).flatMap(Yaml.map)
     // the overlay patches one row by id: a second row of the same plugin would run unpatched (e.g. the user's own hooks)
-    def row(name: String) =
+    def row(name: String, unique: Boolean) =
       val named = rows.filter(m => Yaml.str(m, "name").contains(name))
-      if named.size > 1 then
+      if unique && named.size > 1 then
         throw new RuntimeException(s"dsh: profile $profile has ${named.size} $name rows " +
           s"(${named.map(Yaml.str(_, "id").getOrElse("no id")).mkString(", ")}); a run's overlay retargets only one (see dsh --dump-config)")
       named.find(m => Yaml.str(m, "id").isDefined)
         .getOrElse(throw new RuntimeException(s"dsh: profile $profile has no $name row (see dsh --dump-config)"))
-    val hooks = row(DshProfile.HooksBridge)
-    val model = row(DefaultModel)
+    val hooks = row(DshProfile.HooksBridge, unique = true)
+    val model = row(DefaultModel, unique = false)
     val provider = Option(model.get("config")).flatMap(Yaml.map).flatMap(Yaml.str(_, "provider"))
     // a patch's `config` replaces the row's whole config: the provider is carried over, the model is the arm's
     val doc = java.util.ArrayList[Object](java.util.List.of(
@@ -93,8 +93,15 @@ final class Dsh(val spec: AgentSpec) extends Agent:
     val picked = sessions.flatMap(f => topLevelCreatedAt(f).map(f -> _)).filter(_._2 >= startedAtMillis).sortBy(-_._2).headOption
     val dest = ctx.runDir / "transcript.jsonl"
     picked match
-      case Some((f, _)) => withZstd(f)(in => os.write.over(dest, in))
-      case None         => os.write.over(dest, "")
+      case Some((f, _)) =>
+        withZstd(f)(in => os.write.over(dest, in))
+        // the run's child sessions go beside the transcript, so a rescore does not depend on the dsh home
+        val kids = header(f).flatMap(s(_, "id")).toList.flatMap(id => descendants(sessions, id, Some(startedAtMillis)))
+        if kids.nonEmpty then
+          val keep = ctx.runDir / "dsh-sessions"
+          os.makeDir.all(keep)
+          kids.foreach(k => os.copy.over(k, keep / s"${(k / os.up).last}.${k.last}"))
+      case None => os.write.over(dest, "")
 
   def parse(lines: Iterator[String]): Transcript = Dsh.parse(lines, price)
 
@@ -104,24 +111,36 @@ final class Dsh(val spec: AgentSpec) extends Agent:
     */
   override def withDelegated(ctx: RunCtx, t: Transcript, startedAtMillis: Option[Long]): IO[Transcript] = IO.blocking:
     val top = t.init.flatMap(s(_, "id"))
-    val dir = if os.isDir(ctx.repo) then Some(dshHome / "sessions" / slug(ctx)).filter(os.isDir(_)) else None
-    (top, dir) match
-      case (Some(id), Some(d)) =>
-        val headers = os.list(d).filter(os.isDir(_)).flatMap(x => SessionFiles.map(x / _).find(os.isFile(_))).toList
-          .flatMap(f => header(f).map(f -> _))
-          .filter((_, h) => startedAtMillis.forall(st => h.value.get("createdAt").flatMap(_.numOpt).exists(_ >= st)))
-        @scala.annotation.tailrec
-        def closure(ids: Set[String]): Set[String] =
-          val more = headers.flatMap((_, h) => s(h, "id").filter(_ => s(h, "parentSession").exists(ids))).toSet ++ ids
-          if more == ids then ids else closure(more)
-        val kids = headers.filter((_, h) => s(h, "id").exists(k => k != id && closure(Set(id))(k)))
-          .sortBy((f, _) => f.toString).map((f, _) => withZstd(f)(in => Dsh.parse(scala.io.Source.fromInputStream(in, "UTF-8").getLines(), price)))
+    // the copies collect kept in the run dir; runs collected before that read the dsh home
+    val kept = ctx.runDir / "dsh-sessions"
+    val files =
+      if os.isDir(kept) then Some(os.list(kept).filter(os.isFile(_)).toList)
+      else if os.isDir(ctx.repo) then
+        Some(dshHome / "sessions" / slug(ctx)).filter(os.isDir(_))
+          .map(d => os.list(d).filter(os.isDir(_)).flatMap(x => SessionFiles.map(x / _).find(os.isFile(_))).toList)
+      else None
+    (top, files) match
+      case (Some(id), Some(fs)) =>
+        val kids = descendants(fs, id, startedAtMillis)
+          .map(f => withZstd(f)(in => Dsh.parse(scala.io.Source.fromInputStream(in, "UTF-8").getLines(), price)))
         def add(a: Option[Long], b: Option[Long]) = if a.isEmpty && b.isEmpty then None else Some(a.getOrElse(0L) + b.getOrElse(0L))
         kids.foldLeft(t)((acc, k) => acc.copy(
           inputTokens = add(acc.inputTokens, k.inputTokens), outputTokens = add(acc.outputTokens, k.outputTokens),
           cacheReadTokens = add(acc.cacheReadTokens, k.cacheReadTokens),
           costUsd = acc.costUsd.map(_ + k.costUsd.getOrElse(0.0))))
       case _ => t
+
+  /** Session files descending from session `id` (transitively via `parentSession`), created at or after the start, in
+    * path order; `id`'s own file excluded. */
+  private def descendants(files: List[os.Path], id: String, startedAtMillis: Option[Long]): List[os.Path] =
+    val headers = files.flatMap(f => header(f).map(f -> _))
+      .filter((_, h) => startedAtMillis.forall(st => h.value.get("createdAt").flatMap(_.numOpt).exists(_ >= st)))
+    @scala.annotation.tailrec
+    def closure(ids: Set[String]): Set[String] =
+      val more = headers.flatMap((_, h) => s(h, "id").filter(_ => s(h, "parentSession").exists(ids))).toSet ++ ids
+      if more == ids then ids else closure(more)
+    val all = closure(Set(id))
+    headers.filter((_, h) => s(h, "id").exists(k => k != id && all(k))).map(_._1).sortBy(_.toString)
 
   /** From the request header: MCP servers beyond allowed-mcp; hooks that ran in an arm without hooks; arm t's turn-end. */
   def envLeaks(t: Transcript, arm: ArmSpec): List[String] =

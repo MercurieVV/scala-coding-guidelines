@@ -222,6 +222,22 @@ class DshTest extends CatsEffectSuite:
       assertEquals(t.costUsd.map(c => math.round(c * 1e9)), Some(1173L * 1000L))
       assertEquals(t.toolCalls, t0.toolCalls)
 
+  test("collect keeps the run's child sessions in the run dir: withDelegated still counts them after the dsh home is pruned"):
+    val home = os.temp.dir(); val c = ctx("g"); val start = 1_790_000_000_000L
+    val dir = home / "sessions" / Dsh.dshSlug(real(c.repo))
+    val top = sess("top", start + 10, None, 100, 10, 1000)
+    zst(dir / "top" / "session.v3.jsonl.zstd", top*)
+    zst(dir / "kid" / "session.v3.jsonl.zstd", sess("kid", start + 20, Some("top"), 7, 3, 50)*)
+    zst(dir / "other-kid" / "session.v3.jsonl.zstd", sess("other-kid", start + 20, Some("other"), 1000, 1000, 1000)*)
+    val a = agent(home)
+    for
+      _ <- a.collect(c, start)
+      _ <- IO.blocking(os.remove.all(home / "sessions"))
+      t <- a.withDelegated(c, a.parse(top.iterator), Some(start))
+    yield
+      assertEquals((t.inputTokens, t.outputTokens, t.cacheReadTokens), (Some(107L), Some(13L), Some(1050L)))
+      assertEquals(os.list(c.runDir / "dsh-sessions").map(_.last).sorted.toList, List("kid.session.v3.jsonl.zstd"))
+
   test("withDelegated: no child sessions, no init or no slug dir leave the transcript as it is"):
     val home = os.temp.dir(); val c = ctx("g")
     val t0 = agent(home).parse(sess("top", 5, None, 1, 1, 1).iterator)
@@ -355,6 +371,13 @@ class DshTest extends CatsEffectSuite:
     agent(extra = Seq("bin" -> ujson.Str(two.toString))).setup(ctx("g")).attempt.map: r =>
       assertEquals(r.left.map(_.getMessage), Left("dsh: profile scala-headless has 2 @deepseek-ai/dsh-hooks-claude-code rows " +
         "(claude-code-hooks, more-hooks); a run's overlay retargets only one (see dsh --dump-config)"))
+
+  test("a second default-model row does not fail setup: only the hooks bridge must be unique; the first model row is used"):
+    val c = ctx("g")
+    val two = fakeBin(dump + "- id: other-model\n  name: '@deepseek-ai/dsh-agent-default-model'\n  config:\n    provider: x\n")._1
+    agent(extra = Seq("bin" -> ujson.Str(two.toString))).setup(c).map: _ =>
+      assert(os.read(c.runDir / "dsh-overlay.yml").contains("- id: agent-default-model"))
+      assert(!os.read(c.runDir / "dsh-overlay.yml").contains("other-model"))
 
   test("afterSteps fails when a gated arm's run copy has no hook map"):
     val c = ctx("g")

@@ -7,6 +7,8 @@ import munit.CatsEffectSuite
 
 /** Codex CLI, Gemini CLI and generic adapters against temp homes: never read or write the real ~/.codex or ~/.gemini. */
 class OtherAgentsTest extends CatsEffectSuite:
+  // the confs render ${HOME} from the environment
+  private val Home = sys.env("HOME")
   private val harnessDir: os.Path =
     LazyList.iterate(os.pwd)(_ / os.up).take(6).flatMap(d => List(d, d / "harness"))
       .find(d => os.exists(d / "experiments" / "gate-ab.conf")).getOrElse(fail("harness dir not found"))
@@ -112,7 +114,7 @@ class OtherAgentsTest extends CatsEffectSuite:
     assertEquals(codex().command(c, "do it"),
       List("codex", "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--ignore-user-config", "--ignore-rules",
         "--dangerously-bypass-approvals-and-sandbox", "-C", c.repo.toString, "-m", "m-1",
-        "-c", """mcp_servers.scala-semantic.command="/Users/viktorskalinins/.local/bin/scalasemantic-mcp"""",
+        "-c", s"""mcp_servers.scala-semantic.command="$Home/.local/bin/scalasemantic-mcp"""",
         "-c", """mcp_servers.scala-semantic.args=["serve", "."]""", "--", "do it"))
 
   test("codex command: no mcp-servers, no overrides"):
@@ -129,7 +131,7 @@ class OtherAgentsTest extends CatsEffectSuite:
     codex().setup(c).unsafeRunSync()
     val toml = os.read(c.repo / ".codex" / "config.toml")
     assert(toml.contains("[mcp_servers.scala-semantic]"), toml)
-    assert(toml.contains("""command = "/Users/viktorskalinins/.local/bin/scalasemantic-mcp""""), toml)
+    assert(toml.contains(s"""command = "$Home/.local/bin/scalasemantic-mcp""""), toml)
     assert(toml.contains("""args = ["serve", "."]"""), toml)
 
   test("codex setup: no mcp-servers writes nothing"):
@@ -211,7 +213,7 @@ class OtherAgentsTest extends CatsEffectSuite:
     val c = ctx()
     gemini().setup(c).unsafeRunSync()
     val j = ujson.read(os.read(c.repo / ".gemini" / "settings.json"))
-    assertEquals(j("mcpServers")("scala-semantic")("command").str, "/Users/viktorskalinins/.local/bin/scalasemantic-mcp")
+    assertEquals(j("mcpServers")("scala-semantic")("command").str, "" + Home + "/.local/bin/scalasemantic-mcp")
     assertEquals(j("mcpServers")("scala-semantic")("args").arr.map(_.str).toList, List("serve", "."))
     assertEquals(j("mcpServers")("scala-semantic")("timeout").num, 60000.0)
 

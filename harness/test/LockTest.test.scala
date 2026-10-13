@@ -58,7 +58,7 @@ class LockTest extends CatsEffectSuite:
       assertEquals(mode(a), 0x1ed); assertEquals(mode(b), 0x1c0); assert(!os.exists(rec))
     }
 
-  test("restore tries every dir after a failing chmod and reports each failure naming the dir"):
+  test("restore tries every dir after a failing chmod; a dir whose chmod never happened is not reported"):
     val (a, b, rec) = setup()
     for
       warned <- IO.ref(Vector.empty[String])
@@ -67,8 +67,8 @@ class LockTest extends CatsEffectSuite:
     yield
       assert(r.isLeft)
       assertEquals(mode(a), 0x1ed); assertEquals(mode(b), 0x1c0); assert(!os.exists(rec))
-      assertEquals(ws.size, 1, ws)
-      assert(ws.head.startsWith("gate-ab: lock restore failed for /usr (mode 755): "), ws.head)
+      // /usr's chmod 000 failed, so it still has its recorded mode: nothing to restore, nothing to report
+      assertEquals(ws, Vector.empty)
 
   test("restore reports nothing when every dir is restored"):
     val (a, b, rec) = setup()

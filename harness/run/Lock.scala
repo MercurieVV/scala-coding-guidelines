@@ -26,7 +26,10 @@ object Lock:
         val i = line.indexOf(' ')
         val p = line.substring(i + 1)
         val mode = line.substring(0, i)
-        Try { val d = os.Path(p); if os.exists(d) then os.perms.set(d, Integer.parseInt(mode, 8)) }.failed.toOption
+        Try {
+          val d = os.Path(p); val m = Integer.parseInt(mode, 8)
+          if os.exists(d) && (os.perms(d).toInt() & 0xfff) != m then os.perms.set(d, m)
+        }.failed.toOption
           .map(e => s"gate-ab: lock restore failed for $p (mode $mode): ${e.getMessage}; run `harness unlock`")
       }
       os.remove(record)

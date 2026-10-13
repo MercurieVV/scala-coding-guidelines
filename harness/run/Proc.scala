@@ -30,7 +30,7 @@ object Proc:
   /** stdout + stderr merged, stdin /dev/null; in its own process group, killed on cancel (as [[run]]). The output goes
     * through a temp file, so no pipe read blocks the cancel. */
   def capture(cmd: Seq[String], cwd: os.Path): IO[(Int, String)] =
-    cats.effect.Resource.make(IO.blocking(os.temp(prefix = "harness-capture")))(f => IO.blocking(os.remove(f)).void)
+    cats.effect.Resource.make(IO.blocking(os.temp(prefix = "harness-capture", deleteOnExit = false)))(f => IO.blocking(os.remove(f)).void)
       .use { f =>
         run(cmd, cwd, f).flatMap(r =>
           IO.blocking((r.rc, new String(os.read.bytes(f), java.nio.charset.StandardCharsets.UTF_8))))

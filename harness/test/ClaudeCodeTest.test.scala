@@ -4,6 +4,8 @@ import munit.CatsEffectSuite
 import harness.config.*
 
 class ClaudeCodeTest extends CatsEffectSuite:
+  // the confs render ${HOME} from the environment
+  private val Home = sys.env("HOME")
   private val harnessDir: os.Path =
     LazyList.iterate(os.pwd)(_ / os.up).take(6).flatMap(d => List(d, d / "harness"))
       .find(d => os.exists(d / "experiments" / "gate-ab.conf")).getOrElse(fail("harness dir not found"))
@@ -101,11 +103,11 @@ class ClaudeCodeTest extends CatsEffectSuite:
       assertEquals(ujson.read(os.read(repo / ".claude" / "settings.json")), ujson.read("""{"permissions":{}}"""))
       assertEquals(os.read(repo / ".claude" / "settings.json"), "{\"permissions\":{}}\n")
       assertEquals(ujson.read(os.read(repo / ".mcp.json")),
-        ujson.read("""{ "mcpServers": { "scala-semantic": { "command": "/Users/viktorskalinins/.local/bin/scalasemantic-mcp", "args": ["serve", "."] } } }"""))
+        ujson.read(s"""{ "mcpServers": { "scala-semantic": { "command": "$Home/.local/bin/scalasemantic-mcp", "args": ["serve", "."] } } }"""))
 
   test(".mcp.json is byte-identical to the GA run.sh:29 heredoc"):
     val repo = os.temp.dir()
-    val ga = "{ \"mcpServers\": { \"scala-semantic\": { \"command\": \"/Users/viktorskalinins/.local/bin/scalasemantic-mcp\", \"args\": [\"serve\", \".\"] } } }\n"
+    val ga = "{ \"mcpServers\": { \"scala-semantic\": { \"command\": \"" + Home + "/.local/bin/scalasemantic-mcp\", \"args\": [\"serve\", \".\"] } } }\n"
     agent().setup(ctx("u", repo)).map(_ => assertEquals(os.read(repo / ".mcp.json"), ga))
 
   test("setup with snapshot replaces every holdout repo path by the real holdout dir"):

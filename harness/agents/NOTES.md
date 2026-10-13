@@ -93,7 +93,8 @@ dsh 0.1.5-rc.1, profile `scala-headless` (derived by `harness dsh-profile --from
   every session descending from the run's session (`parentSession` chain, same slug, created at or after the run's
   `start_epoch`) to `input_tokens` / `output_tokens` / `cache_read_tokens` / `cost_usd` (2026-10-13). Turns, tool calls,
   gate blocks and contamination stay the top-level session's (dsh-gs rep 1: child 18 steps, 50273 in / 32570 out / 960128
-  cache read, now counted). Rescoring reads the child sessions from the dsh home, so they must still be there.
+  cache read, now counted). collect copies the child sessions into `<run>/dsh-sessions/`, and scoring reads them there, so a rescore
+  does not depend on the dsh home; runs collected before 2026-10-13 have no copy and still read the dsh home.
 - Gate blocks: a blocking PreToolUse hook reaches the agent as the call's `Error: BLOCKED by …` tool result, so it is counted
   there (one per blocked call; dsh-gs had 11 PreToolUse block events on 10 calls, two hooks blocked the same call). Only a
   Stop block is a hook text (`Stop hook feedback`, turn-end). Fixed live: PreToolUse block texts were also hook texts,
